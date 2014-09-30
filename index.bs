@@ -132,6 +132,7 @@ The primary goal is to make as much of this process as possible consistent betwe
   <li>reference fetch standard
   <li>cross-origin produces an opaque object as in ServiceWorker
   <li>CORS, CSP
+  <li>other kinds of web assets
 </ul>
 
 <h3 id="browser-translate">Translate</h3>
