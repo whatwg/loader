@@ -97,14 +97,51 @@ The primary goal is to make as much of this process as possible consistent betwe
 
 <h2 id="browser">Browser Loader</h2>
 
-<b>TODO:</b>
+<h3 id="browser-site-packages">Site Packages</h3>
 
+<b>TODO:</b>
 <ul>
-<li>name resolution policy
-  <ul>
-    <li>top-level packages: <code>"jquery"</code>, <code>"ember/data"</code>
-    <li>absolute URLs: <code>"https://jquery.com/modules/v/2.0"</code>
-    <li>relative URLs: <code>"./utils.js"</code>
-  </ul>
-<li>site packages: <code>System.site({ "jquery": "https://jquery.com/modules/v/2.0" })</code>
+  <li>internal table in <code>System</code>: \[[Site]]
+  <li>public methods
+    <ul>
+    <li><code>System.site({ "jquery": "https://jquery.com/modules/v/2.1.1" })</code>
+    <li><code>System.site.get("jquery")</code>
+    <li><code>System.site.set("jquery", "https://jquery.com/modules/v/2.1.1")</code>
+    <li><code>System.site.has("jquery")</code>
+    <li><code>System.site.delete("jquery")</code>
+    </ul>
+</ul>
+
+<h3 id="browser-normalize">Normalize</h3>
+
+<b>TODO:</b> name resolution policy
+<ul>
+  <li>top-level packages consult \[[Site]]: <code>"jquery"</code>, <code>"ember/data"</code>
+  <li>absolute URLs: <code>"https://jquery.com/modules/v/2.0"</code>
+  <li>relative URLs: <code>"./utils.js"</code>
+</ul>
+
+<h3 id="browser-locate">Locate</h3>
+
+<b>TODO:</b> no-op.
+
+<h3 id="browser-fetch">Fetch</h3>
+
+<b>TODO:</b>
+<ul>
+  <li>reference fetch standard
+  <li>cross-origin produces an opaque object as in ServiceWorker
+  <li>CORS, CSP
+</ul>
+
+<h3 id="browser-translate">Translate</h3>
+
+<b>TODO:</b> no-op.
+
+<h3 id="browser-instantiate">Instantiate</h3>
+
+<b>TODO:</b>
+<ul>
+  <li>basically a no-op.
+  <li>but also needs to re-absorb opaque responses.
 </ul>
