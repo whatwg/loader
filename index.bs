@@ -5,7 +5,7 @@ H1: Loader
 Shortname: loader
 Level: 1
 Status: DREAM
-ED: https://tc39.github.io/loader
+ED: https://dherman.github.io/loader
 Editor: Eric Ferraiuolo, Yahoo https://yahoo.com, edf@ericf.me, https://github.com/ericf
 Editor: Dave Herman, Mozilla https://mozilla.org, dherman@mozilla.com, http://calculist.org
 Editor: Yehuda Katz, jQuery Foundation https://jquery.org, wycats@gmail.com, http://yehudakatz.com
@@ -14,8 +14,8 @@ Abstract: This specification describes the behavior of loading JavaScript module
 Abstract: JavaScript host environment. It also provides APIs for intercepting the module
 Abstract: loading process and customizing loading behavior.
 Logo: https://resources.whatwg.org/logo-javascript.svg
-!Version History: <a href="https://github.com/tc39/loader/commits">https://github.com/tc39/loader/commits</a>
-!Participate: <a href="https://github.com/tc39/loader/issues/new">File an issue</a> (<a href="https://github.com/tc39/loader/issues?state=open">open issues</a>)
+!Version History: <a href="https://github.com/dherman/loader/commits">https://github.com/dherman/loader/commits</a>
+!Participate: <a href="https://github.com/dherman/loader/issues/new">File an issue</a> (<a href="https://github.com/dherman/loader/issues?state=open">open issues</a>)
 </pre>
 
 <style>
