@@ -8,4 +8,4 @@ points of Web browsers, as well as Node.js.
 
 Building the specification requires [Bikeshed](http://github.com/tabatkins/bikeshed).
 First make sure to [install Bikeshed](https://github.com/tabatkins/bikeshed/blob/master/docs/install.md)
-and then build the spec by running make. The output will be in `out/index.html`.
+and then build the spec by running make. The output will be in `index.html`.
