@@ -1,0 +1,110 @@
+<pre class="metadata">
+Title: Loader
+Group: TC39
+H1: Loader
+Shortname: loader
+Level: 1
+Status: DREAM
+ED: https://tc39.github.io/loader
+Editor: Eric Ferraiuolo, Yahoo https://yahoo.com, edf@ericf.me, https://github.com/ericf
+Editor: Dave Herman, Mozilla https://mozilla.org, dherman@mozilla.com, http://calculist.org
+Editor: Yehuda Katz, jQuery Foundation https://jquery.org, wycats@gmail.com, http://yehudakatz.com
+Editor: Caridy Patiño, Yahoo https://yahoo.com, caridy@gmail.com, http://caridy.name
+Abstract: This specification describes the behavior of loading JavaScript modules from a
+Abstract: JavaScript host environment. It also provides APIs for intercepting the module
+Abstract: loading process and customizing loading behavior.
+Logo: https://resources.whatwg.org/logo-javascript.svg
+!Version History: <a href="https://github.com/tc39/loader/commits">https://github.com/tc39/loader/commits</a>
+!Participate: <a href="https://github.com/tc39/loader/issues/new">File an issue</a> (<a href="https://github.com/tc39/loader/issues?state=open">open issues</a>)
+</pre>
+
+<style>
+  ol > li { margin: 0; }
+</style>
+
+<h2 id="status" class="no-num no-toc">Status</h2>
+
+This document is a work in progress and dreams of becoming a living standard.
+
+<h2 id="intro">Introduction</h2>
+
+Throughout their development, JavaScript modules have been divided into two general areas:
+
+<ul>
+<li>The <b>authoring format</b>, which defines the importing and exporting syntax, as well as the semantics for variable bindings and cycles.
+<li>The <b>JavaScript Loader</b>, which provides a pipeline for on-demand, asynchronous loading of JavaScript modules.
+</ul>
+
+The authoring format was carefully designed to support pre-compilation (like Browserify) and on-demand asynchronous loading (like AMD). It defines the minimal syntax necessary to allow people to write portable modules that can work across different platforms, most notably Node.js and web browsers.
+
+The JavaScript Loader allows host environments, like Node.js and browsers, to fetch and load modules on demand. It provides a hookable pipeline, to allow front-end packaging solutions like Browserify, WebPack and jspm to hook into the loading process.
+
+This division provides a single format that developers can use in all JavaScript environments, and a separate loading mechanism for each environment. For example, a Node Loader would load its modules from the file system, consulting <code>package.json</code>, while a Browser Loader would fetch modules and use browser-supplied packaging formats.
+
+JavaScript itself, in ECMAScript 2015, defines the module syntax and the "linking semantics" between modules. When a module is requested, it delegates responsibility for loading the module to the host environment. The Loader defines how host environments can allow JavaScript code to configure that process.
+
+The primary goal is to make as much of this process as possible consistent between Node and Browser environments. For example, if a JavaScript program wants to translate <code>.coffee</code> files to JavaScript on the fly, the Loader defines a "translate" hook that can be used. This allows programs to participate in the loading process, even though some details (specifically, the process of getting a particular module from its host-defined storage) will be different between environments.
+
+<h2 id="pipeline">Loader Pipeline</h2>
+
+<b>TODO:</b> migrate from existing documents (<a href="https://github.com/jorendorff/js-loaders/wiki/Spec-Drafts">modules draft</a>, <a href="http://wiki.ecmascript.org/doku.php?id=harmony:specification_drafts#current_working_draft">ES6 drafts</a>)
+
+<h3 id="pipeline-semantics">Semantics</h3>
+
+<b>TODO:</b> migrate from <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-runtime-semantics-loader-state">15.2.3</a> and <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-runtime-semantics-module-loading">15.2.4</a>
+
+
+<h3 id="pipeline-api">API</h3>
+
+<b>TODO:</b> migrate from <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-loader-objects">26.2</a> and <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-system-object">26.3</a>
+
+<ul>
+  <li>methods:
+    <ul>
+    <li><code>System.import(name, context).then(mod => ...)</code>
+    <li><code>System.load(name, context).then(() => ...)</code>
+    <li><code>System.provide(name, src)</code>
+    </ul>
+  <li>hooks:
+    <ul>
+    <li><code>System.hook("normalize"[, normalize])</code>
+    <li><code>System.hook("locate"[, locate])</code>
+    <li><code>System.hook("fetch"[, fetch])</code>
+    <li><code>System.hook("translate"[, translate])</code>
+    <li><code>System.hook("instantiate"[, instantiate])</code>
+    </ul>
+  <li>module registry:
+    <ul>
+    <li><code>System.modules.get("https://jquery.com/modules/v/2.1.1")</code>
+    <li><code>System.modules.set("https://jquery.com/modules/v/2.1.1", mod)</code>
+    <li><code>System.modules.delete("https://jquery.com/modules/v/2.1.1")</code>
+    <li><code>System.modules.has("https://jquery.com/modules/v/2.1.1")</code>
+    </ul>
+</ul>
+
+<h2 id="local">Local Loading</h2>
+
+<b>TODO:</b>
+
+<ul>
+<li>syntax for accessing module local information: <code>import local from this;</code>
+<li>dynamic import: <code>local.import()</code>
+<li>extending the hooks to handle <code>this</code>
+<li>debugging info
+<li>room for host environment-specific data
+</ul>
+
+
+<h2 id="browser">Browser Loader</h2>
+
+<b>TODO:</b>
+
+<ul>
+<li>name resolution policy
+  <ul>
+    <li>top-level packages: <code>"jquery"</code>, <code>"ember/data"</code>
+    <li>absolute URLs: <code>"https://jquery.com/modules/v/2.0"</code>
+    <li>relative URLs: <code>"./utils.js"</code>
+  </ul>
+<li>site packages: <code>System.site({ "jquery": "https://jquery.com/modules/v/2.0" })</code>
+</ul>
