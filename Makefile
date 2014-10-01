@@ -1,2 +1,2 @@
-index.html: *.include index.bs
+index.html: index.bs
 	bikeshed spec index.bs index.html
