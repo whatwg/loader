@@ -177,7 +177,7 @@ The browser loader has an extra internal slot:
 <b>TODO:</b> name resolution policy
 <ul>
   <li>relative and site-relative URLs: <code>"./utils.js"</code>, <code>"/scripts/utils.js"</code>
-  <li>JS standard modules: <code>"std/math"</code>, <code>"std/reflect"</code>
+  <li>JS standard modules: <code>"std/math"</code>, <code>"std/json"</code>, <code>"std/reflect"</code>
   <li>Web standard modules: <code>"web/worker"</code>, <code>"web/audio"</code>
   <li>absolute URLs: <code>"https://jquery.com/modules/v/2.0"</code>
   <li>top-level packages consult \[[Site]]: <code>"jquery"</code>, <code>"ember/data"</code>
