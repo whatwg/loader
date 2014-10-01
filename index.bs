@@ -99,26 +99,88 @@ The primary goal is to make as much of this process as possible consistent betwe
 
 <h3 id="browser-site-packages">Site Packages</h3>
 
-<b>TODO:</b>
-<ul>
-  <li>internal table in <code>System</code>: \[[Site]]
-  <li>public methods
-    <ul>
-    <li><code>System.site({ "jquery": "https://jquery.com/modules/v/2.1.1" })</code>
-    <li><code>System.site.get("jquery")</code>
-    <li><code>System.site.set("jquery", "https://jquery.com/modules/v/2.1.1")</code>
-    <li><code>System.site.has("jquery")</code>
-    <li><code>System.site.delete("jquery")</code>
-    </ul>
-</ul>
+The browser loader contains extra properties for storing <dfn>site packages</dfn>, an application-global set of globally available packages. These map in an internal table to unique URLs that in turn serve as keys in the module registry.
+
+<div class="note">
+<p>
+The site package system serves as a simple coordination mechanism for modest-sized applications, but it does not provide all functionality required of a full-fledged package management system. It is expected that development ecosystems will build around package management tools that deal with requirements outside the scope of this specification, such as version management and allowing multiple versions of a library to coexist with the same name.
+</p>
+
+<p>
+Tools that preprocess JavaScript source code may choose to use or ignore the site package table. For example, a package manager may choose to preprocess two separate import statements requiring <code>"jquery"</code> to <code>"jquery/1.9"</code> and <code>"jquery/2.1.1"</code> respectively, based on configuration files informing the tool of version requirements. The tool would then store both versions of jQuery in the site package table using the longer names. Alternatively, the tool may choose to preprocess the imports directly as URLs and bypass the site package system altogether.
+</p>
+</div>
+
+The browser loader has an extra internal slot:
+
+<table>
+  <thead>
+    <tr>
+      <th>Internal Slot</th>
+      <th>Description (<em>non-normative</em>)</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>\[[Site]]</td>
+    <td>A table that maps package names to URLs.</td>
+  </tr>
+</table>
+
+<h4 id="System-site">System.site( mappings )</h4>
+
+<div class="example">
+  <pre>
+    System.site({
+      "jquery":     "https://cdn.example.com/jquery/v/2.1.1",
+      "underscore": "https://cdn.example.com/underscore/v/1.7.0",
+      "moment":     "https://cdn.example.com/moment/v/2.8.3"
+    });
+  </pre>
+</div>
+
+<h4 id="System-site-get">System.site.get( name )</h4>
+
+<div class="example">
+  <pre>
+    var url = System.site.get("jquery");
+  </pre>
+</div>
+
+<h4 id="System-site-set">System.site.set( name, url )</h4>
+
+<div class="example">
+  <pre>
+    System.site.set("jquery", "https://cdn.example.com/jquery/v/2.1.1");
+  </pre>
+</div>
+
+<h4 id="System-site-has">System.site.has( name )</h4>
+
+<div class="example">
+  <pre>
+    if (!System.site.has("jquery")) {
+      System.site.set("jquery", "https://cdn.example.com/jquery/v/2.1.1");
+    }
+  </pre>
+</div>
+
+<h4 id="System-site-delete">System.site.delete( name )</h4>
+
+<div class="example">
+  <pre>
+    System.site.delete("jquery");
+  </pre>
+</div>
 
 <h3 id="browser-normalize">Normalize</h3>
 
 <b>TODO:</b> name resolution policy
 <ul>
-  <li>top-level packages consult \[[Site]]: <code>"jquery"</code>, <code>"ember/data"</code>
+  <li>relative and site-relative URLs: <code>"./utils.js"</code>, <code>"/scripts/utils.js"</code>
+  <li>JS standard modules: <code>"std/math"</code>, <code>"std/reflect"</code>
+  <li>Web standard modules: <code>"web/worker"</code>, <code>"web/audio"</code>
   <li>absolute URLs: <code>"https://jquery.com/modules/v/2.0"</code>
-  <li>relative URLs: <code>"./utils.js"</code>
+  <li>top-level packages consult \[[Site]]: <code>"jquery"</code>, <code>"ember/data"</code>
 </ul>
 
 <h3 id="browser-locate">Locate</h3>
