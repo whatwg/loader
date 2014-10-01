@@ -1,2 +1,2 @@
 index.html: index.bs
-	bikeshed spec index.bs index.html
+	curl -s https://api.csswg.org/bikeshed/ -F file=@index.bs > index.html
