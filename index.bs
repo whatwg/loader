@@ -49,37 +49,430 @@ The primary goal is to make as much of this process as possible consistent betwe
 
 <b>TODO:</b> migrate from existing documents (<a href="https://github.com/jorendorff/js-loaders/wiki/Spec-Drafts">modules draft</a>, <a href="http://wiki.ecmascript.org/doku.php?id=harmony:specification_drafts#current_working_draft">ES6 drafts</a>)
 
-<h3 id="pipeline-semantics">Semantics</h3>
+<h3 id="pipeline-semantics">Loading Semantics</h3>
 
 <b>TODO:</b> migrate from <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-runtime-semantics-loader-state">15.2.3</a> and <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-runtime-semantics-module-loading">15.2.4</a>
 
+<h4 id="internal-types">Internal Types</h4>
+
+<h5 id="registry">Module Registry</h5>
+
+A <dfn>module registry</dfn> is a record with the following fields:
+
+<table>
+  <thead>
+    <tr>
+      <th>Internal Slot</th>
+      <th>Value Type (<em>non-normative</em>)</th>
+      <th>Description (<em>non-normative</em>)</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>\[[Named]]</td>
+    <td>List of pairs</td>
+    <td>Each pair consists of a normalized name and a <a>registry entry record</a>.</td>
+  </tr>
+</table>
+
+<h5 id="registry-entry-records">Registry Entry Records</h5>
+
+A <dfn>registry entry record</dfn> is one of:
+<ul>
+<li>a <a>loading state record</a>;
+<li>a <a>linking state record</a>; or
+<li>a <a>ready entry record</a>.
+</ul>
+
+<h5 id="loading-state-records">Loading State Records</h5>
+
+A <dfn>loading state record</dfn> is a record with the following fields:
+
+<table>
+  <thead>
+    <tr>
+      <th>Internal Slot</th>
+      <th>Value Type (<em>non-normative</em>)</th>
+      <th>Description (<em>non-normative</em>)</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>\[[Envelope]]</td>
+    <td>A <a>module envelope record</a></td>
+    <td>The loading metadata determined during the loading process.</td>
+  </tr>
+  <tr>
+    <td>\[[OnLoad]]</td>
+    <td>Promise of <b>undefined</b></td>
+    <td>A promise that signals the completion of loading.</td>
+  </tr>
+  <tr>
+    <td>\[[Source]]</td>
+    <td>any</td>
+    <td>The result of the <code>"translate"</code> hook.</td>
+  </tr>
+</table>
+
+<h5 id="linking-state-records">Linking State Records</h5>
+
+A <dfn>linking state record</dfn> is a record with the following fields:
+
+<table>
+  <thead>
+    <tr>
+      <th>Internal Slot</th>
+      <th>Value Type (<em>non-normative</em>)</th>
+      <th>Description (<em>non-normative</em>)</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>\[[Envelope]]</td>
+    <td>A <a>module envelope record</a></td>
+    <td>The loading metadata determined during the loading process.</td>
+  </tr>
+  <tr>
+    <td>\[[Definition]]</td>
+    <td>A <a>module definition record</a></td>
+    <td>The processed result of the <code>"instantiate"</code> hook.</td>
+  </tr>
+  <tr>
+    <td>\[[Deps]]</td>
+    <td>List of Strings</td>
+    <td>The unnormalized names of dependencies.</td>
+  </tr>
+  <tr>
+    <td>\[[Exports]]</td>
+    <td><b>undefined</b>, or List of Strings</td>
+    <td>The predeclared set of export names</td>
+  </tr>
+  <tr>
+    <td>\[[GroupIndex]]</td>
+    <td>Number</td>
+    <td>Largest dependency group count</td>
+  </tr>
+</table>
+
+<h5 id="ready-entry-records">Ready Entry Records</h5>
+
+A <dfn>ready entry record</dfn> is a record with the following fields:
+
+<table>
+  <thead>
+    <tr>
+      <th>Internal Slot</th>
+      <th>Value Type (<em>non-normative</em>)</th>
+      <th>Description (<em>non-normative</em>)</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>\[[Envelope]]</td>
+    <td>A <a>module envelope record</a>
+    <td>The loading metadata determined during the loading process.</td>
+  </tr>
+  <tr>
+    <td>\[[ModuleId]]</td>
+    <td>String</td>
+    <td>The unique ID of the loaded module.</td>
+  </tr>
+</table>
+
+<h5 id="module-envelope-records">Module Envelope Records</h5>
+
+A <dfn>module envelope record</dfn> is a record with the following fields:
+
+<table>
+  <thead>
+    <tr>
+      <th>Internal Slot</th>
+      <th>Value Type (<em>non-normative</em>)</th>
+      <th>Description (<em>non-normative</em>)</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>\[[Address]]</td>
+    <td>any</td>
+    <td>The result of the <code>"locate"</code> hook.</td>
+  </tr>
+  <tr>
+    <td>\[[Metadata]]</td>
+    <td>Object</td>
+    <td>An object passed to each loader hook, which hooks may use for any purpose.</td>
+  </tr>
+</table>
+
+<h5 id="module-definition-records">Module Definition Records</h5>
+
+A <dfn>module definition record</dfn> is a record with the following fields:
+
+<table>
+  <thead>
+    <tr>
+      <th>Internal Slot</th>
+      <th>Value Type (<em>non-normative</em>)</th>
+      <th>Description (<em>non-normative</em>)</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>\[[Body]]</td>
+    <td>parse result or function</td>
+    <td>Either the parse of a <em>Module</em> production or the value of <code>factory.execute</code>.</td>
+  </tr>
+  <tr>
+    <td>\[[Dependencies]]</td>
+    <td>List of pairs</td>
+    <td>Each pair consists of two strings: an unnormalized name and a normalized name.</td>
+  </tr>
+</table>
+
+<h4 id="shorthand-phrases">Shorthand Phrases</h4>
+
+<h5 id="reject-if-abrupt">RejectIfAbrupt(x)</h5>
+
+Algorithm steps that say
+
+<pre emu-alg>
+1. RejectIfAbrupt(_x_).
+</pre>
+
+mean the same thing as:
+
+<pre emu-alg>
+1. If _x_ is an abrupt completion, the return a promise rejected with _x_.[[value]].
+1. Else if _x_ is a Completion Record, then let _x_ be _x_.[[value]].
+</pre>
+
+
+<h4 id="auxiliary-operations">Auxiliary Operations</h4>
+
+<h5 id="create-object">CreateObject()</h5>
+
+<pre emu-alg>
+1. Let _obj_ be ObjectCreate(%ObjectPrototype%).
+1. Return _obj_.
+</pre>
+
+<h5 id="simple-define">SimpleDefine(obj, name, value)</h5>
+
+<pre emu-alg>
+1. Let _desc_ be a new PropertyDescriptor record {[[Value]]: _value_, [[Writable]]: *true*, [[Enumerable]]: *true*, [[Configurable]]: *true*}.
+1. Return the result of calling OrdinaryDefineOwnProperty(obj, name, value).
+</pre>
+
+<h5 id="freshid">FreshId()</h5>
+
+<pre emu-alg>
+1. Let _id_ be a unique string that has never been returned from FreshId.
+1. Return _id_.
+</pre>
+
+<h5 id="create-dynamic-module">CreateDynamicModule()</h5>
+
+<pre emu-alg>
+1. Let _id_ be FreshId().
+1. Let _mod_ be CreateModule(_id_).
+1. Set _mod_.[[ImportedModules]] to ...
+1. Set _mod_.[[ECMAScriptCode]] to *undefined*.
+1. Set _mod_.[[ImportEntries]] to ...
+1. Set _mod_.[[LocalExportEntries]] to ...
+1. Set _mod_.[[IndirectExportEntries]] to a new empty List.
+1. Set _mod_.[[StarExportEntries]] to a new empty List.
+1. Set _mod_.[[Environment]] to *undefined*.
+1. Set _mod_.[[Evaluated]] to *true*.
+1. Return _mod_.
+</pre>
+
+<h5 id="get-hook">GetHook(registry, name)</h5>
+
+<pre emu-alg>
+1. // TODO
+</pre>
+
+
+
+<h4 id="loading-operations">Loading Operations</h4>
+
+<h5 id="load-relative">LoadRelative(registry, name, referrerName, referrerAddress)</h5>
+
+<i>Note: used to be called RequestLoad</i>
+
+<pre emu-alg>
+1. Let _hook_ be GetHook(_registry_, "normalize"). // TODO: reject if GetHook is fallible
+1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
+1. Let _p_ be the result of promise-calling _hook_(_name_, _referrerName_, _referrerAddress_).
+1. Let _metadata_ be CreateObject().
+1. Return the result of transforming _p_ with a fulfillment handler that, when called with argument _name_, runs the following steps:
+  1. Let _name_ be ToString(_name_).
+  1. ReturnIfAbrupt(_name_).
+  1. Return ResumeLoad("locate", _registry_, _name_, _metadata_, *undefined*, *undefined*).
+</pre>
+
+<h5 id="load-absolute">LoadAbsolute(registry, name, options)</h5>
+
+<i>Note: used to be called LoadModule</i>
+
+<pre emu-alg>
+1. Assert: _registry_ is a Registry record.
+1. Let _name_ be ToString(_name_).
+1. RejectIfAbrupt(_name_).
+1. Let _address_ be GetOption(_options_, "address").
+1. RejectIfAbrupt(_address_).
+1. If _address_ is *undefined*, let _step_ be "locate".
+1. Else let _step_ be "fetch".
+1. Let _metadata_ be CreateObject().
+1. Return the result of ResumeLoad(_step_, _registry_, _name_, _metadata_, *undefined*, _address_).
+</pre>
+
+<h5 id="resume-load">ResumeLoad(step, registry, name, metadata, source, address)</h5>
+
+<pre emu-alg>
+1. If _registry_.[[Named]] has an entry whose [[key]] is equal to _name_, then:
+  1. Let _entry_ be the [[value]] of the entry in _registry_.[[Named]] whose [[key]] is equal to _name_.
+  1. If _entry_ is a loading state record, then:
+    1. Return _entry_.[[OnLoad]].
+  1. Else:
+    1. Assert: _entry_ is a linking state record or a ready entry record.
+    1. Return a promise resolved with *undefined*.
+1. Else return the result of StartLoad(_step_, _registry_, _name_, _metadata_, _source_, _address_).
+</pre>
+
+<h5 id="start-load">StartLoad(step, registry, name, metadata, source, address)</h5>
+
+<pre emu-alg>
+1. If _registry_.[[Named]] has an entry whose [[key]] is equal to _name_, then return a promise rejected with a new TypeError.
+1. Let _p_ be a new promise.
+1. Let _e_ be a new envelope record { [[Address]]: _address_, [[Metadata]]: _metadata_ }.
+1. Let _s_ be a new loading state record { [[Envelope]]: _e_, [[OnLoad]]: _p_, [[Source]]: *undefined* }.
+1. Let _entry_ be a new pair { [[key]]: _name_, [[value]]: _s_ }.
+1. Add _entry_ to _registry_.[[Named]].
+1. If _step_ is equal to "locate", then:
+  1. Transform the result of Locate(_registry_, _name_, _s_) with:
+    1. A fulfillment handler that fulfills _p_ with its value.
+    1. A rejection handler that rejects _p_ with its reason.
+1. Else if _step_ is equal to "fetch", then:
+  1. Transform the result of Fetch(_registry_, _name_, _s_, _address_) with:
+    1. A fulfillment handler that fulfills _p_ with its reason.
+    1. A rejection handler that rejects _p_ with its reason.
+1. Else:
+  1. Assert _step_ is equal to "translate".
+  1. Transform the result of Translate(_registry_, _name_, _s_, _address_, _source_) with:
+    1. A fulfillment handler that fulfills _p_ with its reason.
+    1. A rejection handler that rejects _p_ with its reason.
+1. Return _p_.
+</pre>
+
+<h5 id="locate">Locate(registry, name, loadState)</h5>
+
+<pre emu-alg>
+1. Let _hook_ be GetHook(_registry_, "locate"). // TODO: reject if GetHook is fallible
+1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
+1. Let _obj_ be CreateObject().
+1. Call SimpleDefine(_obj_, "name", _name_).
+1. Call SimpleDefine(_obj_, "metadata", _loadState_.[[Envelope]].[[Metadata]]).
+1. Let _p_ be the result of promise-calling _hook_(_obj_).
+1. Return the result of transforming _p_ with a fulfillment handler that, when called with argument _address_, runs the following steps:
+  1. Set _loadState_.[[Envelope]].[[Address]] to _address_.
+  1. Return Fetch(_registry_, _name_, _loadState_, _address_).
+</pre>
+
+<h5 id="fetch">Fetch(registry, name, loadState, address)</h5>
+
+<pre emu-alg>
+1. Let _hook_ be GetHook(_registry_, "fetch"). // TODO: reject if GetHook is fallible
+1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
+1. Let _obj_ be CreateObject().
+1. Call SimpleDefine(_obj_, "name", _name_).
+1. Call SimpleDefine(_obj_, "metadata", _loadState_.[[Envelope]].[[Metadata]]).
+1. Call SimpleDefine(_obj_, "address", _address_).
+1. Let _p_ be the result of promise-calling _hook_(_obj_).
+1. Return the result of transforming _p_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
+  1. Return Translate(_registry_, _name_, _loadState_, _address_, _source_).
+</pre>
+
+<h5 id="translate">Translate(registry, name, loadState, address, source)</h5>
+
+<pre emu-alg>
+1. Let _hook_ be GetHook(_registry_, "translate"). // TODO: reject if GetHook is fallible
+1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
+1. Let _obj_ be CreateObject().
+1. Call SimpleDefine(_obj_, "name", _name_).
+1. Call SimpleDefine(_obj_, "metadata", _loadState_.[[Envelope]].[[Metadata]]).
+1. Call SimpleDefine(_obj_, "address", _address_).
+1. Call SimpleDefine(_obj_, "source", _source_).
+1. Let _p_ be the result of promise-calling _hook_(_obj_).
+1. Return the result of transforming _p_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
+  1. Return Instantiate(_registry_, _name_, _loadState_, _address_, _source_).
+</pre>
+
+<h5 id="instantiate">Instantiate(registry, name, loadState, address, source)</h5>
+
+<pre emu-alg>
+1. Let _hook_ be GetHook(_registry_, "instantiate"). // TODO: reject if GetHook is fallible
+1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
+1. Let _obj_ be CreateObject().
+1. Call SimpleDefine(_obj_, "name", _name_).
+1. Call SimpleDefine(_obj_, "metadata", _loadState_.[[Envelope]].[[Metadata]]).
+1. Call SimpleDefine(_obj_, "address", _address_).
+1. Call SimpleDefine(_obj_, "source", _source_).
+1. Let _p_ be the result of promise-calling _hook_(_obj_).
+1. Return the result of transforming _p_ with a fulfillment handler that, when called with value _result_, runs the following steps: // TODO: any error handling?
+  1. If _result_ is *undefined*, then:
+    1. Let _body_ be the result of parsing _source_, interpreted as UTF-16 encoded Unicode text as described in the ECMA-262, clause 10.1.1, using Module as the goal symbol. Throw a SyntaxError exception if the parse fails or if any static semantics errors are detected.
+    1. Let _depsList_ be the ModuleRequests of _body_.
+    1. Let _exports_ be *undefined*.
+  1. Else if Type(_result_) is Object, then:
+    1. Let _body_ be the result of Get(_result_, "execute").
+    1. ReturnIfAbrupt(_body_).
+    1. Let _deps_ be the result of Get(_result_, "deps").
+    1. ReturnIfAbrupt(_deps).
+    1. Let _depsList_ be the result of IterateDeps(_deps_).
+    1. ReturnIfAbrupt(_depsList_).
+    1. Let _exports_ be the result of Get(_result_, "exports").
+    1. ReturnIfAbrupt(_exports_).
+  1. Else, throw a TypeError exception.
+  1. Let _newState_ be a new linking state record { [[Envelope]]: _loadState_.[[Envelope]], [[Definition]]: _body_, [[Deps]]: _depsList_, [[Exports]]: _exports_, [[GroupIndex]]: NaN }.
+  1. Let _entry_ be the pair in _registry_.[[Named]] whose [[key]] is _name_.
+  1. Set _entry_.[[value]] to _newState_.
+  1. Let _depLoads_ be a new empty List.
+  1. For each _dep_ in _depsList_, do:
+    1. Let _p_ be the result of LoadRelative(_registry_, _dep_, _name_, _address_).
+    1. Add _p_ to _depLoads_.
+  1. Let _p_ be the result of waiting for all _depLoads_.
+  1. Return the result of transforming _p_ with a fulfillment handler that produces *undefined*. // TODO: any post-processing?
+</pre>
 
 <h3 id="pipeline-api">API</h3>
 
 <b>TODO:</b> migrate from <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-loader-objects">26.2</a> and <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-system-object">26.3</a>
 
+<h4 id="loading-api">Loading</h4>
+
+<b>TODO:</b>
 <ul>
-  <li>methods:
-    <ul>
     <li><code>System.import(name, context).then(mod => ...)</code>
     <li><code>System.load(name, context).then(() => ...)</code>
     <li><code>System.provide(name, src)</code>
-    </ul>
-  <li>hooks:
-    <ul>
+</ul>
+
+<h4 id="loading-hooks">Pipeline Intercession</h4>
+
+<b>TODO:</b>
+<ul>
     <li><code>System.hook("normalize"[, normalize])</code>
     <li><code>System.hook("locate"[, locate])</code>
     <li><code>System.hook("fetch"[, fetch])</code>
     <li><code>System.hook("translate"[, translate])</code>
     <li><code>System.hook("instantiate"[, instantiate])</code>
-    </ul>
-  <li>module registry:
-    <ul>
-    <li><code>System.modules.get("https://jquery.com/modules/v/2.1.1")</code>
-    <li><code>System.modules.set("https://jquery.com/modules/v/2.1.1", mod)</code>
-    <li><code>System.modules.delete("https://jquery.com/modules/v/2.1.1")</code>
-    <li><code>System.modules.has("https://jquery.com/modules/v/2.1.1")</code>
-    </ul>
+</ul>
+
+<h4 id="reflection-api">Reflection</h4>
+
+<b>TODO:</b>
+<ul>
+    <li><code>System.modules.get("https://cdn.example.com/jquery/v/2.1.1")</code>
+    <li><code>System.modules.set("https://cdn.example.com/jquery/v/2.1.1", mod)</code>
+    <li><code>System.modules.delete("https://cdn.example.com/jquery/v/2.1.1")</code>
+    <li><code>System.modules.has("https://cdn.example.com/jquery/v/2.1.1")</code>
+    <li>return reified records representing the intermediate loading states
+    <li>affect pending operations on modification
 </ul>
 
 <h2 id="local">Local Loading</h2>
@@ -179,7 +572,7 @@ The browser loader has an extra internal slot:
   <li>relative and site-relative URLs: <code>"./utils.js"</code>, <code>"/scripts/utils.js"</code>
   <li>JS standard modules: <code>"std/math"</code>, <code>"std/json"</code>, <code>"std/reflect"</code>
   <li>Web standard modules: <code>"web/worker"</code>, <code>"web/audio"</code>
-  <li>absolute URLs: <code>"https://jquery.com/modules/v/2.0"</code>
+  <li>absolute URLs: <code>"https://cdn.example.com/jquery/v/2.0"</code>
   <li>top-level packages consult \[[Site]]: <code>"jquery"</code>, <code>"ember/data"</code>
 </ul>
 
