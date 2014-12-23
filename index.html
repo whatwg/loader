@@ -1,156 +1,1014 @@
-<!DOCTYPE html><html lang=en><meta charset=utf-8>
-  <title>Loader</title>
-  <link href=https://www.whatwg.org/style/specification rel=stylesheet>
-  <link href=https://resources.whatwg.org/logo-javascript.svg rel=icon>
-<script async src=//resources.whatwg.org/file-bug.js></script>
-  <style>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    
+  
+    <title>Loader</title>
+    
+  
+    <link href="https://www.whatwg.org/style/specification" rel="stylesheet">
+    
+  
+    <link href="https://resources.whatwg.org/bikeshed.css" rel="stylesheet">
+    
+  
+    <link href="https://resources.whatwg.org/logo-javascript.svg" rel="icon">
+    
+
+    <style>
   ol > li { margin: 0; }
 </style>
+    
 
-<body class=h-entry>
-<div class=head>
-  <p data-fill-with=logo><a class=logo href=http://www.whatwg.org/>
-    <img alt=WHATWG height=100 src=https://resources.whatwg.org/logo-javascript.svg>
+
+  </head>
+  <body class="h-entry status-DREAM">
+
+    <div class="head">
+  
+      <p data-fill-with="logo"><a class="logo" href="http://whatwg.org/">
+    <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-javascript.svg">
 </a>
 </p>
-  <h1 class="p-name no-ref" id=title>Loader</h1>
-  <h2 class="no-num no-toc no-ref heading settled" id=subtitle><span class=content>A Collection of Interesting Ideas,
-    <span class=dt-updated><span class=value-title title=20141001>1 October 2014</span></span></span></h2>
-  <div data-fill-with=spec-metadata><dl><dt>This version:<dd><a class=u-url href=https://whatwg.github.io/loader>https://whatwg.github.io/loader</a><dt>Editors:<dd><div class="p-author h-card vcard"><a class="p-name fn u-url url" href=https://github.com/ericf>Eric Ferraiuolo</a> (<a class="p-org org" href=https://yahoo.com>Yahoo</a>) <a class="u-email email" href=mailto:edf@ericf.me>edf@ericf.me</a></div><dd><div class="p-author h-card vcard"><a class="p-name fn u-url url" href=http://calculist.org>Dave Herman</a> (<a class="p-org org" href=https://mozilla.org>Mozilla</a>) <a class="u-email email" href=mailto:dherman@mozilla.com>dherman@mozilla.com</a></div><dd><div class="p-author h-card vcard"><a class="p-name fn u-url url" href=http://yehudakatz.com>Yehuda Katz</a> (<a class="p-org org" href=https://jquery.org>jQuery Foundation</a>) <a class="u-email email" href=mailto:wycats@gmail.com>wycats@gmail.com</a></div><dd><div class="p-author h-card vcard"><a class="p-name fn u-url url" href=http://caridy.name>Caridy Patiño</a> (<a class="p-org org" href=https://yahoo.com>Yahoo</a>) <a class="u-email email" href=mailto:caridy@gmail.com>caridy@gmail.com</a></div><dt>Version History:<dd><span><a href=https://github.com/whatwg/loader/commits>https://github.com/whatwg/loader/commits</a></span><dt>Participate:<dd><span><a href=https://github.com/whatwg/loader/issues/new>File an issue</a> (<a href="https://github.com/whatwg/loader/issues?state=open">open issues</a>)</span></dl></div>
-  <div data-fill-with=warning></div>
-  <p class=copyright data-fill-with=copyright><a href=http://creativecommons.org/publicdomain/zero/1.0/ rel=license><img alt=CC0 src=https://i.creativecommons.org/p/zero/1.0/80x15.png></a>
-To the extent possible under law, the editors have waived all copyright
-and related or neighboring rights to this work.
-In addition, as of 1 October 2014,
-the editors have made this specification available under the
-<a href=http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0 rel=license>Open Web Foundation Agreement Version 1.0</a>,
-which is available at http://www.openwebfoundation.org/legal/the-owf-1-0-agreements/owfa-1-0.
-Parts of this work may be from another specification document.  If so, those parts are instead covered by the license of that specification document.
-</p>
-  <hr title="Separator for header">
+  
+      <h1 class="p-name no-ref" id="title">Loader</h1>
+  
+      <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">A Collection of Interesting Ideas — Last Updated
+    <time class="dt-updated" datetime="2014-12-23">23 December 2014</time></span></h2>
+  
+      <div data-fill-with="spec-metadata">
+        <dl>
+          <dt>This version:</dt>
+          <dd><a class="u-url" href="https://whatwg.github.io/loader">https://whatwg.github.io/loader</a></dd>
+          <dt class="editor">Editors:</dt>
+          <dd class="editor">
+            <div class="p-author h-card vcard"><a class="p-name fn u-url url" href="https://github.com/ericf">Eric Ferraiuolo</a> (<a class="p-org org" href="https://yahoo.com">Yahoo</a>) <a class="u-email email" href="mailto:edf@ericf.me">edf@ericf.me</a></div>
+          </dd>
+          <dd class="editor">
+            <div class="p-author h-card vcard"><a class="p-name fn u-url url" href="http://calculist.org">Dave Herman</a> (<a class="p-org org" href="https://mozilla.org">Mozilla</a>) <a class="u-email email" href="mailto:dherman@mozilla.com">dherman@mozilla.com</a></div>
+          </dd>
+          <dd class="editor">
+            <div class="p-author h-card vcard"><a class="p-name fn u-url url" href="http://yehudakatz.com">Yehuda Katz</a> (<a class="p-org org" href="https://jquery.org">jQuery Foundation</a>) <a class="u-email email" href="mailto:wycats@gmail.com">wycats@gmail.com</a></div>
+          </dd>
+          <dd class="editor">
+            <div class="p-author h-card vcard"><a class="p-name fn u-url url" href="http://caridy.name">Caridy Patiño</a> (<a class="p-org org" href="https://yahoo.com">Yahoo</a>) <a class="u-email email" href="mailto:caridy@gmail.com">caridy@gmail.com</a></div>
+          </dd>
+          <dt>Version History:</dt>
+          <dd><span><a href="https://github.com/whatwg/loader/commits">https://github.com/whatwg/loader/commits</a></span></dd>
+          <dt>Participate:</dt>
+          <dd><span><a href="https://github.com/whatwg/loader/issues/new">File an issue</a> (<a href="https://github.com/whatwg/loader/issues?state=open">open issues</a>)</span></dd>
+        </dl>
+      </div>
+  
+      <div data-fill-with="warning"></div>
 </div>
+    
 
-<h2 class="no-num no-toc no-ref heading settled" id=abstract><span class=content>Abstract</span></h2>
-<div class=p-summary data-fill-with=abstract><p>This specification describes the behavior of loading JavaScript modules from a
+
+    <h2 class="no-num no-toc no-ref heading settled" id="abstract"><span class="content">Abstract</span></h2>
+    
+
+    <div class="p-summary" data-fill-with="abstract">
+      <p>This specification describes the behavior of loading JavaScript modules from a
 
 JavaScript host environment. It also provides APIs for intercepting the module
 loading process and customizing loading behavior.</p>
 
 </div>
-<div data-fill-with=at-risk></div>
+    
 
-<h2 class="no-num no-toc no-ref heading settled" id=contents><span class=content>Table of Contents</span></h2>
-<div data-fill-with=table-of-contents><ul class=toc><li><a href=#intro><span class=secno>1</span> <span class=content>Introduction</span></a><li><a href=#pipeline><span class=secno>2</span> <span class=content>Loader Pipeline</span></a><ul class=toc><li><a href=#pipeline-semantics><span class=secno>2.1</span> <span class=content>Semantics</span></a><li><a href=#pipeline-api><span class=secno>2.2</span> <span class=content>API</span></a></ul><li><a href=#local><span class=secno>3</span> <span class=content>Local Loading</span></a><li><a href=#browser><span class=secno>4</span> <span class=content>Browser Loader</span></a><ul class=toc><li><a href=#browser-site-packages><span class=secno>4.1</span> <span class=content>Site Packages</span></a><ul class=toc><li><a href=#System-site><span class=secno>4.1.1</span> <span class=content>System.site( mappings )</span></a><li><a href=#System-site-get><span class=secno>4.1.2</span> <span class=content>System.site.get( name )</span></a><li><a href=#System-site-set><span class=secno>4.1.3</span> <span class=content>System.site.set( name, url )</span></a><li><a href=#System-site-has><span class=secno>4.1.4</span> <span class=content>System.site.has( name )</span></a><li><a href=#System-site-delete><span class=secno>4.1.5</span> <span class=content>System.site.delete( name )</span></a></ul><li><a href=#browser-normalize><span class=secno>4.2</span> <span class=content>Normalize</span></a><li><a href=#browser-locate><span class=secno>4.3</span> <span class=content>Locate</span></a><li><a href=#browser-fetch><span class=secno>4.4</span> <span class=content>Fetch</span></a><li><a href=#browser-translate><span class=secno>4.5</span> <span class=content>Translate</span></a><li><a href=#browser-instantiate><span class=secno>4.6</span> <span class=content>Instantiate</span></a></ul><li><a href=#conformance><span class=secno></span> <span class=content>Conformance</span></a><li><a href=#references><span class=secno></span> <span class=content>References</span></a><ul class=toc><li><a href=#normative><span class=secno></span> <span class=content>Normative References</span></a></ul><li><a href=#index><span class=secno></span> <span class=content>Index</span></a></ul></div>
-
-
-<h2 class="no-num no-toc heading settled" id=status><span class=content>Status</span></h2>
-
-<p>This document is a work in progress and dreams of becoming a living standard.</p>
-
-<h2 class="heading settled" data-level=1 id=intro><span class=secno>1. </span><span class=content>Introduction</span><a class=self-link href=#intro></a></h2>
-
-<p>Throughout their development, JavaScript modules have been divided into two general areas:</p>
-
-<ul>
-<li>The <b>authoring format</b>, which defines the importing and exporting syntax, as well as the semantics for variable bindings and cycles.
-<li>The <b>JavaScript Loader</b>, which provides a pipeline for on-demand, asynchronous loading of JavaScript modules.
-</ul>
-
-<p>The authoring format was carefully designed to support pre-compilation (like Browserify) and on-demand asynchronous loading (like AMD). It defines the minimal syntax necessary to allow people to write portable modules that can work across different platforms, most notably Node.js and web browsers.</p>
-
-<p>The JavaScript Loader allows host environments, like Node.js and browsers, to fetch and load modules on demand. It provides a hookable pipeline, to allow front-end packaging solutions like Browserify, WebPack and jspm to hook into the loading process.</p>
-
-<p>This division provides a single format that developers can use in all JavaScript environments, and a separate loading mechanism for each environment. For example, a Node Loader would load its modules from the file system, consulting <code>package.json</code>, while a Browser Loader would fetch modules and use browser-supplied packaging formats.</p>
-
-<p>JavaScript itself, in ECMAScript 2015, defines the module syntax and the "linking semantics" between modules. When a module is requested, it delegates responsibility for loading the module to the host environment. The Loader defines how host environments can allow JavaScript code to configure that process.</p>
-
-<p>The primary goal is to make as much of this process as possible consistent between Node and Browser environments. For example, if a JavaScript program wants to translate <code>.coffee</code> files to JavaScript on the fly, the Loader defines a "translate" hook that can be used. This allows programs to participate in the loading process, even though some details (specifically, the process of getting a particular module from its host-defined storage) will be different between environments.</p>
-
-<h2 class="heading settled" data-level=2 id=pipeline><span class=secno>2. </span><span class=content>Loader Pipeline</span><a class=self-link href=#pipeline></a></h2>
-
-<p><b>TODO:</b> migrate from existing documents (<a href=https://github.com/jorendorff/js-loaders/wiki/Spec-Drafts>modules draft</a>, <a href="http://wiki.ecmascript.org/doku.php?id=harmony:specification_drafts#current_working_draft">ES6 drafts</a>)</p>
-
-<h3 class="heading settled" data-level=2.1 id=pipeline-semantics><span class=secno>2.1. </span><span class=content>Semantics</span><a class=self-link href=#pipeline-semantics></a></h3>
-
-<p><b>TODO:</b> migrate from <a href=http://people.mozilla.org/~jorendorff/es6-draft.html#sec-runtime-semantics-loader-state>15.2.3</a> and <a href=http://people.mozilla.org/~jorendorff/es6-draft.html#sec-runtime-semantics-module-loading>15.2.4</a></p>
+    <div data-fill-with="at-risk"></div>
+    
 
 
-<h3 class="heading settled" data-level=2.2 id=pipeline-api><span class=secno>2.2. </span><span class=content>API</span><a class=self-link href=#pipeline-api></a></h3>
+    <h2 class="no-num no-toc no-ref heading settled" id="contents"><span class="content">Table of Contents</span></h2>
+    
 
-<p><b>TODO:</b> migrate from <a href=http://people.mozilla.org/~jorendorff/es6-draft.html#sec-loader-objects>26.2</a> and <a href=http://people.mozilla.org/~jorendorff/es6-draft.html#sec-system-object>26.3</a></p>
+    <div data-fill-with="table-of-contents" role="navigation">
+      <ul class="toc" role="directory">
+        <li><a href="#intro"><span class="secno">1</span> <span class="content">Introduction</span></a></li>
+        <li><a href="#pipeline"><span class="secno">2</span> <span class="content">Loader Pipeline</span></a>
+          <ul class="toc">
+            <li><a href="#pipeline-semantics"><span class="secno">2.1</span> <span class="content">Loading Semantics</span></a>
+              <ul class="toc">
+                <li><a href="#internal-types"><span class="secno">2.1.1</span> <span class="content">Internal Types</span></a>
+                  <ul class="toc">
+                    <li><a href="#registry"><span class="secno">2.1.1.1</span> <span class="content">Module Registry</span></a></li>
+                    <li><a href="#registry-entry-records"><span class="secno">2.1.1.2</span> <span class="content">Registry Entry Records</span></a></li>
+                    <li><a href="#loading-state-records"><span class="secno">2.1.1.3</span> <span class="content">Loading State Records</span></a></li>
+                    <li><a href="#linking-state-records"><span class="secno">2.1.1.4</span> <span class="content">Linking State Records</span></a></li>
+                    <li><a href="#ready-entry-records"><span class="secno">2.1.1.5</span> <span class="content">Ready Entry Records</span></a></li>
+                    <li><a href="#module-envelope-records"><span class="secno">2.1.1.6</span> <span class="content">Module Envelope Records</span></a></li>
+                    <li><a href="#module-definition-records"><span class="secno">2.1.1.7</span> <span class="content">Module Definition Records</span></a></li>
+                  </ul>
+                </li>
+                <li><a href="#shorthand-phrases"><span class="secno">2.1.2</span> <span class="content">Shorthand Phrases</span></a>
+                  <ul class="toc">
+                    <li><a href="#reject-if-abrupt"><span class="secno">2.1.2.1</span> <span class="content">RejectIfAbrupt(x)</span></a></li>
+                  </ul>
+                </li>
+                <li><a href="#auxiliary-operations"><span class="secno">2.1.3</span> <span class="content">Auxiliary Operations</span></a>
+                  <ul class="toc">
+                    <li><a href="#create-object"><span class="secno">2.1.3.1</span> <span class="content">CreateObject()</span></a></li>
+                    <li><a href="#simple-define"><span class="secno">2.1.3.2</span> <span class="content">SimpleDefine(obj, name, value)</span></a></li>
+                    <li><a href="#freshid"><span class="secno">2.1.3.3</span> <span class="content">FreshId()</span></a></li>
+                    <li><a href="#create-dynamic-module"><span class="secno">2.1.3.4</span> <span class="content">CreateDynamicModule()</span></a></li>
+                    <li><a href="#get-hook"><span class="secno">2.1.3.5</span> <span class="content">GetHook(registry, name)</span></a></li>
+                  </ul>
+                </li>
+                <li><a href="#loading-operations"><span class="secno">2.1.4</span> <span class="content">Loading Operations</span></a>
+                  <ul class="toc">
+                    <li><a href="#load-relative"><span class="secno">2.1.4.1</span> <span class="content">LoadRelative(registry, name, referrerName, referrerAddress)</span></a></li>
+                    <li><a href="#load-absolute"><span class="secno">2.1.4.2</span> <span class="content">LoadAbsolute(registry, name, options)</span></a></li>
+                    <li><a href="#resume-load"><span class="secno">2.1.4.3</span> <span class="content">ResumeLoad(step, registry, name, metadata, source, address)</span></a></li>
+                    <li><a href="#start-load"><span class="secno">2.1.4.4</span> <span class="content">StartLoad(step, registry, name, metadata, source, address)</span></a></li>
+                    <li><a href="#locate"><span class="secno">2.1.4.5</span> <span class="content">Locate(registry, name, loadState)</span></a></li>
+                    <li><a href="#fetch"><span class="secno">2.1.4.6</span> <span class="content">Fetch(registry, name, loadState, address)</span></a></li>
+                    <li><a href="#translate"><span class="secno">2.1.4.7</span> <span class="content">Translate(registry, name, loadState, address, source)</span></a></li>
+                    <li><a href="#instantiate"><span class="secno">2.1.4.8</span> <span class="content">Instantiate(registry, name, loadState, address, source)</span></a></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+            <li><a href="#pipeline-api"><span class="secno">2.2</span> <span class="content">API</span></a>
+              <ul class="toc">
+                <li><a href="#loading-api"><span class="secno">2.2.1</span> <span class="content">Loading</span></a></li>
+                <li><a href="#loading-hooks"><span class="secno">2.2.2</span> <span class="content">Pipeline Intercession</span></a></li>
+                <li><a href="#reflection-api"><span class="secno">2.2.3</span> <span class="content">Reflection</span></a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#local"><span class="secno">3</span> <span class="content">Local Loading</span></a></li>
+        <li><a href="#browser"><span class="secno">4</span> <span class="content">Browser Loader</span></a>
+          <ul class="toc">
+            <li><a href="#browser-site-packages"><span class="secno">4.1</span> <span class="content">Site Packages</span></a>
+              <ul class="toc">
+                <li><a href="#System-site"><span class="secno">4.1.1</span> <span class="content">System.site( mappings )</span></a></li>
+                <li><a href="#System-site-get"><span class="secno">4.1.2</span> <span class="content">System.site.get( name )</span></a></li>
+                <li><a href="#System-site-set"><span class="secno">4.1.3</span> <span class="content">System.site.set( name, url )</span></a></li>
+                <li><a href="#System-site-has"><span class="secno">4.1.4</span> <span class="content">System.site.has( name )</span></a></li>
+                <li><a href="#System-site-delete"><span class="secno">4.1.5</span> <span class="content">System.site.delete( name )</span></a></li>
+              </ul>
+            </li>
+            <li><a href="#browser-normalize"><span class="secno">4.2</span> <span class="content">Normalize</span></a></li>
+            <li><a href="#browser-locate"><span class="secno">4.3</span> <span class="content">Locate</span></a></li>
+            <li><a href="#browser-fetch"><span class="secno">4.4</span> <span class="content">Fetch</span></a></li>
+            <li><a href="#browser-translate"><span class="secno">4.5</span> <span class="content">Translate</span></a></li>
+            <li><a href="#browser-instantiate"><span class="secno">4.6</span> <span class="content">Instantiate</span></a></li>
+          </ul>
+        </li>
+        <li><a href="#conformance"><span class="secno"></span> <span class="content">Conformance</span></a></li>
+        <li><a href="#references"><span class="secno"></span> <span class="content">References</span></a>
+          <ul class="toc">
+            <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a></li>
+          </ul>
+        </li>
+        <li><a href="#index"><span class="secno"></span> <span class="content">Index</span></a></li>
+      </ul></div>
+    
 
-<ul>
-  <li>methods:
-    <ul>
-    <li><code>System.import(name, context).then(mod =&gt; ...)</code>
-    <li><code>System.load(name, context).then(() =&gt; ...)</code>
-    <li><code>System.provide(name, src)</code>
-    </ul>
-  <li>hooks:
-    <ul>
-    <li><code>System.hook("normalize"[, normalize])</code>
-    <li><code>System.hook("locate"[, locate])</code>
-    <li><code>System.hook("fetch"[, fetch])</code>
-    <li><code>System.hook("translate"[, translate])</code>
-    <li><code>System.hook("instantiate"[, instantiate])</code>
-    </ul>
-  <li>module registry:
-    <ul>
-    <li><code>System.modules.get("https://jquery.com/modules/v/2.1.1")</code>
-    <li><code>System.modules.set("https://jquery.com/modules/v/2.1.1", mod)</code>
-    <li><code>System.modules.delete("https://jquery.com/modules/v/2.1.1")</code>
-    <li><code>System.modules.has("https://jquery.com/modules/v/2.1.1")</code>
-    </ul>
-</ul>
-
-<h2 class="heading settled" data-level=3 id=local><span class=secno>3. </span><span class=content>Local Loading</span><a class=self-link href=#local></a></h2>
-
-<p><b>TODO:</b></p>
-
-<ul>
-<li>syntax for accessing module local information: <code>import local from this;</code>
-<li>dynamic import: <code>local.import()</code>
-<li>extending the hooks to handle <code>this</code>
-<li>debugging info
-<li>room for host environment-specific data
-</ul>
+    <main>
 
 
-<h2 class="heading settled" data-level=4 id=browser><span class=secno>4. </span><span class=content>Browser Loader</span><a class=self-link href=#browser></a></h2>
 
-<h3 class="heading settled" data-level=4.1 id=browser-site-packages><span class=secno>4.1. </span><span class=content>Site Packages</span><a class=self-link href=#browser-site-packages></a></h3>
+      <h2 class="no-num no-toc heading settled" id="status"><span class="content">Status</span></h2>
 
-<p>The browser loader contains extra properties for storing <dfn data-dfn-type=dfn data-noexport="" id=site-packages>site packages<a class=self-link href=#site-packages></a></dfn>, an application-global set of globally available packages. These map in an internal table to unique URLs that in turn serve as keys in the module registry.</p>
 
-<div class=note>
-<p>
+      <p>This document is a work in progress and dreams of becoming a living standard.</p>
+
+
+      <h2 class="heading settled" data-level="1" id="intro"><span class="secno">1. </span><span class="content">Introduction</span><a class="self-link" href="#intro"></a></h2>
+
+
+      <p>Throughout their development, JavaScript modules have been divided into two general areas:</p>
+
+
+      <ul>
+
+        <li>The <b>authoring format</b>, which defines the importing and exporting syntax, as well as the semantics for variable bindings and cycles.
+</li>
+        <li>The <b>JavaScript Loader</b>, which provides a pipeline for on-demand, asynchronous loading of JavaScript modules.
+</li></ul>
+
+
+      <p>The authoring format was carefully designed to support pre-compilation (like Browserify) and on-demand asynchronous loading (like AMD). It defines the minimal syntax necessary to allow people to write portable modules that can work across different platforms, most notably Node.js and web browsers.</p>
+
+
+      <p>The JavaScript Loader allows host environments, like Node.js and browsers, to fetch and load modules on demand. It provides a hookable pipeline, to allow front-end packaging solutions like Browserify, WebPack and jspm to hook into the loading process.</p>
+
+
+      <p>This division provides a single format that developers can use in all JavaScript environments, and a separate loading mechanism for each environment. For example, a Node Loader would load its modules from the file system, consulting <code>package.json</code>, while a Browser Loader would fetch modules and use browser-supplied packaging formats.</p>
+
+
+      <p>JavaScript itself, in ECMAScript 2015, defines the module syntax and the "linking semantics" between modules. When a module is requested, it delegates responsibility for loading the module to the host environment. The Loader defines how host environments can allow JavaScript code to configure that process.</p>
+
+
+      <p>The primary goal is to make as much of this process as possible consistent between Node and Browser environments. For example, if a JavaScript program wants to translate <code>.coffee</code> files to JavaScript on the fly, the Loader defines a "translate" hook that can be used. This allows programs to participate in the loading process, even though some details (specifically, the process of getting a particular module from its host-defined storage) will be different between environments.</p>
+
+
+      <h2 class="heading settled" data-level="2" id="pipeline"><span class="secno">2. </span><span class="content">Loader Pipeline</span><a class="self-link" href="#pipeline"></a></h2>
+
+
+      <p><b>TODO:</b> migrate from existing documents (<a href="https://github.com/jorendorff/js-loaders/wiki/Spec-Drafts">modules draft</a>, <a href="http://wiki.ecmascript.org/doku.php?id=harmony:specification_drafts#current_working_draft">ES6 drafts</a>)</p>
+
+
+      <h3 class="heading settled" data-level="2.1" id="pipeline-semantics"><span class="secno">2.1. </span><span class="content">Loading Semantics</span><a class="self-link" href="#pipeline-semantics"></a></h3>
+
+
+      <p><b>TODO:</b> migrate from <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-runtime-semantics-loader-state">15.2.3</a> and <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-runtime-semantics-module-loading">15.2.4</a></p>
+
+
+      <h4 class="heading settled" data-level="2.1.1" id="internal-types"><span class="secno">2.1.1. </span><span class="content">Internal Types</span><a class="self-link" href="#internal-types"></a></h4>
+
+
+      <h5 class="heading settled" data-level="2.1.1.1" id="registry"><span class="secno">2.1.1.1. </span><span class="content">Module Registry</span><a class="self-link" href="#registry"></a></h5>
+
+
+      <p>A <dfn data-dfn-type="dfn" data-noexport="" id="module-registry">module registry<a class="self-link" href="#module-registry"></a></dfn> is a record with the following fields:</p>
+
+
+      <table>
+  
+        <thead>
+    
+          <tr>
+      
+            <th>Internal Slot</th>
+            
+      
+            <th>Value Type (<em>non-normative</em>)</th>
+            
+      
+            <th>Description (<em>non-normative</em>)</th>
+            
+    
+          </tr>
+          
+  
+        </thead>
+  
+        <tbody>
+          <tr>
+    
+            <td>[[Named]]</td>
+            
+    
+            <td>List of pairs</td>
+            
+    
+            <td>Each pair consists of a normalized name and a <a data-link-type="dfn" href="#registry-entry-record">registry entry record</a>.</td>
+            
+  
+          </tr>
+          
+
+        </tbody></table>
+
+
+      <h5 class="heading settled" data-level="2.1.1.2" id="registry-entry-records"><span class="secno">2.1.1.2. </span><span class="content">Registry Entry Records</span><a class="self-link" href="#registry-entry-records"></a></h5>
+
+
+      <p>A <dfn data-dfn-type="dfn" data-noexport="" id="registry-entry-record">registry entry record<a class="self-link" href="#registry-entry-record"></a></dfn> is one of:</p>
+
+      <ul>
+
+        <li>a <a data-link-type="dfn" href="#loading-state-record">loading state record</a>;
+</li>
+        <li>a <a data-link-type="dfn" href="#linking-state-record">linking state record</a>; or
+</li>
+        <li>a <a data-link-type="dfn" href="#ready-entry-record">ready entry record</a>.
+</li></ul>
+
+
+      <h5 class="heading settled" data-level="2.1.1.3" id="loading-state-records"><span class="secno">2.1.1.3. </span><span class="content">Loading State Records</span><a class="self-link" href="#loading-state-records"></a></h5>
+
+
+      <p>A <dfn data-dfn-type="dfn" data-noexport="" id="loading-state-record">loading state record<a class="self-link" href="#loading-state-record"></a></dfn> is a record with the following fields:</p>
+
+
+      <table>
+  
+        <thead>
+    
+          <tr>
+      
+            <th>Internal Slot</th>
+            
+      
+            <th>Value Type (<em>non-normative</em>)</th>
+            
+      
+            <th>Description (<em>non-normative</em>)</th>
+            
+    
+          </tr>
+          
+  
+        </thead>
+  
+        <tbody>
+          <tr>
+    
+            <td>[[Envelope]]</td>
+            
+    
+            <td>A <a data-link-type="dfn" href="#module-envelope-record">module envelope record</a></td>
+            
+    
+            <td>The loading metadata determined during the loading process.</td>
+            
+  
+          </tr>
+          
+  
+          <tr>
+    
+            <td>[[OnLoad]]</td>
+            
+    
+            <td>Promise of <b>undefined</b></td>
+            
+    
+            <td>A promise that signals the completion of loading.</td>
+            
+  
+          </tr>
+          
+  
+          <tr>
+    
+            <td>[[Source]]</td>
+            
+    
+            <td>any</td>
+            
+    
+            <td>The result of the <code>"translate"</code> hook.</td>
+            
+  
+          </tr>
+          
+
+        </tbody></table>
+
+
+      <h5 class="heading settled" data-level="2.1.1.4" id="linking-state-records"><span class="secno">2.1.1.4. </span><span class="content">Linking State Records</span><a class="self-link" href="#linking-state-records"></a></h5>
+
+
+      <p>A <dfn data-dfn-type="dfn" data-noexport="" id="linking-state-record">linking state record<a class="self-link" href="#linking-state-record"></a></dfn> is a record with the following fields:</p>
+
+
+      <table>
+  
+        <thead>
+    
+          <tr>
+      
+            <th>Internal Slot</th>
+            
+      
+            <th>Value Type (<em>non-normative</em>)</th>
+            
+      
+            <th>Description (<em>non-normative</em>)</th>
+            
+    
+          </tr>
+          
+  
+        </thead>
+  
+        <tbody>
+          <tr>
+    
+            <td>[[Envelope]]</td>
+            
+    
+            <td>A <a data-link-type="dfn" href="#module-envelope-record">module envelope record</a></td>
+            
+    
+            <td>The loading metadata determined during the loading process.</td>
+            
+  
+          </tr>
+          
+  
+          <tr>
+    
+            <td>[[Definition]]</td>
+            
+    
+            <td>A <a data-link-type="dfn" href="#module-definition-record">module definition record</a></td>
+            
+    
+            <td>The processed result of the <code>"instantiate"</code> hook.</td>
+            
+  
+          </tr>
+          
+  
+          <tr>
+    
+            <td>[[Deps]]</td>
+            
+    
+            <td>List of Strings</td>
+            
+    
+            <td>The unnormalized names of dependencies.</td>
+            
+  
+          </tr>
+          
+  
+          <tr>
+    
+            <td>[[Exports]]</td>
+            
+    
+            <td><b>undefined</b>, or List of Strings</td>
+            
+    
+            <td>The predeclared set of export names</td>
+            
+  
+          </tr>
+          
+  
+          <tr>
+    
+            <td>[[GroupIndex]]</td>
+            
+    
+            <td>Number</td>
+            
+    
+            <td>Largest dependency group count</td>
+            
+  
+          </tr>
+          
+
+        </tbody></table>
+
+
+      <h5 class="heading settled" data-level="2.1.1.5" id="ready-entry-records"><span class="secno">2.1.1.5. </span><span class="content">Ready Entry Records</span><a class="self-link" href="#ready-entry-records"></a></h5>
+
+
+      <p>A <dfn data-dfn-type="dfn" data-noexport="" id="ready-entry-record">ready entry record<a class="self-link" href="#ready-entry-record"></a></dfn> is a record with the following fields:</p>
+
+
+      <table>
+  
+        <thead>
+    
+          <tr>
+      
+            <th>Internal Slot</th>
+            
+      
+            <th>Value Type (<em>non-normative</em>)</th>
+            
+      
+            <th>Description (<em>non-normative</em>)</th>
+            
+    
+          </tr>
+          
+  
+        </thead>
+  
+        <tbody>
+          <tr>
+    
+            <td>[[Envelope]]</td>
+            
+    
+            <td>A <a data-link-type="dfn" href="#module-envelope-record">module envelope record</a>
+    </td>
+            <td>The loading metadata determined during the loading process.</td>
+            
+  
+          </tr>
+          
+  
+          <tr>
+    
+            <td>[[ModuleId]]</td>
+            
+    
+            <td>String</td>
+            
+    
+            <td>The unique ID of the loaded module.</td>
+            
+  
+          </tr>
+          
+
+        </tbody></table>
+
+
+      <h5 class="heading settled" data-level="2.1.1.6" id="module-envelope-records"><span class="secno">2.1.1.6. </span><span class="content">Module Envelope Records</span><a class="self-link" href="#module-envelope-records"></a></h5>
+
+
+      <p>A <dfn data-dfn-type="dfn" data-noexport="" id="module-envelope-record">module envelope record<a class="self-link" href="#module-envelope-record"></a></dfn> is a record with the following fields:</p>
+
+
+      <table>
+  
+        <thead>
+    
+          <tr>
+      
+            <th>Internal Slot</th>
+            
+      
+            <th>Value Type (<em>non-normative</em>)</th>
+            
+      
+            <th>Description (<em>non-normative</em>)</th>
+            
+    
+          </tr>
+          
+  
+        </thead>
+  
+        <tbody>
+          <tr>
+    
+            <td>[[Address]]</td>
+            
+    
+            <td>any</td>
+            
+    
+            <td>The result of the <code>"locate"</code> hook.</td>
+            
+  
+          </tr>
+          
+  
+          <tr>
+    
+            <td>[[Metadata]]</td>
+            
+    
+            <td>Object</td>
+            
+    
+            <td>An object passed to each loader hook, which hooks may use for any purpose.</td>
+            
+  
+          </tr>
+          
+
+        </tbody></table>
+
+
+      <h5 class="heading settled" data-level="2.1.1.7" id="module-definition-records"><span class="secno">2.1.1.7. </span><span class="content">Module Definition Records</span><a class="self-link" href="#module-definition-records"></a></h5>
+
+
+      <p>A <dfn data-dfn-type="dfn" data-noexport="" id="module-definition-record">module definition record<a class="self-link" href="#module-definition-record"></a></dfn> is a record with the following fields:</p>
+
+
+      <table>
+  
+        <thead>
+    
+          <tr>
+      
+            <th>Internal Slot</th>
+            
+      
+            <th>Value Type (<em>non-normative</em>)</th>
+            
+      
+            <th>Description (<em>non-normative</em>)</th>
+            
+    
+          </tr>
+          
+  
+        </thead>
+  
+        <tbody>
+          <tr>
+    
+            <td>[[Body]]</td>
+            
+    
+            <td>parse result or function</td>
+            
+    
+            <td>Either the parse of a <em>Module</em> production or the value of <code>factory.execute</code>.</td>
+            
+  
+          </tr>
+          
+  
+          <tr>
+    
+            <td>[[Dependencies]]</td>
+            
+    
+            <td>List of pairs</td>
+            
+    
+            <td>Each pair consists of two strings: an unnormalized name and a normalized name.</td>
+            
+  
+          </tr>
+          
+
+        </tbody></table>
+
+
+      <h4 class="heading settled" data-level="2.1.2" id="shorthand-phrases"><span class="secno">2.1.2. </span><span class="content">Shorthand Phrases</span><a class="self-link" href="#shorthand-phrases"></a></h4>
+
+
+      <h5 class="heading settled" data-level="2.1.2.1" id="reject-if-abrupt"><span class="secno">2.1.2.1. </span><span class="content">RejectIfAbrupt(x)</span><a class="self-link" href="#reject-if-abrupt"></a></h5>
+
+
+      <p>Algorithm steps that say</p>
+
+
+      <pre emu-alg="">1. RejectIfAbrupt(_x_).
+</pre>
+
+
+      <p>mean the same thing as:</p>
+
+
+      <pre emu-alg="">1. If _x_ is an abrupt completion, the return a promise rejected with _x_.[[value]].
+1. Else if _x_ is a Completion Record, then let _x_ be _x_.[[value]].
+</pre>
+
+
+
+      <h4 class="heading settled" data-level="2.1.3" id="auxiliary-operations"><span class="secno">2.1.3. </span><span class="content">Auxiliary Operations</span><a class="self-link" href="#auxiliary-operations"></a></h4>
+
+
+      <h5 class="heading settled" data-level="2.1.3.1" id="create-object"><span class="secno">2.1.3.1. </span><span class="content">CreateObject()</span><a class="self-link" href="#create-object"></a></h5>
+
+
+      <pre emu-alg="">1. Let _obj_ be ObjectCreate(%ObjectPrototype%).
+1. Return _obj_.
+</pre>
+
+
+      <h5 class="heading settled" data-level="2.1.3.2" id="simple-define"><span class="secno">2.1.3.2. </span><span class="content">SimpleDefine(obj, name, value)</span><a class="self-link" href="#simple-define"></a></h5>
+
+
+      <pre emu-alg="">1. Let _desc_ be a new PropertyDescriptor record {[[Value]]: _value_, [[Writable]]: *true*, [[Enumerable]]: *true*, [[Configurable]]: *true*}.
+1. Return the result of calling OrdinaryDefineOwnProperty(obj, name, value).
+</pre>
+
+
+      <h5 class="heading settled" data-level="2.1.3.3" id="freshid"><span class="secno">2.1.3.3. </span><span class="content">FreshId()</span><a class="self-link" href="#freshid"></a></h5>
+
+
+      <pre emu-alg="">1. Let _id_ be a unique string that has never been returned from FreshId.
+1. Return _id_.
+</pre>
+
+
+      <h5 class="heading settled" data-level="2.1.3.4" id="create-dynamic-module"><span class="secno">2.1.3.4. </span><span class="content">CreateDynamicModule()</span><a class="self-link" href="#create-dynamic-module"></a></h5>
+
+
+      <pre emu-alg="">1. Let _id_ be FreshId().
+1. Let _mod_ be CreateModule(_id_).
+1. Set _mod_.[[ImportedModules]] to ...
+1. Set _mod_.[[ECMAScriptCode]] to *undefined*.
+1. Set _mod_.[[ImportEntries]] to ...
+1. Set _mod_.[[LocalExportEntries]] to ...
+1. Set _mod_.[[IndirectExportEntries]] to a new empty List.
+1. Set _mod_.[[StarExportEntries]] to a new empty List.
+1. Set _mod_.[[Environment]] to *undefined*.
+1. Set _mod_.[[Evaluated]] to *true*.
+1. Return _mod_.
+</pre>
+
+
+      <h5 class="heading settled" data-level="2.1.3.5" id="get-hook"><span class="secno">2.1.3.5. </span><span class="content">GetHook(registry, name)</span><a class="self-link" href="#get-hook"></a></h5>
+
+
+      <pre emu-alg="">1. // TODO
+</pre>
+
+
+
+
+      <h4 class="heading settled" data-level="2.1.4" id="loading-operations"><span class="secno">2.1.4. </span><span class="content">Loading Operations</span><a class="self-link" href="#loading-operations"></a></h4>
+
+
+      <h5 class="heading settled" data-level="2.1.4.1" id="load-relative"><span class="secno">2.1.4.1. </span><span class="content">LoadRelative(registry, name, referrerName, referrerAddress)</span><a class="self-link" href="#load-relative"></a></h5>
+
+
+      <p><i>Note: used to be called RequestLoad</i></p>
+
+
+      <pre emu-alg="">1. Let _hook_ be GetHook(_registry_, "normalize"). // TODO: reject if GetHook is fallible
+1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
+1. Let _p_ be the result of promise-calling _hook_(_name_, _referrerName_, _referrerAddress_).
+1. Let _metadata_ be CreateObject().
+1. Return the result of transforming _p_ with a fulfillment handler that, when called with argument _name_, runs the following steps:
+  1. Let _name_ be ToString(_name_).
+  1. ReturnIfAbrupt(_name_).
+  1. Return ResumeLoad("locate", _registry_, _name_, _metadata_, *undefined*, *undefined*).
+</pre>
+
+
+      <h5 class="heading settled" data-level="2.1.4.2" id="load-absolute"><span class="secno">2.1.4.2. </span><span class="content">LoadAbsolute(registry, name, options)</span><a class="self-link" href="#load-absolute"></a></h5>
+
+
+      <p><i>Note: used to be called LoadModule</i></p>
+
+
+      <pre emu-alg="">1. Assert: _registry_ is a Registry record.
+1. Let _name_ be ToString(_name_).
+1. RejectIfAbrupt(_name_).
+1. Let _address_ be GetOption(_options_, "address").
+1. RejectIfAbrupt(_address_).
+1. If _address_ is *undefined*, let _step_ be "locate".
+1. Else let _step_ be "fetch".
+1. Let _metadata_ be CreateObject().
+1. Return the result of ResumeLoad(_step_, _registry_, _name_, _metadata_, *undefined*, _address_).
+</pre>
+
+
+      <h5 class="heading settled" data-level="2.1.4.3" id="resume-load"><span class="secno">2.1.4.3. </span><span class="content">ResumeLoad(step, registry, name, metadata, source, address)</span><a class="self-link" href="#resume-load"></a></h5>
+
+
+      <pre emu-alg="">1. If _registry_.[[Named]] has an entry whose [[key]] is equal to _name_, then:
+  1. Let _entry_ be the [[value]] of the entry in _registry_.[[Named]] whose [[key]] is equal to _name_.
+  1. If _entry_ is a loading state record, then:
+    1. Return _entry_.[[OnLoad]].
+  1. Else:
+    1. Assert: _entry_ is a linking state record or a ready entry record.
+    1. Return a promise resolved with *undefined*.
+1. Else return the result of StartLoad(_step_, _registry_, _name_, _metadata_, _source_, _address_).
+</pre>
+
+
+      <h5 class="heading settled" data-level="2.1.4.4" id="start-load"><span class="secno">2.1.4.4. </span><span class="content">StartLoad(step, registry, name, metadata, source, address)</span><a class="self-link" href="#start-load"></a></h5>
+
+
+      <pre emu-alg="">1. If _registry_.[[Named]] has an entry whose [[key]] is equal to _name_, then return a promise rejected with a new TypeError.
+1. Let _p_ be a new promise.
+1. Let _e_ be a new envelope record { [[Address]]: _address_, [[Metadata]]: _metadata_ }.
+1. Let _s_ be a new loading state record { [[Envelope]]: _e_, [[OnLoad]]: _p_, [[Source]]: *undefined* }.
+1. Let _entry_ be a new pair { [[key]]: _name_, [[value]]: _s_ }.
+1. Add _entry_ to _registry_.[[Named]].
+1. If _step_ is equal to "locate", then:
+  1. Transform the result of Locate(_registry_, _name_, _s_) with:
+    1. A fulfillment handler that fulfills _p_ with its value.
+    1. A rejection handler that rejects _p_ with its reason.
+1. Else if _step_ is equal to "fetch", then:
+  1. Transform the result of Fetch(_registry_, _name_, _s_, _address_) with:
+    1. A fulfillment handler that fulfills _p_ with its reason.
+    1. A rejection handler that rejects _p_ with its reason.
+1. Else:
+  1. Assert _step_ is equal to "translate".
+  1. Transform the result of Translate(_registry_, _name_, _s_, _address_, _source_) with:
+    1. A fulfillment handler that fulfills _p_ with its reason.
+    1. A rejection handler that rejects _p_ with its reason.
+1. Return _p_.
+</pre>
+
+
+      <h5 class="heading settled" data-level="2.1.4.5" id="locate"><span class="secno">2.1.4.5. </span><span class="content">Locate(registry, name, loadState)</span><a class="self-link" href="#locate"></a></h5>
+
+
+      <pre emu-alg="">1. Let _hook_ be GetHook(_registry_, "locate"). // TODO: reject if GetHook is fallible
+1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
+1. Let _obj_ be CreateObject().
+1. Call SimpleDefine(_obj_, "name", _name_).
+1. Call SimpleDefine(_obj_, "metadata", _loadState_.[[Envelope]].[[Metadata]]).
+1. Let _p_ be the result of promise-calling _hook_(_obj_).
+1. Return the result of transforming _p_ with a fulfillment handler that, when called with argument _address_, runs the following steps:
+  1. Set _loadState_.[[Envelope]].[[Address]] to _address_.
+  1. Return Fetch(_registry_, _name_, _loadState_, _address_).
+</pre>
+
+
+      <h5 class="heading settled" data-level="2.1.4.6" id="fetch"><span class="secno">2.1.4.6. </span><span class="content">Fetch(registry, name, loadState, address)</span><a class="self-link" href="#fetch"></a></h5>
+
+
+      <pre emu-alg="">1. Let _hook_ be GetHook(_registry_, "fetch"). // TODO: reject if GetHook is fallible
+1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
+1. Let _obj_ be CreateObject().
+1. Call SimpleDefine(_obj_, "name", _name_).
+1. Call SimpleDefine(_obj_, "metadata", _loadState_.[[Envelope]].[[Metadata]]).
+1. Call SimpleDefine(_obj_, "address", _address_).
+1. Let _p_ be the result of promise-calling _hook_(_obj_).
+1. Return the result of transforming _p_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
+  1. Return Translate(_registry_, _name_, _loadState_, _address_, _source_).
+</pre>
+
+
+      <h5 class="heading settled" data-level="2.1.4.7" id="translate"><span class="secno">2.1.4.7. </span><span class="content">Translate(registry, name, loadState, address, source)</span><a class="self-link" href="#translate"></a></h5>
+
+
+      <pre emu-alg="">1. Let _hook_ be GetHook(_registry_, "translate"). // TODO: reject if GetHook is fallible
+1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
+1. Let _obj_ be CreateObject().
+1. Call SimpleDefine(_obj_, "name", _name_).
+1. Call SimpleDefine(_obj_, "metadata", _loadState_.[[Envelope]].[[Metadata]]).
+1. Call SimpleDefine(_obj_, "address", _address_).
+1. Call SimpleDefine(_obj_, "source", _source_).
+1. Let _p_ be the result of promise-calling _hook_(_obj_).
+1. Return the result of transforming _p_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
+  1. Return Instantiate(_registry_, _name_, _loadState_, _address_, _source_).
+</pre>
+
+
+      <h5 class="heading settled" data-level="2.1.4.8" id="instantiate"><span class="secno">2.1.4.8. </span><span class="content">Instantiate(registry, name, loadState, address, source)</span><a class="self-link" href="#instantiate"></a></h5>
+
+
+      <pre emu-alg="">1. Let _hook_ be GetHook(_registry_, "instantiate"). // TODO: reject if GetHook is fallible
+1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
+1. Let _obj_ be CreateObject().
+1. Call SimpleDefine(_obj_, "name", _name_).
+1. Call SimpleDefine(_obj_, "metadata", _loadState_.[[Envelope]].[[Metadata]]).
+1. Call SimpleDefine(_obj_, "address", _address_).
+1. Call SimpleDefine(_obj_, "source", _source_).
+1. Let _p_ be the result of promise-calling _hook_(_obj_).
+1. Return the result of transforming _p_ with a fulfillment handler that, when called with value _result_, runs the following steps: // TODO: any error handling?
+  1. If _result_ is *undefined*, then:
+    1. Let _body_ be the result of parsing _source_, interpreted as UTF-16 encoded Unicode text as described in the ECMA-262, clause 10.1.1, using Module as the goal symbol. Throw a SyntaxError exception if the parse fails or if any static semantics errors are detected.
+    1. Let _depsList_ be the ModuleRequests of _body_.
+    1. Let _exports_ be *undefined*.
+  1. Else if Type(_result_) is Object, then:
+    1. Let _body_ be the result of Get(_result_, "execute").
+    1. ReturnIfAbrupt(_body_).
+    1. Let _deps_ be the result of Get(_result_, "deps").
+    1. ReturnIfAbrupt(_deps).
+    1. Let _depsList_ be the result of IterateDeps(_deps_).
+    1. ReturnIfAbrupt(_depsList_).
+    1. Let _exports_ be the result of Get(_result_, "exports").
+    1. ReturnIfAbrupt(_exports_).
+  1. Else, throw a TypeError exception.
+  1. Let _newState_ be a new linking state record { [[Envelope]]: _loadState_.[[Envelope]], [[Definition]]: _body_, [[Deps]]: _depsList_, [[Exports]]: _exports_, [[GroupIndex]]: NaN }.
+  1. Let _entry_ be the pair in _registry_.[[Named]] whose [[key]] is _name_.
+  1. Set _entry_.[[value]] to _newState_.
+  1. Let _depLoads_ be a new empty List.
+  1. For each _dep_ in _depsList_, do:
+    1. Let _p_ be the result of LoadRelative(_registry_, _dep_, _name_, _address_).
+    1. Add _p_ to _depLoads_.
+  1. Let _p_ be the result of waiting for all _depLoads_.
+  1. Return the result of transforming _p_ with a fulfillment handler that produces *undefined*. // TODO: any post-processing?
+</pre>
+
+
+      <h3 class="heading settled" data-level="2.2" id="pipeline-api"><span class="secno">2.2. </span><span class="content">API</span><a class="self-link" href="#pipeline-api"></a></h3>
+
+
+      <p><b>TODO:</b> migrate from <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-loader-objects">26.2</a> and <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-system-object">26.3</a></p>
+
+
+      <h4 class="heading settled" data-level="2.2.1" id="loading-api"><span class="secno">2.2.1. </span><span class="content">Loading</span><a class="self-link" href="#loading-api"></a></h4>
+
+
+      <p><b>TODO:</b></p>
+
+      <ul>
+    
+        <li><code>System.import(name, context).then(mod => ...)</code>
+    </li>
+        <li><code>System.load(name, context).then(() => ...)</code>
+    </li>
+        <li><code>System.provide(name, src)</code>
+</li></ul>
+
+
+      <h4 class="heading settled" data-level="2.2.2" id="loading-hooks"><span class="secno">2.2.2. </span><span class="content">Pipeline Intercession</span><a class="self-link" href="#loading-hooks"></a></h4>
+
+
+      <p><b>TODO:</b></p>
+
+      <ul>
+    
+        <li><code>System.hook("normalize"[, normalize])</code>
+    </li>
+        <li><code>System.hook("locate"[, locate])</code>
+    </li>
+        <li><code>System.hook("fetch"[, fetch])</code>
+    </li>
+        <li><code>System.hook("translate"[, translate])</code>
+    </li>
+        <li><code>System.hook("instantiate"[, instantiate])</code>
+</li></ul>
+
+
+      <h4 class="heading settled" data-level="2.2.3" id="reflection-api"><span class="secno">2.2.3. </span><span class="content">Reflection</span><a class="self-link" href="#reflection-api"></a></h4>
+
+
+      <p><b>TODO:</b></p>
+
+      <ul>
+    
+        <li><code>System.modules.get("https://cdn.example.com/jquery/v/2.1.1")</code>
+    </li>
+        <li><code>System.modules.set("https://cdn.example.com/jquery/v/2.1.1", mod)</code>
+    </li>
+        <li><code>System.modules.delete("https://cdn.example.com/jquery/v/2.1.1")</code>
+    </li>
+        <li><code>System.modules.has("https://cdn.example.com/jquery/v/2.1.1")</code>
+    </li>
+        <li>return reified records representing the intermediate loading states
+    </li>
+        <li>affect pending operations on modification
+</li></ul>
+
+
+      <h2 class="heading settled" data-level="3" id="local"><span class="secno">3. </span><span class="content">Local Loading</span><a class="self-link" href="#local"></a></h2>
+
+
+      <p><b>TODO:</b></p>
+
+
+      <ul>
+
+        <li>syntax for accessing module local information: <code>import local from this;</code>
+</li>
+        <li>dynamic import: <code>local.import()</code>
+</li>
+        <li>extending the hooks to handle <code>this</code>
+</li>
+        <li>debugging info
+</li>
+        <li>room for host environment-specific data
+</li></ul>
+
+
+
+      <h2 class="heading settled" data-level="4" id="browser"><span class="secno">4. </span><span class="content">Browser Loader</span><a class="self-link" href="#browser"></a></h2>
+
+
+      <h3 class="heading settled" data-level="4.1" id="browser-site-packages"><span class="secno">4.1. </span><span class="content">Site Packages</span><a class="self-link" href="#browser-site-packages"></a></h3>
+
+
+      <p>The browser loader contains extra properties for storing <dfn data-dfn-type="dfn" data-noexport="" id="site-packages">site packages<a class="self-link" href="#site-packages"></a></dfn>, an application-global set of globally available packages. These map in an internal table to unique URLs that in turn serve as keys in the module registry.</p>
+
+
+      <div class="note" role="note">
+
+        <p>
 The site package system serves as a simple coordination mechanism for modest-sized applications, but it does not provide all functionality required of a full-fledged package management system. It is expected that development ecosystems will build around package management tools that deal with requirements outside the scope of this specification, such as version management and allowing multiple versions of a library to coexist with the same name.
 </p>
 
-<p>
+
+        <p>
 Tools that preprocess JavaScript source code may choose to use or ignore the site package table. For example, a package manager may choose to preprocess two separate import statements requiring <code>"jquery"</code> to <code>"jquery/1.9"</code> and <code>"jquery/2.1.1"</code> respectively, based on configuration files informing the tool of version requirements. The tool would then store both versions of jQuery in the site package table using the longer names. Alternatively, the tool may choose to preprocess the imports directly as URLs and bypass the site package system altogether.
 </p>
 </div>
 
-<p>The browser loader has an extra internal slot:</p>
 
-<table>
-  <thead>
-    <tr>
-      <th>Internal Slot</th>
-      <th>Description (<em>non-normative</em>)</th>
-    </tr>
-  </thead>
-  <tr>
-    <td>[[Site]]</td>
-    <td>A table that maps package names to URLs.</td>
-  </tr>
-</table>
+      <p>The browser loader has an extra internal slot:</p>
 
-<h4 class="heading settled" data-level=4.1.1 id=System-site><span class=secno>4.1.1. </span><span class=content>System.site( mappings )</span><a class=self-link href=#System-site></a></h4>
 
-<div class=example>
-  <pre>System.site({
+      <table>
+  
+        <thead>
+    
+          <tr>
+      
+            <th>Internal Slot</th>
+            
+      
+            <th>Description (<em>non-normative</em>)</th>
+            
+    
+          </tr>
+          
+  
+        </thead>
+  
+        <tbody>
+          <tr>
+    
+            <td>[[Site]]</td>
+            
+    
+            <td>A table that maps package names to URLs.</td>
+            
+  
+          </tr>
+          
+
+        </tbody></table>
+
+
+      <h4 class="heading settled" data-level="4.1.1" id="System-site"><span class="secno">4.1.1. </span><span class="content">System.site( mappings )</span><a class="self-link" href="#System-site"></a></h4>
+
+
+      <div class="example">
+  
+        <pre>System.site({
   "jquery":     "https://cdn.example.com/jquery/v/2.1.1",
   "underscore": "https://cdn.example.com/underscore/v/1.7.0",
   "moment":     "https://cdn.example.com/moment/v/2.8.3"
@@ -158,82 +1016,143 @@ Tools that preprocess JavaScript source code may choose to use or ignore the sit
 </pre>
 </div>
 
-<h4 class="heading settled" data-level=4.1.2 id=System-site-get><span class=secno>4.1.2. </span><span class=content>System.site.get( name )</span><a class=self-link href=#System-site-get></a></h4>
 
-<div class=example>
-  <pre>var url = System.site.get("jquery");
+      <h4 class="heading settled" data-level="4.1.2" id="System-site-get"><span class="secno">4.1.2. </span><span class="content">System.site.get( name )</span><a class="self-link" href="#System-site-get"></a></h4>
+
+
+      <div class="example">
+  
+        <pre>var url = System.site.get("jquery");
 </pre>
 </div>
 
-<h4 class="heading settled" data-level=4.1.3 id=System-site-set><span class=secno>4.1.3. </span><span class=content>System.site.set( name, url )</span><a class=self-link href=#System-site-set></a></h4>
 
-<div class=example>
-  <pre>System.site.set("jquery", "https://cdn.example.com/jquery/v/2.1.1");
+      <h4 class="heading settled" data-level="4.1.3" id="System-site-set"><span class="secno">4.1.3. </span><span class="content">System.site.set( name, url )</span><a class="self-link" href="#System-site-set"></a></h4>
+
+
+      <div class="example">
+  
+        <pre>System.site.set("jquery", "https://cdn.example.com/jquery/v/2.1.1");
 </pre>
 </div>
 
-<h4 class="heading settled" data-level=4.1.4 id=System-site-has><span class=secno>4.1.4. </span><span class=content>System.site.has( name )</span><a class=self-link href=#System-site-has></a></h4>
 
-<div class=example>
-  <pre>if (!System.site.has("jquery")) {
+      <h4 class="heading settled" data-level="4.1.4" id="System-site-has"><span class="secno">4.1.4. </span><span class="content">System.site.has( name )</span><a class="self-link" href="#System-site-has"></a></h4>
+
+
+      <div class="example">
+  
+        <pre>if (!System.site.has("jquery")) {
   System.site.set("jquery", "https://cdn.example.com/jquery/v/2.1.1");
 }
 </pre>
 </div>
 
-<h4 class="heading settled" data-level=4.1.5 id=System-site-delete><span class=secno>4.1.5. </span><span class=content>System.site.delete( name )</span><a class=self-link href=#System-site-delete></a></h4>
 
-<div class=example>
-  <pre>System.site.delete("jquery");
+      <h4 class="heading settled" data-level="4.1.5" id="System-site-delete"><span class="secno">4.1.5. </span><span class="content">System.site.delete( name )</span><a class="self-link" href="#System-site-delete"></a></h4>
+
+
+      <div class="example">
+  
+        <pre>System.site.delete("jquery");
 </pre>
 </div>
 
-<h3 class="heading settled" data-level=4.2 id=browser-normalize><span class=secno>4.2. </span><span class=content>Normalize</span><a class=self-link href=#browser-normalize></a></h3>
 
-<p><b>TODO:</b> name resolution policy
-<ul>
-  <li>relative and site-relative URLs: <code>"./utils.js"</code>, <code>"/scripts/utils.js"</code>
-  <li>JS standard modules: <code>"std/math"</code>, <code>"std/json"</code>, <code>"std/reflect"</code>
-  <li>Web standard modules: <code>"web/worker"</code>, <code>"web/audio"</code>
-  <li>absolute URLs: <code>"https://jquery.com/modules/v/2.0"</code>
-  <li>top-level packages consult [[Site]]: <code>"jquery"</code>, <code>"ember/data"</code>
-</ul><p></p>
+      <h3 class="heading settled" data-level="4.2" id="browser-normalize"><span class="secno">4.2. </span><span class="content">Normalize</span><a class="self-link" href="#browser-normalize"></a></h3>
 
-<h3 class="heading settled" data-level=4.3 id=browser-locate><span class=secno>4.3. </span><span class=content>Locate</span><a class=self-link href=#browser-locate></a></h3>
 
-<p><b>TODO:</b> no-op.</p>
+      <p><b>TODO:</b> name resolution policy</p>
 
-<h3 class="heading settled" data-level=4.4 id=browser-fetch><span class=secno>4.4. </span><span class=content>Fetch</span><a class=self-link href=#browser-fetch></a></h3>
+      <ul>
+  
+        <li>relative and site-relative URLs: <code>"./utils.js"</code>, <code>"/scripts/utils.js"</code>
+  </li>
+        <li>JS standard modules: <code>"std/math"</code>, <code>"std/json"</code>, <code>"std/reflect"</code>
+  </li>
+        <li>Web standard modules: <code>"web/worker"</code>, <code>"web/audio"</code>
+  </li>
+        <li>absolute URLs: <code>"https://cdn.example.com/jquery/v/2.0"</code>
+  </li>
+        <li>top-level packages consult [[Site]]: <code>"jquery"</code>, <code>"ember/data"</code>
+</li></ul>
 
-<p><b>TODO:</b>
-<ul>
-  <li>reference fetch standard
-  <li>cross-origin produces an opaque object as in ServiceWorker
-  <li>CORS, CSP
-  <li>other kinds of web assets
-</ul><p></p>
 
-<h3 class="heading settled" data-level=4.5 id=browser-translate><span class=secno>4.5. </span><span class=content>Translate</span><a class=self-link href=#browser-translate></a></h3>
+      <h3 class="heading settled" data-level="4.3" id="browser-locate"><span class="secno">4.3. </span><span class="content">Locate</span><a class="self-link" href="#browser-locate"></a></h3>
 
-<p><b>TODO:</b> no-op.</p>
 
-<h3 class="heading settled" data-level=4.6 id=browser-instantiate><span class=secno>4.6. </span><span class=content>Instantiate</span><a class=self-link href=#browser-instantiate></a></h3>
+      <p><b>TODO:</b> no-op.</p>
 
-<p><b>TODO:</b>
-<ul>
-  <li>basically a no-op.
-  <li>but also needs to re-absorb opaque responses.
-</ul><p></p>
 
-<h2 class="no-num no-ref heading settled" id=conformance><span class=content>Conformance</span><a class=self-link href=#conformance></a></h2>
+      <h3 class="heading settled" data-level="4.4" id="browser-fetch"><span class="secno">4.4. </span><span class="content">Fetch</span><a class="self-link" href="#browser-fetch"></a></h3>
 
-<p>All diagrams, examples, and notes in this specification are non-normative, as are all sections explicitly marked
+
+      <p><b>TODO:</b></p>
+
+      <ul>
+  
+        <li>reference fetch standard
+  </li>
+        <li>cross-origin produces an opaque object as in ServiceWorker
+  </li>
+        <li>CORS, CSP
+  </li>
+        <li>other kinds of web assets
+</li></ul>
+
+
+      <h3 class="heading settled" data-level="4.5" id="browser-translate"><span class="secno">4.5. </span><span class="content">Translate</span><a class="self-link" href="#browser-translate"></a></h3>
+
+
+      <p><b>TODO:</b> no-op.</p>
+
+
+      <h3 class="heading settled" data-level="4.6" id="browser-instantiate"><span class="secno">4.6. </span><span class="content">Instantiate</span><a class="self-link" href="#browser-instantiate"></a></h3>
+
+
+      <p><b>TODO:</b></p>
+
+      <ul>
+  
+        <li>basically a no-op.
+  </li>
+        <li>but also needs to re-absorb opaque responses.
+</li></ul>
+
+</main>
+    
+
+    <h2 class="no-num no-ref heading settled" id="conformance"><span class="content">Conformance</span><a class="self-link" href="#conformance"></a></h2>
+    
+
+
+    <p>All diagrams, examples, and notes in this specification are non-normative, as are all sections explicitly marked
 non-normative. Everything else in this specification is normative.
 
-<p>The key words "MUST", "MUST NOT", "REQUIRED",  "SHOULD", "SHOULD NOT", "RECOMMENDED",
+</p>
+    <p>The key words "MUST", "MUST NOT", "REQUIRED",  "SHOULD", "SHOULD NOT", "RECOMMENDED",
 "MAY", and "OPTIONAL" in the normative parts of this specification are to be interpreted as described in RFC2119. For
-readability, these words do not appear in all uppercase letters in this specification. <a data-biblio-type=normative data-link-type=biblio href=#biblio-rfc2119 title=RFC2119>[RFC2119]</a>
+readability, these words do not appear in all uppercase letters in this specification. <a data-biblio-type="normative" data-link-type="biblio" href="#biblio-rfc2119" title="RFC2119">[RFC2119]</a>
 
-<p>Conformance requirements phrased as algorithms or specific steps may be implemented in any manner, so long as the end
-result is equivalent.
-<h2 class="no-num heading settled" id=references><span class=content>References</span><a class=self-link href=#references></a></h2><h3 class="no-num heading settled" id=normative><span class=content>Normative References</span><a class=self-link href=#normative></a></h3><dl><dt id=biblio-rfc2119 title=rfc2119><a class=self-link href=#biblio-rfc2119></a>[rfc2119]<dd>S. Bradner. <a href=http://www.ietf.org/rfc/rfc2119.txt>Key words for use in RFCs to Indicate Requirement Levels</a>. Best Current Practice. URL: <a href=http://www.ietf.org/rfc/rfc2119.txt>http://www.ietf.org/rfc/rfc2119.txt</a></dl><h2 class="no-num heading settled" id=index><span class=content>Index</span><a class=self-link href=#index></a></h2><ul class=indexlist><li>site packages, <a href=#site-packages title="section 4.1">4.1</a></ul>
+</p>
+    <p>Conformance requirements phrased as algorithms or specific steps may be implemented in any manner, so long as the end
+result is equivalent. (In particular, the algorithms defined in this specification are intended to be easy to follow, 
+and not intended to be performant.) 
+</p>
+    <h2 class="no-num heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
+    <h3 class="no-num heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
+    <dl>
+      <dt id="biblio-rfc2119" title="rfc2119"><a class="self-link" href="#biblio-rfc2119"></a>[rfc2119]</dt>
+      <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a></dd></dl>
+    <h2 class="no-num heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
+    <ul class="indexlist">
+      <li>linking state record, <a href="#linking-state-record" title="section 2.1.1.4">2.1.1.4</a></li>
+      <li>loading state record, <a href="#loading-state-record" title="section 2.1.1.3">2.1.1.3</a></li>
+      <li>module definition record, <a href="#module-definition-record" title="section 2.1.1.7">2.1.1.7</a></li>
+      <li>module envelope record, <a href="#module-envelope-record" title="section 2.1.1.6">2.1.1.6</a></li>
+      <li>module registry, <a href="#module-registry" title="section 2.1.1.1">2.1.1.1</a></li>
+      <li>ready entry record, <a href="#ready-entry-record" title="section 2.1.1.5">2.1.1.5</a></li>
+      <li>registry entry record, <a href="#registry-entry-record" title="section 2.1.1.2">2.1.1.2</a></li>
+      <li>site packages, <a href="#site-packages" title="section 4.1">4.1</a></li></ul>
+  </body>
+</html>
