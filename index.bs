@@ -76,247 +76,7 @@ mean the same thing as:
 1. Else if _x_ is a Completion Record, then let _x_ be _x_.[[value]].
 </pre>
 
-
-<h2 id="registry">The Module Registry</h2>
-
-<h3 id="registry-record">Module Registry</h3>
-
-A <dfn>module registry</dfn> is a record with the following fields:
-
-<table>
-  <thead>
-    <tr>
-      <th>Internal Slot</th>
-      <th>Value Type (<em>non-normative</em>)</th>
-      <th>Description (<em>non-normative</em>)</th>
-    </tr>
-  </thead>
-  <tr>
-    <td>\[[Entries]]</td>
-    <td>List of pairs</td>
-    <td>Each pair consists of a normalized name and a <a>modstate</a> record.</td>
-  </tr>
-</table>
-
-All modstate records have an \[[Envelope]] field that is a <a>module envelope record</a>. An invariant of the registry is that for every entry { \[[key]]: <var>name</var>, \[[value]]: <var>state</var> }, <var>name</var> is equal to <var>state</var>.\[[Envelope]].\[[Name]]. As a convention, we say that a String <var>name</var> <dfn>refers to</dfn> a modstate <var>a</var> if <var>name</var> is equal to <var>a</var>.\[[Envelope]].\[[Name]].
-
-<h3 id="registry-entries">Module Registry Entries</h3>
-
-A <dfn>modstate</dfn> record represents an entry in the <a>module registry</a> and is one of the following state records:
-<ul>
-<li>a <a>loadstate</a> record;
-<li>a <a>linkstate</a> record; or
-<li>a <a>readystate</a> record.
-</ul>
-
-A <dfn>loadstate</dfn> record represents a module that is currently in the process of loading. It has the following fields:
-
-<table>
-  <thead>
-    <tr>
-      <th>Internal Slot</th>
-      <th>Value Type (<em>non-normative</em>)</th>
-      <th>Description (<em>non-normative</em>)</th>
-    </tr>
-  </thead>
-  <tr>
-    <td>\[[Envelope]]</td>
-    <td>A <a>module envelope record</a></td>
-    <td>The loading metadata determined during the loading process.</td>
-  </tr>
-  <tr>
-    <td>\[[OnLoad]]</td>
-    <td>Promise of <a>module definition</a></td>
-    <td>A promise that signals the completion of loading the module and all of its transitive dependencies.</td>
-  </tr>
-  <tr>
-    <td>\[[Source]]</td>
-    <td>any</td>
-    <td>The result of the <code>"translate"</code> hook.</td>
-  </tr>
-</table>
-
-A <dfn>linkstate</dfn> record represents a module that is currently in the process of linking. It has the following fields:
-
-<table>
-  <thead>
-    <tr>
-      <th>Internal Slot</th>
-      <th>Value Type (<em>non-normative</em>)</th>
-      <th>Description (<em>non-normative</em>)</th>
-    </tr>
-  </thead>
-  <tr>
-    <td>\[[Envelope]]</td>
-    <td>A <a>module envelope record</a></td>
-    <td>The loading metadata determined during the loading process.</td>
-  </tr>
-  <tr>
-    <td>\[[Definition]]</td>
-    <td>A <a>module definition</a></td>
-    <td>The definition needed to instantiate and evaluate the module.</td>
-  </tr>
-  <tr>
-    <td>\[[Dependencies]]</td>
-    <td>List of pairs of String and (<a>module definition</a> or <code>undefined</code>)</td>
-    <td>Each pair consists of an unnormalized name and the module it resolved to. The resolved module is <code>undefined</code> until it has been resolved.</td>
-  </tr>
-<!--
-  <tr>
-    <td>\[[Exports]]</td>
-    <td><code>undefined</code>, or List of Strings</td>
-    <td>The predeclared set of export names.</td>
-  </tr>
-  <tr>
-    <td>\[[GroupIndex]]</td>
-    <td>Number</td>
-    <td>Largest dependency group count.</td>
-  </tr>
--->
-</table>
-
-A <dfn>readystate</dfn> record represents a module that is fully loaded and linked. It has the following fields:
-
-<table>
-  <thead>
-    <tr>
-      <th>Internal Slot</th>
-      <th>Value Type (<em>non-normative</em>)</th>
-      <th>Description (<em>non-normative</em>)</th>
-    </tr>
-  </thead>
-  <tr>
-    <td>\[[Envelope]]</td>
-    <td>A <a>module envelope record</a>
-    <td>The loading metadata determined during the loading process.</td>
-  </tr>
-  <tr>
-    <td>\[[Dependencies]]</td>
-    <td>List of pairs of String and Module Record</td>
-    <td>Each pair consists of an unnormalized name and the module it resolved to.</td>
-  </tr>
-  <tr>
-    <td>\[[Module]]</td>
-    <td>Module Record</td>
-    <td>The loaded module record.</td>
-  </tr>
-</table>
-
-A <dfn>module envelope record</dfn> is a record with the following fields:
-
-<table>
-  <thead>
-    <tr>
-      <th>Internal Slot</th>
-      <th>Value Type (<em>non-normative</em>)</th>
-      <th>Description (<em>non-normative</em>)</th>
-    </tr>
-  </thead>
-  <tr>
-    <td>\[[Name]]</td>
-    <td>String</td>
-    <td>The normalized module name.</td>
-  </tr>
-  <tr>
-    <td>\[[Address]]</td>
-    <td>any</td>
-    <td>The result of the <code>"locate"</code> hook.</td>
-  </tr>
-  <tr>
-    <td>\[[Metadata]]</td>
-    <td>Object</td>
-    <td>An object passed to each loader hook, which hooks may use for any purpose.</td>
-  </tr>
-</table>
-
-<!--
-A module definition is one of:
-<ul>
-  <li>A Module Record; or
-  <li>A function object that was produced by [[#instantiate]].
-</ul>
--->
-
-
-<h3 id="module-definitions">Module Definitions</h3>
-
-<b>TODO:</b> move the explanation of declarative/dynamic up from the dependency groups section
-
-A <dfn>module definition</dfn> is one of:
-<ul>
-  <li>a Module Record; or
-  <li>a <a>delayed module definition</a>
-</ul>
-
-<!--
-A <dfn>declarative module definition</dfn> is a record with the following fields:
-
-<table>
-  <thead>
-    <tr>
-      <th>Internal Slot</th>
-      <th>Value Type (<em>non-normative</em>)</th>
-      <th>Description (<em>non-normative</em>)</th>
-    </tr>
-  </thead>
-  <tr>
-    <td>\[[Body]]</td>
-    <td>A Normal Module Record or function object</td>
-    <td>A module or a thunk for producing a module.</td>
-  </tr>
-  <tr>
-    <td>\[[Exports]]</td>
-    <td><code>undefined</code>, or List of Strings</td>
-    <td>The predeclared set of export names.</td>
-  </tr>
-</table>
--->
-
-A <dfn>delayed module definition</dfn> is a record with the following fields:
-
-<table>
-  <thead>
-    <tr>
-      <th>Internal Slot</th>
-      <th>Value Type (<em>non-normative</em>)</th>
-      <th>Description (<em>non-normative</em>)</th>
-    </tr>
-  </thead>
-  <tr>
-    <td>\[[Factory]]</td>
-    <td>A function object</td>
-    <td>A thunk that produces a delayed module.</td>
-  </tr>
-  <tr>
-    <td>\[[LinkState]]</td>
-    <td>A <a>linkstate</a> record</td>
-    <td>The current linking state of the module.</td>
-  </tr>
-  <tr>
-    <td>\[[Module]]</td>
-    <td><code>undefined</code>, or Module Record</td>
-    <td>The result of calling the factory, or <code>undefined</code> if it has not been called yet.</td>
-  </tr>
-</table>
-
-<h3 id="register-module">RegisterModule(registry, envelope, deps, module)</h3>
-
-<pre emu-alg>
-1. Let _state_ be a new readystate record { [[Envelope]]: _envelope_, [[Dependencies]]: _deps_, [[Module]]: _module_ }.
-1. Set _mod_.[[LoaderState]] to _state_.
-1. Let _name_ be _envelope_.[[Name]].
-1. Let _pair_ be the entry in _registry_.[[Entries]] such that _pair_.[[key]] is equal to _name_.
-1. If _pair_ does not exist, then:
-  1. Let _pair_ be a new pair {[[key]]: _name_, [[value]]: _state_}.
-  1. Append _pair_ to _registry_.[[Entries]].
-1. Else:
-  1. Set _pair_.[[value]] to _state_.
-</pre>
-
-
-<h2 id="pipeline-semantics">Loading Semantics</h2>
-
-<h3 id="auxiliary-operations">Auxiliary Operations</h3>
+<h3 id="common-operations">Common Operations</h3>
 
 <h4 id="create-object">CreateObject()</h4>
 
@@ -332,189 +92,264 @@ A <dfn>delayed module definition</dfn> is a record with the following fields:
 1. Return the result of calling OrdinaryDefineOwnProperty(obj, name, value).
 </pre>
 
-<!--
-<h4 id="freshid">FreshId()</h4>
+
+
+<h2 id="loader-object">Loader Object</h2>
+
+A <dfn>loader object</dfn> has the following fields:
+
+<table>
+  <thead>
+    <tr>
+      <th>Internal Slot</th>
+      <th>Value Type (<em>non-normative</em>)</th>
+      <th>Description (<em>non-normative</em>)</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>\[[Realm]]</td>
+    <td>Realm Record</td>
+    <td>The realm this loader belongs to.</td>
+  </tr>
+  <tr>
+    <td>\[[Registry]]</td>
+    <td>List of pairs of String and <a>registry entry</a></td>
+    <td>The registry of installed modules.</td>
+  </tr>
+  <tr>
+    <td>\[[Resolve]]</td>
+    <td>A function object</td>
+    <td>The <code>"resolve"</code> loading hook.</td>
+  </tr>
+  <tr>
+    <td>\[[Fetch]]</td>
+    <td>A function object</td>
+    <td>The <code>"fetch"</code> loading hook.</td>
+  </tr>
+  <tr>
+    <td>\[[Translate]]</td>
+    <td>A function object</td>
+    <td>The <code>"translate"</code> loading hook.</td>
+  </tr>
+  <tr>
+    <td>\[[Instantiate]]</td>
+    <td>A function object</td>
+    <td>The <code>"instantiate"</code> loading hook.</td>
+  </tr>
+</table>
+
+<h3 id="registry">Module Registry</h3>
+
+A <dfn>registry entry</dfn> is a record with the following fields:
+
+<table>
+  <thead>
+    <tr>
+      <th>Internal Slot</th>
+      <th>Value Type (<em>non-normative</em>)</th>
+      <th>Description (<em>non-normative</em>)</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>\[[Key]]</td>
+    <td>String</td>
+    <td>The resolved module key.</td>
+  </tr>
+  <tr>
+    <td>\[[State]]</td>
+    <td><code>"fetch"</code>, <code>"translate"</code>, <code>"instantiate"</code>, <code>"link"</code>, <code>"ready"</code></td>
+    <td>The metadata object passed through the pipeline.</td>
+  </tr>
+  <tr>
+    <td>\[[Metadata]]</td>
+    <td>Object or <code>undefined</code></td>
+    <td>The metadata object passed through the pipeline.</td>
+  </tr>
+  <tr>
+    <td>\[[Fetch]]</td>
+    <td>Promise or <code>undefined</code></td>
+    <td>A promise for the result of [[#request-fetch]].</td>
+  </tr>
+  <tr>
+    <td>\[[Translate]]</td>
+    <td>Promise or <code>undefined</code></td>
+    <td>A promise for the result of [[#request-translate]].</td>
+  </tr>
+  <tr>
+    <td>\[[Instantiate]]</td>
+    <td>Promise or <code>undefined</code></td>
+    <td>A promise for the result of [[#request-instantiate]].</td>
+  </tr>
+  <tr>
+    <td>\[[Dependencies]]</td>
+    <td>List of pairs of String and (<a>registry entry</a> or <code>undefined</code>), or <code>undefined</code>.</td>
+    <td>Table mapping unresolved names to their resolved modules.</td>
+  </tr>
+  <tr>
+    <td>\[[Module]]</td>
+    <td>Module Record or Function object or <code>undefined</code></td>
+    <td>The Module Record if the entry is ready, or a thunk if the entry is delayed; otherwise <code>undefined</code>.</td>
+  </tr>
+  <tr>
+    <td>\[[Error]]</td>
+    <td>Any or <b>nothing</b></td>
+    <td>An error that was encountered during loading, linking, or evaluation; <b>nothing</b> if no error has been encountered.</td>
+  </tr>
+</table>
+
+
+
+<h2 id="pipeline-semantics">Loading Semantics</h2>
+
+<h3 id="auxiliary-operations">Auxiliary Operations</h3>
+
+<h4 id="ensure-registered">EnsureRegistered(loader, key)</h4>
 
 <pre emu-alg>
-1. Let _id_ be a unique string that has never been returned from FreshId.
-1. Return _id_.
+1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
+1. If _pair_ exists, then:
+  1. Let _entry_ be _pair_.[[value]].
+1. Else:
+  1. Let _entry_ be a new registry entry record { [[Key]]: _key_, [[State]]: "fetch", [[Metadata]]: *undefined*, [[Fetch]]: *undefined*, [[Translate]]: *undefined*, [[Instantiate]]: *undefined*, [[Dependencies]]: *undefined*, [[Module]]: *undefined*, [[Error]]: *nothing* }.
+  1. Append { [[key]]: _key_, [[value]]: _entry_ } to _loader_.[[Registry]].
+1. Return _entry_.
 </pre>
--->
 
-<h4 id="get-hook">GetHook(registry, name)</h4>
+<h4 id="resolve-fetch">ResolveFetch(loader, entry, payload)</h4>
 
 <pre emu-alg>
-1. // TODO
+1. If _entry_.[[Fetch]] is *undefined*, then set _entry_.[[Fetch]] to a new promise.
+1. Resolve _entry_.[[Fetch]] with _payload_.
+1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "translate".
 </pre>
 
+<h4 id="resolve-translate">ResolveTranslate(loader, entry, source)</h4>
 
+<pre emu-alg>
+1. If _entry_.[[Translate]] is *undefined*, then set _entry_.[[Translate]] to a new promise.
+1. Resolve _entry_.[[Translate]] with _source_.
+1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "instantiate".
+</pre>
+
+<h4 id="resolve-instantiate">ResolveInstantiate(loader, entry, instance, source)</h4>
+
+<pre emu-alg>
+1. If _entry_.[[Instantiate]] is *undefined*, then set _entry_.[[Instantiate]] to a new promise.
+1. Return CommitInstantiated(_entry_, _instance_, _source_).
+</pre>
+
+<h4 id="commit-instantiated">CommitInstantiated(entry, instance, source)</h4>
+
+<pre emu-alg>
+1. Let _instance_ be Instantiation(_instance_, _source_).
+1. ReturnIfAbrupt(_instance_).
+1. // TODO: edge case: what if _instance_ is a thenable function?
+1. Resolve _entry_.[[Instantiate]] with _instance_.
+1. Let _deps_ be a new empty List.
+1. If _instance_ is a Module Record, then:
+  1. Assert: _instance_ is a Normal Module Record.
+  1. For each _dep_ in _instance_.[[ImportedModules]], do:
+    1. Append the record { [[key]]: _dep_, [[value]]: *undefined* } to _deps_.
+1. Set _entry_.[[Dependencies]] to _deps_.
+1. Set _entry_.[[Module]] to _instance_.
+1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "link".
+</pre>
+
+<h4 id="instantiation">Instantiation(loader, result, source)</h4>
+
+<pre emu-alg>
+1. If _result_ is *undefined*, then return ParseModule(_loader_.[[Realm]], _source_).
+1. If IsCallable(_result_) is *false* then throw a new TypeError.
+1. Return _result_.
+</pre>
 
 <h3 id="loading-operations">Loading Operations</h3>
 
-<h4 id="load-relative">LoadRelative(registry, name, referrerName, referrerAddress)</h4>
-
-<i>Note: used to be called RequestLoad</i>
+<h4 id="request-fetch">RequestFetch(loader, key)</h4>
 
 <pre emu-alg>
-1. Let _hook_ be GetHook(_registry_, "normalize"). // TODO: reject if GetHook is fallible
-1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
-1. Let _p_ be the result of promise-calling _hook_(_name_, _referrerName_, _referrerAddress_).
-1. Let _metadata_ be CreateObject().
-1. Return the result of transforming _p_ with a fulfillment handler that, when called with argument _name_, runs the following steps:
-  1. Let _name_ be ToString(_name_).
-  1. ReturnIfAbrupt(_name_).
-  1. Return ResumeLoad("locate", _registry_, _name_, _metadata_, *undefined*, *undefined*).
-</pre>
-
-<h4 id="load-absolute">LoadAbsolute(registry, name, options)</h4>
-
-<i>Note: used to be called LoadModule</i>
-
-<pre emu-alg>
-1. Assert: _registry_ is a Registry record.
-1. Let _name_ be ToString(_name_).
-1. RejectIfAbrupt(_name_).
-1. Let _address_ be GetOption(_options_, "address").
-1. RejectIfAbrupt(_address_).
-1. If _address_ is *undefined*, let _step_ be "locate".
-1. Else let _step_ be "fetch".
-1. Let _metadata_ be CreateObject().
-1. Return the result of ResumeLoad(_step_, _registry_, _name_, _metadata_, *undefined*, _address_).
-</pre>
-
-<h4 id="resume-load">ResumeLoad(step, registry, name, metadata, source, address)</h4>
-
-<pre emu-alg>
-1. If _registry_.[[Entries]] has an entry whose [[key]] is equal to _name_, then:
-  1. Let _entry_ be the [[value]] of the entry in _registry_.[[Entries]] whose [[key]] is equal to _name_.
-  1. If _entry_ is a loadstate record, then:
-    1. Return _entry_.[[OnLoad]].
-  1. Else:
-    1. Assert: _entry_ is a linkstate record or a readystate record.
-    1. Return a promise resolved with *undefined*.
-1. Else return the result of StartLoad(_step_, _registry_, _name_, _metadata_, _source_, _address_).
-</pre>
-
-<h4 id="start-load">StartLoad(step, registry, name, metadata, source, address)</h4>
-
-<pre emu-alg>
-1. If _registry_.[[Entries]] has an entry whose [[key]] is equal to _name_, then return a promise rejected with a new TypeError. // TODO: figure out these race errors
-1. Let _p_ be a new promise.
-1. Let _e_ be a new envelope record { [[Name]]: _name_, [[Address]]: _address_, [[Metadata]]: _metadata_ }.
-1. Let _s_ be a new loadstate record { [[Envelope]]: _e_, [[OnLoad]]: _p_, [[Source]]: *undefined* }.
-1. Let _entry_ be a new pair { [[key]]: _name_, [[value]]: _s_ }.
-1. Add _entry_ to _registry_.[[Entries]].
-1. If _step_ is equal to "locate", then:
-  1. Transform the result of Locate(_registry_, _name_, _s_) with:
-    1. A fulfillment handler that fulfills _p_ with its value.
-    1. A rejection handler that rejects _p_ with its reason.
-1. Else if _step_ is equal to "fetch", then:
-  1. Transform the result of Fetch(_registry_, _name_, _s_, _address_) with:
-    1. A fulfillment handler that fulfills _p_ with its reason.
-    1. A rejection handler that rejects _p_ with its reason.
-1. Else:
-  1. Assert _step_ is equal to "translate".
-  1. Transform the result of Translate(_registry_, _name_, _s_, _address_, _source_) with:
-    1. A fulfillment handler that fulfills _p_ with its reason.
-    1. A rejection handler that rejects _p_ with its reason.
+1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. If _entry_.[[State]] is greater than "link", return a new error promise.
+1. If _entry_.[[Fetch]] is not *undefined*, return _entry_.[[Fetch]].
+1. Let _hook_ be _loader_.[[Fetch]].
+1. // TODO: metadata object
+1. Let _p0_ be the result of promise-calling _hook_(_key_).
+1. Let _p_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _v_, runs the following steps:
+  1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "translate".
+  1. Return _v_.
+1. Set _entry_.[[Fetch]] to _p_.
 1. Return _p_.
 </pre>
 
-<h4 id="locate">Locate(registry, name, loadState)</h4>
+<h4 id="request-translate">RequestTranslate(loader, key)</h4>
 
 <pre emu-alg>
-1. Let _hook_ be GetHook(_registry_, "locate"). // TODO: reject if GetHook is fallible
-1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
-1. Let _obj_ be CreateObject().
-1. Call SimpleDefine(_obj_, "name", _name_).
-1. Call SimpleDefine(_obj_, "metadata", _loadState_.[[Envelope]].[[Metadata]]).
-1. Let _p_ be the result of promise-calling _hook_(_obj_).
-1. Return the result of transforming _p_ with a fulfillment handler that, when called with argument _address_, runs the following steps:
-  1. Set _loadState_.[[Envelope]].[[Address]] to _address_.
-  1. Return Fetch(_registry_, _name_, _loadState_, _address_).
+1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. If _entry_.[[State]] is greater than "link", return a new error promise.
+1. If _entry_.[[Translate]] is not *undefined*, return _entry_.[[Translate]].
+1. Let _hook_ be _loader_.[[Translate]].
+1. Let _p_ be the result of transforming RequestFetch(_loader_, _key_) with a fulfillment handler that, when called with argument _payload_, runs the following steps:
+  1. // TODO: metadata
+  1. Let _p1_ be the result of promise-calling _hook_(_key_, _payload_).
+  1. Return the result of transforming _p1_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
+    1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "instantiate".
+    1. Return _source_.
+1. Set _entry_.[[Translate]] to _p_.
+1. Return _p_.
 </pre>
 
-<h4 id="fetch">Fetch(registry, name, loadState, address)</h4>
+<h4 id="request-instantiate">RequestInstantiate(loader, key)</h4>
 
 <pre emu-alg>
-1. Let _hook_ be GetHook(_registry_, "fetch"). // TODO: reject if GetHook is fallible
-1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
-1. Let _obj_ be CreateObject().
-1. Call SimpleDefine(_obj_, "name", _name_).
-1. Call SimpleDefine(_obj_, "metadata", _loadState_.[[Envelope]].[[Metadata]]).
-1. Call SimpleDefine(_obj_, "address", _address_).
-1. Let _p_ be the result of promise-calling _hook_(_obj_).
-1. Return the result of transforming _p_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
-  1. Return Translate(_registry_, _name_, _loadState_, _address_, _source_).
+1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. If _entry_.[[State]] is "ready", return a new error promise.
+1. If _entry_.[[Instantiate]] is not *undefined*, return _entry_.[[Instantiate]].
+1. Let _hook_ be _loader_.[[Instantiate]].
+1. Let _p_ be the result of transforming RequestFetch(_loader_, _key_) with a fulfillment handler that, when called with argument _payload_, runs the following steps:
+  1. Return the result of transforming RequestTranslate(_loader_, _key_) with a fulfillment handler that, when called with argument _source_, runs the following steps:
+    1. // TODO: metadata
+    1. Let _p1_ be the result of promise-calling _hook_(_key_, _payload_, _source_).
+    1. Return the result of transforming _p1_ with a fulfillment handler that, when called with argument _instance_, runs the following steps:
+      1. Let _status_ be CommitInstantiated(_entry_, _instance_, _source_).
+      1. ReturnIfAbrupt(_status_).
+      1. Return _entry_.
+1. Set _entry_.[[Instantiate]] to _p_.
+1. Return _p_.
 </pre>
 
-<h4 id="translate">Translate(registry, name, loadState, address, source)</h4>
+<h4 id="request-link">RequestLink(loader, key)</h4>
 
 <pre emu-alg>
-1. Let _hook_ be GetHook(_registry_, "translate"). // TODO: reject if GetHook is fallible
-1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
-1. Let _obj_ be CreateObject().
-1. Call SimpleDefine(_obj_, "name", _name_).
-1. Call SimpleDefine(_obj_, "metadata", _loadState_.[[Envelope]].[[Metadata]]).
-1. Call SimpleDefine(_obj_, "address", _address_).
-1. Call SimpleDefine(_obj_, "source", _source_).
-1. Let _p_ be the result of promise-calling _hook_(_obj_).
-1. Return the result of transforming _p_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
-  1. Return Instantiate(_registry_, _name_, _loadState_, _address_, _source_).
-</pre>
-
-<h4 id="instantiate">Instantiate(registry, name, loadState, address, source)</h4>
-
-<pre emu-alg>
-1. Let _hook_ be GetHook(_registry_, "instantiate"). // TODO: reject if GetHook is fallible
-1. If IsCallable(_hook_) is *false*, then return a promise rejected with a new TypeError.
-1. Let _obj_ be CreateObject().
-1. Call SimpleDefine(_obj_, "name", _name_).
-1. Call SimpleDefine(_obj_, "metadata", _loadState_.[[Envelope]].[[Metadata]]).
-1. Call SimpleDefine(_obj_, "address", _address_).
-1. Call SimpleDefine(_obj_, "source", _source_).
-1. Let _p_ be the result of promise-calling _hook_(_obj_).
-1. Return the result of transforming _p_ with a fulfillment handler that, when called with value _result_, runs the following steps: // TODO: any error handling?
-  1. If _result_ is *undefined*, then:
-    1. Let _def_ be ParseModule(_registry_.[[Realm]], _source_).
-    1. ReturnIfAbrupt(_def_).
-    1. Let _depsList_ be _def_.[[ImportedModules]].
-  1. Else if _result_ is a module namespace exotic object, then:
-    1. Let _def_ be _result_.
-    1. Let _depsList_ be a new empty List.
-  1. Else if _result_ is callable, then:
-    1. Let _def_ be a new delayed module definition record.
-    1. Set _def_.[[Factory]] to _result_.
-    1. Set _def_.[[Module]] to *undefined*.
-    1. Let _depsList_ be a new empty List.
-  1. Else, throw a TypeError exception.
-  1. Let _depsPairs_ be a new empty List.
-  1. For each _dep_ in _depsList_, do:
-    1. Let _pair_ be a new pair { [[key]]: _dep_, [[value]]: *undefined* }.
-    1. Add _pair_ to _depsPairs_.
-  1. Let _newState_ be a new linkstate record { [[Envelope]]: _loadState_.[[Envelope]], [[Definition]]: _def_, [[Dependencies]]: _depsPairs_, [[GroupIndex]]: NaN }.
-  1. If _def_ is a Module Record, then:
-    1. Set _def_.[[LoaderState]] to _newState_.
-  1. Else
-    1. Set _def_.[[LinkState]] to _newState_.
-  1. Let _entry_ be the pair in _registry_.[[Entries]] whose [[key]] is _name_.
-  1. Set _entry_.[[value]] to _newState_.
+1. Let _entry0_ be EnsureRegistered(_loader_, _key_).
+1. If _entry0_.[[State]] is "ready", return a new promise fulfilled with _entry_.[[Module]].
+1. Return the result of transforming RequestInstantiate(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _depLoads_ be a new empty List.
-  1. For each _pair_ in _depsList_, do:
-    1. Let _p_ be the result of LoadRelative(_registry_, _pair_.[[key]], _name_, _address_).
-    1. Let _p2_ be the result of transforming _p_ with a fulfillment handler that, when called with value _def_, runs the following steps:
-      1. Set _pair_.[[value]] to _def_.
-      1. Return _def_.
-    1. Add _p2_ to _depLoads_.
+  1. For each _pair_ in _entry_.[[Dependencies]], do:
+    1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[key]], _key_) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
+      1. Return the result of transforming RequestInstantiate(_loader_, _depKey_) with a fulfillment handler that, when called with value _dep_, runs the following steps:
+        1. Set _pair_.[[value]] to _dep_.
+        1. Return _dep_.
+    1. Append _p_ to _depLoads_.
   1. Let _p_ be the result of waiting for all _depLoads_.
-  1. Return the result of transforming _p_ with a fulfillment handler that produces _def_.
+  1. Return the result of transforming _p_ with a fulfillment handler that, when called, runs the following steps:
+    1. Let _status_ be Link(_loader_, _entry_).
+    1. ReturnIfAbrupt(_status_).
+    1. Assert: _entry_'s whole dependency graph is in "ready" state.
+    1. Return _entry_.
 </pre>
+
+<h4 id="request-ready">RequestReady(loader, key)</h4>
+
+<pre emu-alg>
+1. Return the result of transforming RequestLink(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+  1. Let _module_ be _entry_.[[Module]].
+  1. Let _status_ be _module_.Evaluate().
+  1. ReturnIfAbrupt(_status_).
+  1. Return _module_.
+</pre>
+
 
 <h2 id="linking-semantics">Linking Semantics</h2>
-
-<b>TODO:</b> migrate from existing documents (<a href="https://github.com/jorendorff/js-loaders/wiki/Spec-Drafts">modules draft</a>, <a href="http://wiki.ecmascript.org/doku.php?id=harmony:specification_drafts#current_working_draft">ES6 drafts</a>)
-
-<b>TODO:</b> migrate from <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-runtime-semantics-loader-state">15.2.3</a> and <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-runtime-semantics-module-loading">15.2.4</a>
 
 <h3 id="resolving-dependencies">Resolving Dependencies</h3>
 
@@ -524,291 +359,224 @@ The modules spec should only invoke this operation from methods of Normal Module
 
 <pre emu-alg>
 1. Assert: _module_ is a Normal Module Record.
-1. Let _state_ be _module_.[[LoaderState]].
-1. Assert: _state_ is a linkstate or readystate.
+1. Let _entry_ be _module_.[[RegistryEntry]].
+1. Assert: _entry_ is in "link" or "ready" state.
 1. Let _pair_ be the pair in _state_.[[Dependencies]] such that _pair_.[[key]] is equal to _requestName_.
 1. Assert: _pair_ is defined.
-1. Let _def_ be _pair_.[[value]].
-1. If _def_ is a Module Record, then:
-  1. Return _def_.
-1. Assert: _def_ is a delayed module definition.
-1. Let _m_ be _def_.[[Module]].
-1. Assert: _m_ is defined.
-1. Return _m_.
+1. Let _dep_ be _pair_.[[value]].
+1. Assert: _def_.[[State]] is greater than or equal to "link".
+1. Return _dep_.[[Module]].
 </pre>
 
-
-<!--
-<h3 id="dependency-graphs">Dependency Graphs</h3>
-
-A <a>linkstate</a> <var>a</var> has a <dfn>linkage dependency</dfn> on a <a>modstate</a> <var>c</var> if:
-<ul>
-<li><var>a</var>.\[[Dependencies]] has an entry whose \[[value]] <a>refers to</a> <var>c</var>, or
-<li><var>a</var>.\[[Dependencies]] has an entry whose \[[value]] refers to a linkstate <var>b</var> in the registry that has a linkage dependency on <var>c</var>.
-</ul>
-
-A <dfn>dependency chain</dfn> from a <a>linkstate</a> <var>a</var> to a <a>modstate</a> <var>b</var> is a List of modstates demonstrating the transitive <a>linkage dependency</a> from <var>a</var> to <var>b</var>.
-
-The <dfn>dependency graph</dfn> of a <a>linkstate</a> (or List of linkstates) is the set of <a>modstate</a>s <var>a</var> such that one of the given linkstates has a <a>linkage dependency</a> on <var>a</var>.
-
-
-<h3 id="dependency-groups">Dependency Groups</h3>
-
-For interoperability with module systems that do not provide published lists of module exports, the [[#instantiate]] step of the loading pipeline allows for modules to dynamically determine their exports at instantiation time. A <a>linkstate</a> record is referred to as <dfn>dynamic</dfn> if its \[[Definition]] is a function and its \[[Exports]] is <code>undefined</code>; otherwise it is referred to as <dfn>declarative</dfn>.
-
-Unlike <a>declarative</a> modules, <a>dynamic</a> modules cannot be pre-linked according to a fixed set of exports. Consequently, the process of linking a set of loaded modules involves sorting the module dependency graph between groups of dynamic and declarative modules. Cyclic dependencies are allowed within an individual group, but dependencies across groups must be acyclic. Linking and instantiation of groups proceeds in topological order.
-
-<h4 id="classifying-dependency-groups">Classifying Dependency Groups</h4>
-
-A <dfn>dependency cycle</dfn> is a dependency chain whose first and last elements are the same.
-
-A dependency chain is <dfn>cyclic</dfn> if it contains a subsequence that is a <a>dependency cycle</a>. A dependency chain is <dfn>acyclic</dfn> if it is not cyclic.
-
-A dependency chain is <dfn>mixed</dfn> if it contains two linkstates <var>a</var> and <var>b</var> such that <var>a</var> is <a>declarative</a> and <var>b</var> is <a>dynamic</a>.
-
-A <dfn>dependency group transition</dfn> is a two-element subsequence (<var>a</var>, <var>b</var>) of a dependency chain such that either <var>a</var> is <a>declarative</a> and <var>b</var> is <a>dynamic</a> or <var>a</var> is dynamic and <var>b</var> is declarative.
-
-The <dfn>dependency group transition count</dfn> of a dependency chain is the number of distinct <a>dependency group transition</a>s in the chain.
-
-
-<h4 id="computing-dependency-groups">Computing Dependency Groups</h4>
-
-<h5 id="compute-group-indices">ComputeGroupIndices(G)</h5>
-
-<pre emu-alg>
-1. Assert: _G_ is a dependency graph without mixed dependency cycles.
-1. For each _state_ in _G_, do:
-  1. Let _n_ be the largest dependency group count of all acyclic dependency chains in _G_ starting from _state_.
-  1. Set _state_.[[GroupIndex]] to _n_.
-1. Return *undefined*.
-</pre>
-
-<h5 id="dependency-groups">DependencyGroups(start, G, registry)</h5>
-
-<pre emu-alg>
-1. Assert: _G_ is a dependency graph without mixed dependency cycles.
-1. Let _declarativeCount_ be the largest [[GroupIndex]] of any declarative node in _G_.
-1. Let _declarative_ be a new List of length _declarativeCount_ where each element is a new empty List.
-1. Let _dynamicCount_ be the largest [[GroupIndex]] of any dynamic node in _G_.
-1. Let _dynamic_ be a new List of length _dynamicCount_ where each element is a new empty List.
-1. Let _visited_ be a new empty List.
-1. For each _root_ in _start_:
-  1. Call ComputeDependencyGroups(_root_, _registry_, _declarative_, _dynamic_, _visited_).
-1. If the first List of _dynamic_ is empty then: // TODO: is this the right condition?
-  1. Return a List constructed by interleaving _dynamic_ and _declarative_, starting with the former.
-1. Otherwise:
-  1. Assert: the first List of _declarative_ is empty. // TODO: is this true?
-  1. Return a List constructed by interleaving _declarative_ and _dynamic_, starting with the former.
-</pre>
-
-
-<h5 id="compute-dependency-groups">ComputeDependencyGroups(node, registry, declarative, dynamic, visited)</h5>
-
-<pre emu-alg>
-1. If _visited_ contains _node_, then return *undefined*.
-1. Add _node_ to _visited_.
-1. If _node_ is a readystate, then return *undefined*.
-1. Assert: _node_ is a linkstate.
-1. For each _pair_ of _node_.[[Dependencies]], do:
-  1. Let _name_ be _pair_.[[value]].
-  1. Let _dep_ be the [[value]] of the pair in _registry_ whose [[key]] is equal to _name_.
-  1. Call ComputeDependencyGroups(_dep_, _registry_, _declarative_, _dynamic_, _visited_).
-1. Let _i_ be _node_.[[GroupIndex]].
-1. If _node_ is declarative, then:
-  1. Append _node_ to the end of the _i_th List in _declarative_.
-1. Otherwise:
-  1. Assert: _node_ is dynamic.
-  1. Append _node_ to the end of the _i_th List in _dynamic_.
-1. Return *undefined*.
-</pre>
--->
 
 <h3 id="linking">Linking</h3>
 
-<h4 id="link">Link(start, registry)</h4>
+<h4 id="link">Link(loader, root)</h4>
 
 <pre emu-alg>
-1. Assert: _start_ is a List of linkstates.
-1. Let _delayed_ be DelayedModules(_start_).
-1. Let _status_ be LinkDelayedModules(_delayed_, _registry_).
-1. ReturnIfAbrupt(_status_).
-1. Let _visited_ be a new empty List.
-1. For each _state_ in _start_, do:
-  1. Let _status_ be LinkReadyModule(_state_, _registry_, _visited_).
-  1. ReturnIfAbrupt(_status_).
+1. Assert: _root_ is a registry entry record in "link" state.
+1. Let _deps_ be DependencyGraph(_root_).
+1. For each _dep_ in _deps_, do:
+  1. If _dep_.[[State]] is "link" and _dep_.[[Module]] is a Function object, then:
+    1. Let _f_ be _dep_.[[Module]].
+    1. Let _m_ be _f_().
+    1. ReturnIfAbrupt(_m_).
+    1. Set _dep_.[[Module]] to _m_.
+    1. Set _dep_.[[State]] to "ready".
+1. Assert: the following sequence is guaranteed not to run any user code.
+1. For each _dep_ in _deps_, do:
+  1. If _dep_.[[State]] is "link", then:
+    1. Let _module_ be _dep_.[[Module]].
+    1. Assert: _module_ is a Module Record.
+    1. Let _status_ be _module_.Instantiate().
+    1. ReturnIfAbrupt(_status_).
+    1. Set _dep_.[[State]] to "ready".
 1. Return *undefined*.
 </pre>
 
-<h4 id="link-delayed-modules">LinkDelayedModules(delayed, registry)</h4>
+<h4 id="dependency-graph">DependencyGraph(root)</h4>
 
 <pre emu-alg>
-1. Assert: _delayed_ is a List of delayed module definitions.
-1. For each _def_ in _delayed_, do:
-  1. Let _f_ be _def_.[[Factory]].
-  1. Let _m_ be _f_().
-  1. ReturnIfAbrupt(_m_).
-  1. Set _def_.[[Module]] to _m_.
-  1. RegisterModule(_registry_, _def_.[[LinkState]].[[Envelope]], «‍ », _m_).
-1. Return *undefined*.
-</pre>
-
-<h4 id="delayed-modules">DelayedModules(start)</h4>
-
-<pre emu-alg>
-1. Assert: _start_ is a List of linkstates.
 1. Let _result_ be a new empty List.
-1. Let _visited_ be a new empty List.
-1. For each _state_ in _start_, do:
-  1. CollectDelayedModules(_state_, _result_, _visited_).
+1. Call ComputeDependencyGraph(_root_, _result_).
 1. Return _result_.
 </pre>
 
-<h4 id="collect-delayed-modules">CollectDelayedModules(state, result, visited)</h4>
+<h4 id="compute-dependency-graph">ComputeDependencyGraph(entry, result)</h4>
 
 <pre emu-alg>
-1. Assert: _state_ is a linkstate.
-1. If _state_ is already in _visited_, then return *undefined*.
-1. Append _state_ to _visited_.
-1. For each _pair_ in _state_.[[Dependencies]], do:
-  1. Let _def_ be _pair_.[[value]].
-  1. Assert: _def_ is defined.
-  1. If _def_ is a Module Record, then:
-    1. Let _otherState_ be _def_.[[LoaderState]].
-    1. If _otherState_ is a linkstate, then:
-      1. CollectDelayedModules(_otherState_, _result_, _visited_).
-  1. Else:
-    1. Append _def_ to _result_.
+1. If _entry_ is already in _result_, then return *undefined*.
+1. Append _entry_ to _result_.
+1. For each _pair_ in _entry_.[[Dependencies]], do:
+  1. Assert: _pair_.[[value]] is defined.
+  1. Call ComputeDependencyGraph(_pair_.[[value]], _result_).
 1. Return *undefined*.
 </pre>
 
-<h4 id="link-ready-module">LinkReadyModule(state, registry, visited)</h4>
-
-<pre emu-alg>
-1. Assert: _state_ is a linkstate.
-1. If _state_ is already in _visited_, then return *undefined*.
-1. Append _state_ to _visited_.
-1. If _status_.[[Definition]] is a Module Record, then:
-  1. Let _module_ be _status_.[[Definition]].
-  1. Let _status_ be _module_.Instantiate().
-  1. ReturnIfAbrupt(_status_).
-  1. For each _pair_ in _state_.[[Dependencies]], do:
-    1. Let _def_ be _pair_.[[value]].
-    1. Assert: _def_ is defined.
-    1. If _def_ is a Module Record, then:
-      1. Let _otherState_ be _def_.[[LoaderState]].
-      1. If _otherState_ is a linkstate, then:
-        1. Let _status_ be LinkReadyModule(_otherState_, _registry_, _visited_).
-        1. ReturnIfAbrupt(_status_).
-  1. Let _deps_ be ReadyDependencies(_state_.[[Dependencies]]).
-  1. Let _mod_ be _state_.[[Definition]].
-  1. RegisterModule(_registry_, _mod_.[[Envelope]], _deps_, _mod_).
-1. Return *undefined*.
-</pre>
-
-<h4 id="ready-dependencies">ReadyDependencies(linkdeps)</h4>
-
-<pre emu-alg>
-1. Let _deps_ be a new empty List.
-1. For each _pair_ in _linkdeps_, do:
-  1. Let _requestName_ be _pair_.[[key]].
-  1. Let _def_ be _pair_.[[value]].
-  1. If _def_ is a Module Record, then:
-    1. Append the pair {[[key]]: _requestName_, [[value]]: _def_} to _deps_.
-  1. Else:
-    1. Assert: _def_ is a delayed module definition.
-    1. Assert: _def_.[[Module]] is defined.
-    1. Append the pair {[[key]]: _requestName_, [[value]]: _def_.[[Module]]} to _deps_.
-1. Return _deps_.
-</pre>
-
-<!--
-<pre emu-alg>
-1. Let _G_ be the dependency graph of _start_ in _registry_.
-1. If _G_ contains any mixed dependency cycles, throw a new SyntaxError.
-1. Call ComputeGroupIndices(_G_).
-1. Let _groups_ be DependencyGroups(_start_, _G_, _registry_).
-1. For each _group_ in _groups_, do:
-  1. If the modstates in _group_ are declarative, then:
-    1. Call LinkDeclarative(_group_, _registry_).
-  1. Otherwise:
-    1. Assert: the modstates in _group_ are dynamic.
-    1. Call LinkDynamic(_group_, _registry_).
-1. Return *undefined*.
-</pre>
-
-<h4 id="link-declarative">LinkDeclarative(group, registry)</h4>
-
-<pre emu-alg>
-1. For each _node_ in _group_:
-  1. 
-1. 
-</pre>
-
-<h4 id="link-dynamic">LinkDynamic(group, registry)</h4>
-
-<pre emu-alg>
-1. For each _node_ in _group_:
-  1. Assert: _node_ is a dynamic linkstate.
-  1. Let _f_ be _node_.[[Definition]].[[Factory]].
-  1. Let _ns_ be _f_().
-  1. ReturnIfAbrupt(_ns_).
-  1. If _ns_ is not a module namespace exotic object, then throw a new TypeError.
-  1. Let _mod_ be _ns_.[[Module]].
-  1. Set _node_.[[Definition]].[[Module]] to _mod_.
-  1. Let _deps_ be a new empty List.
-  1. For each _pair_ in _node_.[[Dependencies]], do:
-    1. Let _requestName_ be _pair_.[[key]].
-    1. Let _def_ be _pair_.[[value]].
-    1. If _def_ is a Module Record, then:
-      1. Append the pair {[[key]]: _requestName_, [[value]]: _def_} to _deps_.
-    1. Else:
-      1. Assert: _def_ is a delayed module definition.
-      1. Assert: _def_.[[Module]] is defined.
-      1. Append the pair {[[key]]: _requestName_, [[value]]: _def_.[[Module]]} to _deps_.
-  1. Let _state_ be a new readystate record { [[Envelope]]: _node_.[[Envelope]], [[Dependencies]]: _deps_, [[Module]]: _mod_ }.
-  1. Set _mod_.[[LoaderState]] to _state_.
-  1. Let _pair_ be the entry in _registry_ such that _pair_.[[Name]] is equal to _node_.[[Envelope]].[[Name]].
-  1. Set _pair_.[[value]] to _state_.
-1. Return *undefined*.
-</pre>
--->
 
 <h2 id="api">API</h2>
 
-<b>TODO:</b> migrate from <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-loader-objects">26.2</a> and <a href="http://people.mozilla.org/~jorendorff/es6-draft.html#sec-system-object">26.3</a>
+<h3 id="loading-api">Importing</h3>
 
-<h3 id="loading-api">Loading</h3>
+<h4 id="reflect-loader-import">Reflect.Loader.import(name[, referrer])</h4>
 
-<b>TODO:</b>
-<ul>
-    <li><code>Reflect.Loader.import(name, context).then(mod => ...)</code>
-    <li><code>Reflect.Loader.load(name, context).then(() => ...)</code>
-    <li><code>Reflect.Loader.provide(name, src)</code>
-</ul>
+<pre emu-alg>
+1. Let _loader_ be this Loader Object.
+1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
+  1. Return RequestReady(_loader_, _key_).
+</pre>
+
+
+<h3 id="resolution-api">Resolution</h3>
+
+<h4 id="reflect-load-resolve">Reflect.Loader.resolve(name[, referrer])</h4>
+
+<pre emu-alg>
+1. Let _loader_ be this Loader Object.
+1. Return Resolve(_loader_, _name_, _referrer_).
+</pre>
+
+
+<h3 id="request-api">Requests</h3>
+
+<h4 id="reflect-loader-load">Reflect.Loader.load(key[, stage])</h4>
+
+<pre emu-alg>
+1. Let _loader_ be this Loader Object.
+1. If _stage_ is *undefined* then let _stage_ be "ready".
+1. If _stage_ is "fetch", then:
+  1. Return RequestFetch(_loader_, _key_).
+1. If _stage_ is "translate", then:
+  1. Return RequestTranslate(_loader_, _key_).
+1. If _stage_ is "instantiate", then:
+  1. Return the result of transforming RequestInstantiate(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+    1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
+    1. Return *undefined*.
+1. If _stage_ is "link", then:
+  1. Return the result of transforming RequestLink(_loader_, _key_) with a fulfillment handler that returns *undefined*.
+1. If _stage_ is "ready", then:
+  1. Return the result of transforming RequestReady(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+    1. Return GetModuleNamespace(_entry_.[[Module]]).
+1. Throw a new TypeError.
+</pre>
+
+
+<h3 id="response-api">Responses</h3>
+
+<h4 id="reflect-loader-provide">Reflect.Loader.provide(key, stage, value)</h4>
+
+<pre emu-alg>
+1. Let _loader_ be this Loader Object.
+1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. If _stage_ is "fetch", then:
+  1. If _entry_.[[State]] is greater than "fetch", throw a new TypeError.
+  1. Call ResolveFetch(_loader_, _entry_, _value_).
+  1. Return *undefined*.
+1. If _stage_ is "translate", then:
+  1. If _entry_.[[State]] is greater than "translate", throw a new TypeError.
+  1. Call ResolveFetch(_loader_, _entry_, *undefined*).
+  1. Call ResolveTranslate(_loader_, _entry_, _value_).
+  1. Return *undefined*.
+1. If _stage_ is "instantiate", then:
+  1. If _entry_.[[State]] is greater than "instantiate", throw a new TypeError.
+  1. Call ResolveFetch(_loader_, _entry_, *undefined*).
+  1. Call ResolveTranslate(_loader_, _entry_, *undefined*).
+  1. Assert: _entry_.[[Translate]] is resolved or rejected.
+  1. TODO: need to propagate rejections
+  1. Let _source_ be the fulfillment value of _entry_.[[Translate]].
+  1. Call ResolveInstantiate(_loader_, _entry_, _value_, _source_).
+  1. Return *undefined*.
+1. Throw a new TypeError.
+</pre>
+
+<h4 id="reflect-loader-error">Reflect.Loader.error(key, stage, value)</h4>
+
+<pre emu-alg>
+1. 
+</pre>
+
 
 <h3 id="registry-api">Registry</h3>
 
-<ul>
-    <li><code>Reflect.Loader.get("https://cdn.example.com/jquery/v/2.1.1")</code>
-    <li><code>Reflect.Loader.set("https://cdn.example.com/jquery/v/2.1.1", mod)</code>
-    <li><code>Reflect.Loader.delete("https://cdn.example.com/jquery/v/2.1.1")</code>
-    <li><code>Reflect.Loader.has("https://cdn.example.com/jquery/v/2.1.1")</code>
-    <li>return reified records representing the intermediate loading states
-    <li>affect pending operations on modification
-</ul>
+<h4 id="reflect-loader-lookup">Reflect.Loader.lookup(key)</h4>
+
+<pre emu-alg>
+1. Let _loader_ be this Loader Object.
+1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
+1. If _pair_ does not exist, then return *null*.
+1. Let _entry_ be _pair_.[[value]].
+1. Let _result_ be CreateObject().
+1. Call SimpleDefine(_result_, "state", _entry_.[[State]]).
+1. If _entry_.[[Fetch]] is *undefined* then let _fetch_ be *undefined*.
+1. Else let _fetch_ be the result of transforming _entry_.[[Fetch]] with a new pass-through promise.
+1. Call SimpleDefine(_result_, "fetch", _fetch_).
+1. If _entry_.[[Translate]] is *undefined*, then let _translate_ be *undefined*.
+1. Else let _translate_ be the result of transforming _entry_.[[Translate]] with a new pass-through promise.
+1. Call SimpleDefine(_result_, "translate", _translate_).
+1. If _entry_.[[Instantiate]] is *undefined*, then let _instantiate_ be *undefined*.
+1. Else let _instantiate_ be the result of transforming _entry_.[[Instantiate]] with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+  1. If _entry_.[[Module]] is a Function object, then return _entry_.[[Module]].
+  1. Return *undefined*.
+1. Call SimpleDefine(_result_, "instantiate", _instantiate_).
+1. If _entry_.[[State]] is "ready" then let _module_ be _entry_.[[Module]].
+1. Else let _module_ be *undefined*.
+1. Call SimpleDefine(_result_, "module", _module_).
+1. If _entry_.[[Error]] is *nothing*, then:
+  1. Call SimpleDefine(_result_, "error", *null*).
+1. Else:
+  1. Let _opt_ be CreateObject().
+  1. Call SimpleDefine(_opt_, "value", _entry_.[[Error]].
+  1. Call SimpleDefine(_result_, "error", _opt_).
+1. Return _result_.
+</pre>
+
+<h4 id="reflect-loader-install">Reflect.Loader.install(key, module)</h4>
+
+<pre emu-alg>
+1. Let _loader_ be this Loader Object.
+1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
+1. If _pair_ exists, then throw a new TypeError.
+1. Let _entry_ be a new registry entry record { [[Key]]: _key_, [[State]]: "ready", [[Metadata]]: *undefined*, [[Fetch]]: *undefined*, [[Translate]]: *undefined*, [[Instantiate]]: *undefined*, [[Dependencies]]: *undefined*, [[Module]]: _module_ }.
+1. Append { [[key]]: _key_, [[value]]: _entry_ } to _loader_.[[Registry]].
+</pre>
+
+<h4 id="reflect-loader-uninstall">Reflect.Loader.uninstall(module)</h4>
+
+<pre emu-alg>
+1. Let _loader_ be this Loader Object.
+1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
+1. If _pair_ does not exist, then throw a new TypeError.
+1. If _pair_.[[value]].[[State]] is less than "link", then throw a new TypeError.
+1. Remove _pair_ from _loader_.[[Registry]].
+</pre>
+
+<h4 id="reflect-loader-cancel">Reflect.Loader.cancel(key)</h4>
+
+<pre emu-alg>
+1. Let _loader_ be this Loader Object.
+1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
+1. If _pair_ does not exist, then throw a new TypeError.
+1. Let _entry_ be _pair_.[[value]].
+1. If _entry_.[[State]] is "link" or greater, throw a new TypeError.
+1. Remove _pair_ from _loader_.[[Registry]].
+</pre>
+
 
 <h3 id="loading-hooks">Pipeline Intercession</h3>
 
+<h4 id="reflect-load-hook">Reflect.Loader.hook(name[, value])</h4>
+
 <b>TODO:</b>
 <ul>
-    <li><code>Reflect.Loader.hook("normalize"[, normalize])</code>
-    <li><code>Reflect.Loader.hook("locate"[, locate])</code>
+    <li><code>Reflect.Loader.hook("resolve"[, resolve])</code>
     <li><code>Reflect.Loader.hook("fetch"[, fetch])</code>
     <li><code>Reflect.Loader.hook("translate"[, translate])</code>
     <li><code>Reflect.Loader.hook("instantiate"[, instantiate])</code>
 </ul>
 
 <h3 id="module-reflection-api">Module Reflection</h3>
+
+<b>TODO:</b> way to force evaluation of a module namespace exotic object (<code>Reflect.Module.evaluate(m)</code>? <code>m[Reflect.Module.evaluate]()</code>?)
 
 <h4 id="reflective-module-record">Reflective Module Records</h4>
 
@@ -1038,7 +806,7 @@ The browser loader has an extra internal slot:
   </pre>
 </div>
 
-<h3 id="browser-normalize">Normalize</h3>
+<h3 id="browser-resolve">Resolve</h3>
 
 <b>TODO:</b> name resolution policy
 <ul>
@@ -1049,9 +817,11 @@ The browser loader has an extra internal slot:
   <li>top-level packages consult \[[Site]]: <code>"jquery"</code>, <code>"ember/data"</code>
 </ul>
 
+<!--
 <h3 id="browser-locate">Locate</h3>
 
 <b>TODO:</b> no-op.
+-->
 
 <h3 id="browser-fetch">Fetch</h3>
 
