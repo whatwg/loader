@@ -72,7 +72,7 @@ Algorithm steps that say
 mean the same thing as:
 
 <pre emu-alg>
-1. If _x_ is an abrupt completion, the return a promise rejected with _x_.[[value]].
+1. If _x_ is an abrupt completion, then return a promise rejected with _x_.[[value]].
 1. Else if _x_ is a Completion Record, then let _x_ be _x_.[[value]].
 </pre>
 
@@ -206,6 +206,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 <h4 id="ensure-registered">EnsureRegistered(loader, key)</h4>
 
 <pre emu-alg>
+1. Assert: _loader_ has a [[Registry]] internal slot.
 1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
 1. If _pair_ exists, then:
   1. Let _entry_ be _pair_.[[value]].
@@ -421,7 +422,9 @@ The modules spec should only invoke this operation from methods of Normal Module
 <h4 id="reflect-loader-import">Reflect.Loader.import(name[, referrer])</h4>
 
 <pre emu-alg>
-1. Let _loader_ be this Loader Object.
+1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a TypeError exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
   1. Return RequestReady(_loader_, _key_).
 </pre>
@@ -432,7 +435,9 @@ The modules spec should only invoke this operation from methods of Normal Module
 <h4 id="reflect-load-resolve">Reflect.Loader.resolve(name[, referrer])</h4>
 
 <pre emu-alg>
-1. Let _loader_ be this Loader Object.
+1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a TypeError exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Return Resolve(_loader_, _name_, _referrer_).
 </pre>
 
@@ -442,7 +447,9 @@ The modules spec should only invoke this operation from methods of Normal Module
 <h4 id="reflect-loader-load">Reflect.Loader.load(key[, stage])</h4>
 
 <pre emu-alg>
-1. Let _loader_ be this Loader Object.
+1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a TypeError exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. If _stage_ is *undefined* then let _stage_ be "ready".
 1. If _stage_ is "fetch", then:
   1. Return RequestFetch(_loader_, _key_).
@@ -466,7 +473,9 @@ The modules spec should only invoke this operation from methods of Normal Module
 <h4 id="reflect-loader-provide">Reflect.Loader.provide(key, stage, value)</h4>
 
 <pre emu-alg>
-1. Let _loader_ be this Loader Object.
+1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
 1. If _stage_ is "fetch", then:
   1. If _entry_.[[State]] is greater than "fetch", throw a new TypeError.
@@ -501,7 +510,9 @@ The modules spec should only invoke this operation from methods of Normal Module
 <h4 id="reflect-loader-lookup">Reflect.Loader.lookup(key)</h4>
 
 <pre emu-alg>
-1. Let _loader_ be this Loader Object.
+1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
 1. If _pair_ does not exist, then return *null*.
 1. Let _entry_ be _pair_.[[value]].
@@ -533,7 +544,9 @@ The modules spec should only invoke this operation from methods of Normal Module
 <h4 id="reflect-loader-install">Reflect.Loader.install(key, module)</h4>
 
 <pre emu-alg>
-1. Let _loader_ be this Loader Object.
+1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
 1. If _pair_ exists, then throw a new TypeError.
 1. Let _entry_ be a new registry entry record { [[Key]]: _key_, [[State]]: "ready", [[Metadata]]: *undefined*, [[Fetch]]: *undefined*, [[Translate]]: *undefined*, [[Instantiate]]: *undefined*, [[Dependencies]]: *undefined*, [[Module]]: _module_ }.
@@ -543,7 +556,9 @@ The modules spec should only invoke this operation from methods of Normal Module
 <h4 id="reflect-loader-uninstall">Reflect.Loader.uninstall(module)</h4>
 
 <pre emu-alg>
-1. Let _loader_ be this Loader Object.
+1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
 1. If _pair_ does not exist, then throw a new TypeError.
 1. If _pair_.[[value]].[[State]] is less than "link", then throw a new TypeError.
@@ -553,7 +568,9 @@ The modules spec should only invoke this operation from methods of Normal Module
 <h4 id="reflect-loader-cancel">Reflect.Loader.cancel(key)</h4>
 
 <pre emu-alg>
-1. Let _loader_ be this Loader Object.
+1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
 1. If _pair_ does not exist, then throw a new TypeError.
 1. Let _entry_ be _pair_.[[value]].
