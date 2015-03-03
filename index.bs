@@ -236,23 +236,23 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 
 <pre emu-alg>
 1. If _entry_.[[Instantiate]] is *undefined*, then set _entry_.[[Instantiate]] to a new promise.
-1. Return CommitInstantiated(_entry_, _instance_, _source_).
+1. Return CommitInstantiated(_loader_, _entry_, _instance_, _source_).
 </pre>
 
-<h4 id="commit-instantiated">CommitInstantiated(entry, instance, source)</h4>
+<h4 id="commit-instantiated">CommitInstantiated(loader, entry, instance, source)</h4>
 
 <pre emu-alg>
-1. Let _instance_ be Instantiation(_instance_, _source_).
-1. ReturnIfAbrupt(_instance_).
-1. // TODO: edge case: what if _instance_ is a thenable function?
-1. Resolve _entry_.[[Instantiate]] with _instance_.
+1. Let _module_ be Instantiation(_loader_, _instance_, _source_).
+1. ReturnIfAbrupt(_module_).
+1. // TODO: edge case: what if _module_ is a thenable function?
+1. Resolve _entry_.[[Instantiate]] with _module_.
 1. Let _deps_ be a new empty List.
-1. If _instance_ is a Module Record, then:
-  1. Assert: _instance_ is a Normal Module Record.
-  1. For each _dep_ in _instance_.[[ImportedModules]], do:
+1. If _module_ is a Module Record, then:
+  1. Assert: _module_ is a Normal Module Record.
+  1. For each _dep_ in _module_.[[ImportedModules]], do:
     1. Append the record { [[key]]: _dep_, [[value]]: *undefined* } to _deps_.
 1. Set _entry_.[[Dependencies]] to _deps_.
-1. Set _entry_.[[Module]] to _instance_.
+1. Set _entry_.[[Module]] to _module_.
 1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "link".
 </pre>
 
@@ -275,9 +275,9 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Let _hook_ be _loader_.[[Fetch]].
 1. // TODO: metadata object
 1. Let _p0_ be the result of promise-calling _hook_(_key_).
-1. Let _p_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _v_, runs the following steps:
+1. Let _p_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _payload_, runs the following steps:
   1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "translate".
-  1. Return _v_.
+  1. Return _payload_.
 1. Set _entry_.[[Fetch]] to _p_.
 1. Return _p_.
 </pre>
@@ -321,12 +321,17 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 <h4 id="request-link">RequestLink(loader, key)</h4>
 
 <pre emu-alg>
-1. Let _entry0_ be EnsureRegistered(_loader_, _key_).
-1. If _entry0_.[[State]] is "ready", return a new promise fulfilled with _entry_.[[Module]].
+1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. If _entry_.[[State]] is "ready", return a new promise fulfilled with _entry_.[[Module]].
 1. Return the result of transforming RequestInstantiate(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _depLoads_ be a new empty List.
   1. For each _pair_ in _entry_.[[Dependencies]], do:
     1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[key]], _key_) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
+      1. Let _depEntry_ be EnsureRegistered(_loader_, _depKey_).
+      1. If _depEntry_.[[State]] is "ready", then:
+        1. Let _dep_ be _depEntry_.[[Module]].
+        1. Set _pair_.[[value]] to _dep_.
+        1. Return _dep_.
       1. Return the result of transforming RequestInstantiate(_loader_, _depKey_) with a fulfillment handler that, when called with value _dep_, runs the following steps:
         1. Set _pair_.[[value]] to _dep_.
         1. Return _dep_.
@@ -501,7 +506,7 @@ The modules spec should only invoke this operation from methods of Normal Module
 <h4 id="reflect-loader-error">Reflect.Loader.error(key, stage, value)</h4>
 
 <pre emu-alg>
-1. 
+1.
 </pre>
 
 
@@ -553,7 +558,7 @@ The modules spec should only invoke this operation from methods of Normal Module
 1. Append { [[key]]: _key_, [[value]]: _entry_ } to _loader_.[[Registry]].
 </pre>
 
-<h4 id="reflect-loader-uninstall">Reflect.Loader.uninstall(module)</h4>
+<h4 id="reflect-loader-uninstall">Reflect.Loader.uninstall(key)</h4>
 
 <pre emu-alg>
 1. Let _loader_ be *this* value.
@@ -597,7 +602,7 @@ The modules spec should only invoke this operation from methods of Normal Module
 
 <h4 id="reflective-module-record">Reflective Module Records</h4>
 
-A <dfn>reflective module record</dfn> is a kind of module record. It extends 
+A <dfn>reflective module record</dfn> is a kind of module record. It extends
 
 <table>
   <thead>
