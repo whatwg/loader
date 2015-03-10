@@ -248,7 +248,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Resolve _entry_.[[Instantiate]] with _instance_.
 1. Let _deps_ be a new empty List.
 1. If _instance_ is a Module Record, then:
-  1. Assert: _instance_ is a Normal Module Record.
+  1. Assert: _instance_ is a Source Text Module Record.
   1. For each _dep_ in _instance_.[[ImportedModules]], do:
     1. Append the record { [[key]]: _dep_, [[value]]: *undefined* } to _deps_.
 1. Set _entry_.[[Dependencies]] to _deps_.
@@ -356,10 +356,10 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 
 <h4 id="host-resolve-imported-module">HostResolveImportedModule(module, requestName)</h4>
 
-The modules spec should only invoke this operation from methods of Normal Module Records, and this spec does not invoke the operation at all.
+The modules spec should only invoke this operation from methods of Source Text Module Records, and this spec does not invoke the operation at all.
 
 <pre emu-alg>
-1. Assert: _module_ is a Normal Module Record.
+1. Assert: _module_ is a Source Text Module Record.
 1. Let _entry_ be _module_.[[RegistryEntry]].
 1. Assert: _entry_ is in "link" or "ready" state.
 1. Let _pair_ be the pair in _state_.[[Dependencies]] such that _pair_.[[key]] is equal to _requestName_.
