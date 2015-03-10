@@ -349,7 +349,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 <pre emu-alg>
 1. Return the result of transforming RequestLink(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _module_ be _entry_.[[Module]].
-  1. Let _status_ be _module_.Evaluate().
+  1. Let _status_ be _module_.ModuleEvaluation().
   1. ReturnIfAbrupt(_status_).
   1. Return _module_.
 </pre>
@@ -394,7 +394,7 @@ The modules spec should only invoke this operation from methods of Source Text M
   1. If _dep_.[[State]] is "link", then:
     1. Let _module_ be _dep_.[[Module]].
     1. Assert: _module_ is a Module Record.
-    1. Let _status_ be _module_.Instantiate().
+    1. Let _status_ be _module_.ModuleDeclarationInstantiation().
     1. ReturnIfAbrupt(_status_).
     1. Set _dep_.[[State]] to "ready".
 1. Return *undefined*.
@@ -659,7 +659,7 @@ A <dfn>reflective module record</dfn> is a kind of module record. It extends
 1. Return *null*.
 </pre>
 
-<h5 id="reflective-instantiate">Reflective Module.Instantiate()</h5>
+<h5 id="reflective-instantiate">Reflective Module.ModuleDeclarationInstantiation()</h5>
 
 Reflective modules are always already instantiated.
 
@@ -667,7 +667,7 @@ Reflective modules are always already instantiated.
 1. Return *undefined*.
 </pre>
 
-<h5 id="reflective-evaluate">Reflective Module.Evaluate()</h5>
+<h5 id="reflective-evaluate">Reflective Module.ModuleEvaluation()</h5>
 
 <pre emu-alg>
 1. Let _module_ be this Reflective Module Record.
