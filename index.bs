@@ -216,23 +216,23 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Return _entry_.
 </pre>
 
-<h4 id="resolve-fetch">ResolveFetch(loader, entry, payload)</h4>
+<h4 id="fulfill-fetch">FulfillFetch(loader, entry, payload)</h4>
 
 <pre emu-alg>
 1. If _entry_.[[Fetch]] is *undefined*, then set _entry_.[[Fetch]] to a new promise.
-1. Resolve _entry_.[[Fetch]] with _payload_.
+1. Fulfill _entry_.[[Fetch]] with _payload_.
 1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "translate".
 </pre>
 
-<h4 id="resolve-translate">ResolveTranslate(loader, entry, source)</h4>
+<h4 id="fulfill-translate">FulfillTranslate(loader, entry, source)</h4>
 
 <pre emu-alg>
 1. If _entry_.[[Translate]] is *undefined*, then set _entry_.[[Translate]] to a new promise.
-1. Resolve _entry_.[[Translate]] with _source_.
+1. Fulfill _entry_.[[Translate]] with _source_.
 1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "instantiate".
 </pre>
 
-<h4 id="resolve-instantiate">ResolveInstantiate(loader, entry, optionalInstance, source)</h4>
+<h4 id="fulfill-instantiate">FulfillInstantiate(loader, entry, optionalInstance, source)</h4>
 
 <pre emu-alg>
 1. If _entry_.[[Instantiate]] is *undefined*, then set _entry_.[[Instantiate]] to a new promise.
@@ -245,7 +245,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Let _instance_ be Instantiation(_loader_, _optionalInstance_, _source_).
 1. ReturnIfAbrupt(_instance_).
 1. // TODO: edge case: what if _instance_ is a thenable function?
-1. Resolve _entry_.[[Instantiate]] with _instance_.
+1. Fulfill _entry_.[[Instantiate]] with _instance_.
 1. Let _deps_ be a new empty List.
 1. If _instance_ is a Module Record, then:
   1. Assert: _instance_ is a Source Text Module Record.
@@ -484,21 +484,21 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
 1. If _stage_ is "fetch", then:
   1. If _entry_.[[State]] is greater than "fetch", throw a new TypeError.
-  1. Call ResolveFetch(_loader_, _entry_, _value_).
+  1. Call FulfillFetch(_loader_, _entry_, _value_).
   1. Return *undefined*.
 1. If _stage_ is "translate", then:
   1. If _entry_.[[State]] is greater than "translate", throw a new TypeError.
-  1. Call ResolveFetch(_loader_, _entry_, *undefined*).
-  1. Call ResolveTranslate(_loader_, _entry_, _value_).
+  1. Call FulfillFetch(_loader_, _entry_, *undefined*).
+  1. Call FulfillTranslate(_loader_, _entry_, _value_).
   1. Return *undefined*.
 1. If _stage_ is "instantiate", then:
   1. If _entry_.[[State]] is greater than "instantiate", throw a new TypeError.
-  1. Call ResolveFetch(_loader_, _entry_, *undefined*).
-  1. Call ResolveTranslate(_loader_, _entry_, *undefined*).
+  1. Call FulfillFetch(_loader_, _entry_, *undefined*).
+  1. Call FulfillTranslate(_loader_, _entry_, *undefined*).
   1. Assert: _entry_.[[Translate]] is resolved or rejected.
   1. TODO: need to propagate rejections
   1. Let _source_ be the fulfillment value of _entry_.[[Translate]].
-  1. Call ResolveInstantiate(_loader_, _entry_, _value_, _source_).
+  1. Call FulfillInstantiate(_loader_, _entry_, _value_, _source_).
   1. Return *undefined*.
 1. Throw a new TypeError.
 </pre>
