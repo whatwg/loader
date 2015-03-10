@@ -16,7 +16,7 @@
   <link href="https://resources.whatwg.org/logo-javascript.svg" rel="icon">
   
 
-  <meta content="1.0.0" name="bikeshed-semver">
+  <meta content="Bikeshed 1.0.0" name="generator">
   <style>
   ol > li { margin: 0; }
 </style>
@@ -36,21 +36,17 @@
    <h1 class="p-name no-ref" id="title">Loader</h1>
   
    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">A Collection of Interesting Ideas — Last Updated
-    <time class="dt-updated" datetime="2015-02-05">5 February 2015</time></span></h2>
+    <time class="dt-updated" datetime="2015-03-10">10 March 2015</time></span></h2>
   
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
      <dd><a class="u-url" href="https://whatwg.github.io/loader">https://whatwg.github.io/loader</a>
      <dt class="editor">Editors:
-     <dd class="editor">
-      <div class="p-author h-card vcard"><a class="p-name fn u-url url" href="https://github.com/ericf">Eric Ferraiuolo</a> (<a class="p-org org" href="https://yahoo.com">Yahoo</a>) <a class="u-email email" href="mailto:edf@ericf.me">edf@ericf.me</a></div>
-     <dd class="editor">
-      <div class="p-author h-card vcard"><a class="p-name fn u-url url" href="http://calculist.org">Dave Herman</a> (<a class="p-org org" href="https://mozilla.org">Mozilla</a>) <a class="u-email email" href="mailto:dherman@mozilla.com">dherman@mozilla.com</a></div>
-     <dd class="editor">
-      <div class="p-author h-card vcard"><a class="p-name fn u-url url" href="http://yehudakatz.com">Yehuda Katz</a> (<a class="p-org org" href="https://jquery.org">jQuery Foundation</a>) <a class="u-email email" href="mailto:wycats@gmail.com">wycats@gmail.com</a></div>
-     <dd class="editor">
-      <div class="p-author h-card vcard"><a class="p-name fn u-url url" href="http://caridy.name">Caridy Patiño</a> (<a class="p-org org" href="https://yahoo.com">Yahoo</a>) <a class="u-email email" href="mailto:caridy@gmail.com">caridy@gmail.com</a></div>
+     <dd class="editor p-author h-card vcard"><a class="p-name fn u-url url" href="https://github.com/ericf">Eric Ferraiuolo</a> (<a class="p-org org" href="https://yahoo.com">Yahoo</a>) <a class="u-email email" href="mailto:edf@ericf.me">edf@ericf.me</a>
+     <dd class="editor p-author h-card vcard"><a class="p-name fn u-url url" href="http://calculist.org">Dave Herman</a> (<a class="p-org org" href="https://mozilla.org">Mozilla</a>) <a class="u-email email" href="mailto:dherman@mozilla.com">dherman@mozilla.com</a>
+     <dd class="editor p-author h-card vcard"><a class="p-name fn u-url url" href="http://yehudakatz.com">Yehuda Katz</a> (<a class="p-org org" href="https://jquery.org">jQuery Foundation</a>) <a class="u-email email" href="mailto:wycats@gmail.com">wycats@gmail.com</a>
+     <dd class="editor p-author h-card vcard"><a class="p-name fn u-url url" href="http://caridy.name">Caridy Patiño</a> (<a class="p-org org" href="https://yahoo.com">Yahoo</a>) <a class="u-email email" href="mailto:caridy@gmail.com">caridy@gmail.com</a>
      <dt>Version History:
      <dd><span><a href="https://github.com/whatwg/loader/commits">https://github.com/whatwg/loader/commits</a></span>
      <dt>Participate:
@@ -111,10 +107,10 @@ loading process and customizing loading behavior.</p>
       <li><a href="#auxiliary-operations"><span class="secno">4.1</span> <span class="content">Auxiliary Operations</span></a>
        <ul class="toc">
         <li><a href="#ensure-registered"><span class="secno">4.1.1</span> <span class="content">EnsureRegistered(loader, key)</span></a>
-        <li><a href="#resolve-fetch"><span class="secno">4.1.2</span> <span class="content">ResolveFetch(loader, entry, payload)</span></a>
-        <li><a href="#resolve-translate"><span class="secno">4.1.3</span> <span class="content">ResolveTranslate(loader, entry, source)</span></a>
-        <li><a href="#resolve-instantiate"><span class="secno">4.1.4</span> <span class="content">ResolveInstantiate(loader, entry, instance, source)</span></a>
-        <li><a href="#commit-instantiated"><span class="secno">4.1.5</span> <span class="content">CommitInstantiated(entry, instance, source)</span></a>
+        <li><a href="#fulfill-fetch"><span class="secno">4.1.2</span> <span class="content">FulfillFetch(loader, entry, payload)</span></a>
+        <li><a href="#fulfill-translate"><span class="secno">4.1.3</span> <span class="content">FulfillTranslate(loader, entry, source)</span></a>
+        <li><a href="#fulfill-instantiate"><span class="secno">4.1.4</span> <span class="content">FulfillInstantiate(loader, entry, optionalInstance, source)</span></a>
+        <li><a href="#commit-instantiated"><span class="secno">4.1.5</span> <span class="content">CommitInstantiated(loader, entry, optionalInstance, source)</span></a>
         <li><a href="#instantiation"><span class="secno">4.1.6</span> <span class="content">Instantiation(loader, result, source)</span></a>
        </ul>
       <li><a href="#loading-operations"><span class="secno">4.2</span> <span class="content">Loading Operations</span></a>
@@ -162,7 +158,7 @@ loading process and customizing loading behavior.</p>
        <ul class="toc">
         <li><a href="#reflect-loader-lookup"><span class="secno">6.5.1</span> <span class="content">Reflect.Loader.lookup(key)</span></a>
         <li><a href="#reflect-loader-install"><span class="secno">6.5.2</span> <span class="content">Reflect.Loader.install(key, module)</span></a>
-        <li><a href="#reflect-loader-uninstall"><span class="secno">6.5.3</span> <span class="content">Reflect.Loader.uninstall(module)</span></a>
+        <li><a href="#reflect-loader-uninstall"><span class="secno">6.5.3</span> <span class="content">Reflect.Loader.uninstall(key)</span></a>
         <li><a href="#reflect-loader-cancel"><span class="secno">6.5.4</span> <span class="content">Reflect.Loader.cancel(key)</span></a>
        </ul>
       <li><a href="#loading-hooks"><span class="secno">6.6</span> <span class="content">Pipeline Intercession</span></a>
@@ -175,8 +171,8 @@ loading process and customizing loading behavior.</p>
          <ul class="toc">
           <li><a href="#reflective-get-export-names"><span class="secno">6.7.1.1</span> <span class="content">Reflective Module.GetExportNames(exportStarStack)</span></a>
           <li><a href="#reflective-resolve-export"><span class="secno">6.7.1.2</span> <span class="content">Reflective Module.ResolveExport(exportName, resolveStack, exportStarStack)</span></a>
-          <li><a href="#reflective-instantiate"><span class="secno">6.7.1.3</span> <span class="content">Reflective Module.Instantiate()</span></a>
-          <li><a href="#reflective-evaluate"><span class="secno">6.7.1.4</span> <span class="content">Reflective Module.Evaluate()</span></a>
+          <li><a href="#reflective-instantiate"><span class="secno">6.7.1.3</span> <span class="content">Reflective Module.ModuleDeclarationInstantiation()</span></a>
+          <li><a href="#reflective-evaluate"><span class="secno">6.7.1.4</span> <span class="content">Reflective Module.ModuleEvaluation()</span></a>
          </ul>
         <li><a href="#parse-exports-descriptors"><span class="secno">6.7.2</span> <span class="content">ParseExportsDescriptors(obj)</span></a>
         <li><a href="#create-module-mutator"><span class="secno">6.7.3</span> <span class="content">CreateModuleMutator(module)</span></a>
@@ -200,11 +196,14 @@ loading process and customizing loading behavior.</p>
       <li><a href="#browser-instantiate"><span class="secno">8.5</span> <span class="content">Instantiate</span></a>
      </ul>
     <li><a href="#conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
+    <li><a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
+     <ul class="toc">
+      <li><a href="#index-defined-here"><span class="secno"></span> <span class="content">Terms defined by this specification</span></a>
+     </ul>
     <li><a href="#references"><span class="secno"></span> <span class="content">References</span></a>
      <ul class="toc">
       <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
      </ul>
-    <li><a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
    </ul></div>
   
 
@@ -284,7 +283,7 @@ loading process and customizing loading behavior.</p>
    <p>mean the same thing as:</p>
 
 
-   <pre emu-alg="">1. If _x_ is an abrupt completion, the return a promise rejected with _x_.[[value]].
+   <pre emu-alg="">1. If _x_ is an abrupt completion, then return a promise rejected with _x_.[[value]].
 1. Else if _x_ is a Completion Record, then let _x_ be _x_.[[value]].
 </pre>
 
@@ -570,7 +569,8 @@ loading process and customizing loading behavior.</p>
    <h4 class="heading settled" data-level="4.1.1" id="ensure-registered"><span class="secno">4.1.1. </span><span class="content">EnsureRegistered(loader, key)</span><a class="self-link" href="#ensure-registered"></a></h4>
 
 
-   <pre emu-alg="">1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
+   <pre emu-alg="">1. Assert: _loader_ has a [[Registry]] internal slot.
+1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
 1. If _pair_ exists, then:
   1. Let _entry_ be _pair_.[[value]].
 1. Else:
@@ -580,43 +580,43 @@ loading process and customizing loading behavior.</p>
 </pre>
 
 
-   <h4 class="heading settled" data-level="4.1.2" id="resolve-fetch"><span class="secno">4.1.2. </span><span class="content">ResolveFetch(loader, entry, payload)</span><a class="self-link" href="#resolve-fetch"></a></h4>
+   <h4 class="heading settled" data-level="4.1.2" id="fulfill-fetch"><span class="secno">4.1.2. </span><span class="content">FulfillFetch(loader, entry, payload)</span><a class="self-link" href="#fulfill-fetch"></a></h4>
 
 
    <pre emu-alg="">1. If _entry_.[[Fetch]] is *undefined*, then set _entry_.[[Fetch]] to a new promise.
-1. Resolve _entry_.[[Fetch]] with _payload_.
+1. Fulfill _entry_.[[Fetch]] with _payload_.
 1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "translate".
 </pre>
 
 
-   <h4 class="heading settled" data-level="4.1.3" id="resolve-translate"><span class="secno">4.1.3. </span><span class="content">ResolveTranslate(loader, entry, source)</span><a class="self-link" href="#resolve-translate"></a></h4>
+   <h4 class="heading settled" data-level="4.1.3" id="fulfill-translate"><span class="secno">4.1.3. </span><span class="content">FulfillTranslate(loader, entry, source)</span><a class="self-link" href="#fulfill-translate"></a></h4>
 
 
    <pre emu-alg="">1. If _entry_.[[Translate]] is *undefined*, then set _entry_.[[Translate]] to a new promise.
-1. Resolve _entry_.[[Translate]] with _source_.
+1. Fulfill _entry_.[[Translate]] with _source_.
 1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "instantiate".
 </pre>
 
 
-   <h4 class="heading settled" data-level="4.1.4" id="resolve-instantiate"><span class="secno">4.1.4. </span><span class="content">ResolveInstantiate(loader, entry, instance, source)</span><a class="self-link" href="#resolve-instantiate"></a></h4>
+   <h4 class="heading settled" data-level="4.1.4" id="fulfill-instantiate"><span class="secno">4.1.4. </span><span class="content">FulfillInstantiate(loader, entry, optionalInstance, source)</span><a class="self-link" href="#fulfill-instantiate"></a></h4>
 
 
    <pre emu-alg="">1. If _entry_.[[Instantiate]] is *undefined*, then set _entry_.[[Instantiate]] to a new promise.
-1. Return CommitInstantiated(_entry_, _instance_, _source_).
+1. Return CommitInstantiated(_loader_, _entry_, _optionalInstance_, _source_).
 </pre>
 
 
-   <h4 class="heading settled" data-level="4.1.5" id="commit-instantiated"><span class="secno">4.1.5. </span><span class="content">CommitInstantiated(entry, instance, source)</span><a class="self-link" href="#commit-instantiated"></a></h4>
+   <h4 class="heading settled" data-level="4.1.5" id="commit-instantiated"><span class="secno">4.1.5. </span><span class="content">CommitInstantiated(loader, entry, optionalInstance, source)</span><a class="self-link" href="#commit-instantiated"></a></h4>
 
 
-   <pre emu-alg="">1. Let _instance_ be Instantiation(_instance_, _source_).
+   <pre emu-alg="">1. Let _instance_ be Instantiation(_loader_, _optionalInstance_, _source_).
 1. ReturnIfAbrupt(_instance_).
 1. // TODO: edge case: what if _instance_ is a thenable function?
-1. Resolve _entry_.[[Instantiate]] with _instance_.
+1. Fulfill _entry_.[[Instantiate]] with _instance_.
 1. Let _deps_ be a new empty List.
 1. If _instance_ is a Module Record, then:
-  1. Assert: _instance_ is a Normal Module Record.
-  1. For each _dep_ in _instance_.[[ImportedModules]], do:
+  1. Assert: _instance_ is a Source Text Module Record.
+  1. For each _dep_ in _instance_.[[RequestedModules]], do:
     1. Append the record { [[key]]: _dep_, [[value]]: *undefined* } to _deps_.
 1. Set _entry_.[[Dependencies]] to _deps_.
 1. Set _entry_.[[Module]] to _instance_.
@@ -645,9 +645,9 @@ loading process and customizing loading behavior.</p>
 1. Let _hook_ be _loader_.[[Fetch]].
 1. // TODO: metadata object
 1. Let _p0_ be the result of promise-calling _hook_(_key_).
-1. Let _p_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _v_, runs the following steps:
+1. Let _p_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _payload_, runs the following steps:
   1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "translate".
-  1. Return _v_.
+  1. Return _payload_.
 1. Set _entry_.[[Fetch]] to _p_.
 1. Return _p_.
 </pre>
@@ -681,9 +681,9 @@ loading process and customizing loading behavior.</p>
 1. Let _p_ be the result of transforming RequestFetch(_loader_, _key_) with a fulfillment handler that, when called with argument _payload_, runs the following steps:
   1. Return the result of transforming RequestTranslate(_loader_, _key_) with a fulfillment handler that, when called with argument _source_, runs the following steps:
     1. // TODO: metadata
-    1. Let _p1_ be the result of promise-calling _hook_(_key_, _payload_, _source_).
-    1. Return the result of transforming _p1_ with a fulfillment handler that, when called with argument _instance_, runs the following steps:
-      1. Let _status_ be CommitInstantiated(_entry_, _instance_, _source_).
+    1. Let _p1_ be the result of promise-calling _hook_(_key_, _source_).
+    1. Return the result of transforming _p1_ with a fulfillment handler that, when called with argument _optionalInstance_, runs the following steps:
+      1. Let _status_ be CommitInstantiated(_loader_, _entry_, _optionalInstance_, _source_).
       1. ReturnIfAbrupt(_status_).
       1. Return _entry_.
 1. Set _entry_.[[Instantiate]] to _p_.
@@ -694,12 +694,17 @@ loading process and customizing loading behavior.</p>
    <h4 class="heading settled" data-level="4.2.4" id="request-link"><span class="secno">4.2.4. </span><span class="content">RequestLink(loader, key)</span><a class="self-link" href="#request-link"></a></h4>
 
 
-   <pre emu-alg="">1. Let _entry0_ be EnsureRegistered(_loader_, _key_).
-1. If _entry0_.[[State]] is "ready", return a new promise fulfilled with _entry_.[[Module]].
+   <pre emu-alg="">1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. If _entry_.[[State]] is "ready", return a new promise fulfilled with _entry_.[[Module]].
 1. Return the result of transforming RequestInstantiate(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _depLoads_ be a new empty List.
   1. For each _pair_ in _entry_.[[Dependencies]], do:
     1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[key]], _key_) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
+      1. Let _depEntry_ be EnsureRegistered(_loader_, _depKey_).
+      1. If _depEntry_.[[State]] is "ready", then:
+        1. Let _dep_ be _depEntry_.[[Module]].
+        1. Set _pair_.[[value]] to _dep_.
+        1. Return _dep_.
       1. Return the result of transforming RequestInstantiate(_loader_, _depKey_) with a fulfillment handler that, when called with value _dep_, runs the following steps:
         1. Set _pair_.[[value]] to _dep_.
         1. Return _dep_.
@@ -718,7 +723,7 @@ loading process and customizing loading behavior.</p>
 
    <pre emu-alg="">1. Return the result of transforming RequestLink(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _module_ be _entry_.[[Module]].
-  1. Let _status_ be _module_.Evaluate().
+  1. Let _status_ be _module_.ModuleEvaluation().
   1. ReturnIfAbrupt(_status_).
   1. Return _module_.
 </pre>
@@ -734,10 +739,10 @@ loading process and customizing loading behavior.</p>
    <h4 class="heading settled" data-level="5.1.1" id="host-resolve-imported-module"><span class="secno">5.1.1. </span><span class="content">HostResolveImportedModule(module, requestName)</span><a class="self-link" href="#host-resolve-imported-module"></a></h4>
 
 
-   <p>The modules spec should only invoke this operation from methods of Normal Module Records, and this spec does not invoke the operation at all.</p>
+   <p>The modules spec should only invoke this operation from methods of Source Text Module Records, and this spec does not invoke the operation at all.</p>
 
 
-   <pre emu-alg="">1. Assert: _module_ is a Normal Module Record.
+   <pre emu-alg="">1. Assert: _module_ is a Source Text Module Record.
 1. Let _entry_ be _module_.[[RegistryEntry]].
 1. Assert: _entry_ is in "link" or "ready" state.
 1. Let _pair_ be the pair in _state_.[[Dependencies]] such that _pair_.[[key]] is equal to _requestName_.
@@ -769,7 +774,7 @@ loading process and customizing loading behavior.</p>
   1. If _dep_.[[State]] is "link", then:
     1. Let _module_ be _dep_.[[Module]].
     1. Assert: _module_ is a Module Record.
-    1. Let _status_ be _module_.Instantiate().
+    1. Let _status_ be _module_.ModuleDeclarationInstantiation().
     1. ReturnIfAbrupt(_status_).
     1. Set _dep_.[[State]] to "ready".
 1. Return *undefined*.
@@ -807,7 +812,9 @@ loading process and customizing loading behavior.</p>
    <h4 class="heading settled" data-level="6.1.1" id="reflect-loader-import"><span class="secno">6.1.1. </span><span class="content">Reflect.Loader.import(name[, referrer])</span><a class="self-link" href="#reflect-loader-import"></a></h4>
 
 
-   <pre emu-alg="">1. Let _loader_ be this Loader Object.
+   <pre emu-alg="">1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a TypeError exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
   1. Return RequestReady(_loader_, _key_).
 </pre>
@@ -820,7 +827,9 @@ loading process and customizing loading behavior.</p>
    <h4 class="heading settled" data-level="6.2.1" id="reflect-load-resolve"><span class="secno">6.2.1. </span><span class="content">Reflect.Loader.resolve(name[, referrer])</span><a class="self-link" href="#reflect-load-resolve"></a></h4>
 
 
-   <pre emu-alg="">1. Let _loader_ be this Loader Object.
+   <pre emu-alg="">1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a TypeError exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Return Resolve(_loader_, _name_, _referrer_).
 </pre>
 
@@ -832,7 +841,9 @@ loading process and customizing loading behavior.</p>
    <h4 class="heading settled" data-level="6.3.1" id="reflect-loader-load"><span class="secno">6.3.1. </span><span class="content">Reflect.Loader.load(key[, stage])</span><a class="self-link" href="#reflect-loader-load"></a></h4>
 
 
-   <pre emu-alg="">1. Let _loader_ be this Loader Object.
+   <pre emu-alg="">1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a TypeError exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. If _stage_ is *undefined* then let _stage_ be "ready".
 1. If _stage_ is "fetch", then:
   1. Return RequestFetch(_loader_, _key_).
@@ -858,25 +869,27 @@ loading process and customizing loading behavior.</p>
    <h4 class="heading settled" data-level="6.4.1" id="reflect-loader-provide"><span class="secno">6.4.1. </span><span class="content">Reflect.Loader.provide(key, stage, value)</span><a class="self-link" href="#reflect-loader-provide"></a></h4>
 
 
-   <pre emu-alg="">1. Let _loader_ be this Loader Object.
+   <pre emu-alg="">1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
 1. If _stage_ is "fetch", then:
   1. If _entry_.[[State]] is greater than "fetch", throw a new TypeError.
-  1. Call ResolveFetch(_loader_, _entry_, _value_).
+  1. Call FulfillFetch(_loader_, _entry_, _value_).
   1. Return *undefined*.
 1. If _stage_ is "translate", then:
   1. If _entry_.[[State]] is greater than "translate", throw a new TypeError.
-  1. Call ResolveFetch(_loader_, _entry_, *undefined*).
-  1. Call ResolveTranslate(_loader_, _entry_, _value_).
+  1. Call FulfillFetch(_loader_, _entry_, *undefined*).
+  1. Call FulfillTranslate(_loader_, _entry_, _value_).
   1. Return *undefined*.
 1. If _stage_ is "instantiate", then:
   1. If _entry_.[[State]] is greater than "instantiate", throw a new TypeError.
-  1. Call ResolveFetch(_loader_, _entry_, *undefined*).
-  1. Call ResolveTranslate(_loader_, _entry_, *undefined*).
+  1. Call FulfillFetch(_loader_, _entry_, *undefined*).
+  1. Call FulfillTranslate(_loader_, _entry_, *undefined*).
   1. Assert: _entry_.[[Translate]] is resolved or rejected.
   1. TODO: need to propagate rejections
   1. Let _source_ be the fulfillment value of _entry_.[[Translate]].
-  1. Call ResolveInstantiate(_loader_, _entry_, _value_, _source_).
+  1. Call FulfillInstantiate(_loader_, _entry_, _value_, _source_).
   1. Return *undefined*.
 1. Throw a new TypeError.
 </pre>
@@ -885,7 +898,7 @@ loading process and customizing loading behavior.</p>
    <h4 class="heading settled" data-level="6.4.2" id="reflect-loader-error"><span class="secno">6.4.2. </span><span class="content">Reflect.Loader.error(key, stage, value)</span><a class="self-link" href="#reflect-loader-error"></a></h4>
 
 
-   <pre emu-alg="">1. 
+   <pre emu-alg="">1.
 </pre>
 
 
@@ -896,7 +909,9 @@ loading process and customizing loading behavior.</p>
    <h4 class="heading settled" data-level="6.5.1" id="reflect-loader-lookup"><span class="secno">6.5.1. </span><span class="content">Reflect.Loader.lookup(key)</span><a class="self-link" href="#reflect-loader-lookup"></a></h4>
 
 
-   <pre emu-alg="">1. Let _loader_ be this Loader Object.
+   <pre emu-alg="">1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
 1. If _pair_ does not exist, then return *null*.
 1. Let _entry_ be _pair_.[[value]].
@@ -929,7 +944,9 @@ loading process and customizing loading behavior.</p>
    <h4 class="heading settled" data-level="6.5.2" id="reflect-loader-install"><span class="secno">6.5.2. </span><span class="content">Reflect.Loader.install(key, module)</span><a class="self-link" href="#reflect-loader-install"></a></h4>
 
 
-   <pre emu-alg="">1. Let _loader_ be this Loader Object.
+   <pre emu-alg="">1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
 1. If _pair_ exists, then throw a new TypeError.
 1. Let _entry_ be a new registry entry record { [[Key]]: _key_, [[State]]: "ready", [[Metadata]]: *undefined*, [[Fetch]]: *undefined*, [[Translate]]: *undefined*, [[Instantiate]]: *undefined*, [[Dependencies]]: *undefined*, [[Module]]: _module_ }.
@@ -937,10 +954,12 @@ loading process and customizing loading behavior.</p>
 </pre>
 
 
-   <h4 class="heading settled" data-level="6.5.3" id="reflect-loader-uninstall"><span class="secno">6.5.3. </span><span class="content">Reflect.Loader.uninstall(module)</span><a class="self-link" href="#reflect-loader-uninstall"></a></h4>
+   <h4 class="heading settled" data-level="6.5.3" id="reflect-loader-uninstall"><span class="secno">6.5.3. </span><span class="content">Reflect.Loader.uninstall(key)</span><a class="self-link" href="#reflect-loader-uninstall"></a></h4>
 
 
-   <pre emu-alg="">1. Let _loader_ be this Loader Object.
+   <pre emu-alg="">1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
 1. If _pair_ does not exist, then throw a new TypeError.
 1. If _pair_.[[value]].[[State]] is less than "link", then throw a new TypeError.
@@ -951,7 +970,9 @@ loading process and customizing loading behavior.</p>
    <h4 class="heading settled" data-level="6.5.4" id="reflect-loader-cancel"><span class="secno">6.5.4. </span><span class="content">Reflect.Loader.cancel(key)</span><a class="self-link" href="#reflect-loader-cancel"></a></h4>
 
 
-   <pre emu-alg="">1. Let _loader_ be this Loader Object.
+   <pre emu-alg="">1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
 1. If _pair_ does not exist, then throw a new TypeError.
 1. Let _entry_ be _pair_.[[value]].
@@ -1085,7 +1106,7 @@ loading process and customizing loading behavior.</p>
 </pre>
 
 
-   <h5 class="heading settled" data-level="6.7.1.3" id="reflective-instantiate"><span class="secno">6.7.1.3. </span><span class="content">Reflective Module.Instantiate()</span><a class="self-link" href="#reflective-instantiate"></a></h5>
+   <h5 class="heading settled" data-level="6.7.1.3" id="reflective-instantiate"><span class="secno">6.7.1.3. </span><span class="content">Reflective Module.ModuleDeclarationInstantiation()</span><a class="self-link" href="#reflective-instantiate"></a></h5>
 
 
    <p>Reflective modules are always already instantiated.</p>
@@ -1095,7 +1116,7 @@ loading process and customizing loading behavior.</p>
 </pre>
 
 
-   <h5 class="heading settled" data-level="6.7.1.4" id="reflective-evaluate"><span class="secno">6.7.1.4. </span><span class="content">Reflective Module.Evaluate()</span><a class="self-link" href="#reflective-evaluate"></a></h5>
+   <h5 class="heading settled" data-level="6.7.1.4" id="reflective-evaluate"><span class="secno">6.7.1.4. </span><span class="content">Reflective Module.ModuleEvaluation()</span><a class="self-link" href="#reflective-evaluate"></a></h5>
 
 
    <pre emu-alg="">1. Let _module_ be this Reflective Module Record.
@@ -1384,16 +1405,17 @@ readability, these words do not appear in all uppercase letters in this specific
 result is equivalent. (In particular, the algorithms defined in this specification are intended to be easy to follow, 
 and not intended to be performant.) 
 </p>
-  <h2 class="no-num heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
-  <h3 class="no-num heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
-  <dl>
-   <dt id="biblio-rfc2119"><a class="self-link" href="#biblio-rfc2119"></a>[rfc2119]
-   <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a></dl>
   <h2 class="no-num heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
+  <h3 class="no-num heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="indexlist">
    <li>loader object, <a href="#loader-object0">3</a>
    <li>reflective module record, <a href="#reflective-module-record0">6.7.1</a>
    <li>registry entry, <a href="#registry-entry">3.1</a>
    <li>site packages, <a href="#site-packages">8.1</a></ul>
+  <h2 class="no-num heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
+  <h3 class="no-num heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
+  <dl>
+   <dt id="biblio-rfc2119"><a class="self-link" href="#biblio-rfc2119"></a>[RFC2119]
+   <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a></dl>
  </body>
 </html>
