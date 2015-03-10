@@ -216,6 +216,13 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Return _entry_.
 </pre>
 
+<h4 id="resolve">Resolve(loader, name, referrer)</h4>
+
+<pre emu-alg>
+1. Let _hook_ be _loader_.[[Resolve]].
+1. Return the result of promise-calling _hook_(_name_, _referrer_).
+</pre>
+
 <h4 id="fulfill-fetch">FulfillFetch(loader, entry, payload)</h4>
 
 <pre emu-alg>
