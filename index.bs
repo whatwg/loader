@@ -232,27 +232,27 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "instantiate".
 </pre>
 
-<h4 id="resolve-instantiate">ResolveInstantiate(loader, entry, instance, source)</h4>
+<h4 id="resolve-instantiate">ResolveInstantiate(loader, entry, optionalInstance, source)</h4>
 
 <pre emu-alg>
 1. If _entry_.[[Instantiate]] is *undefined*, then set _entry_.[[Instantiate]] to a new promise.
-1. Return CommitInstantiated(_loader_, _entry_, _instance_, _source_).
+1. Return CommitInstantiated(_loader_, _entry_, _optionalInstance_, _source_).
 </pre>
 
-<h4 id="commit-instantiated">CommitInstantiated(loader, entry, instance, source)</h4>
+<h4 id="commit-instantiated">CommitInstantiated(loader, entry, optionalInstance, source)</h4>
 
 <pre emu-alg>
-1. Let _module_ be Instantiation(_loader_, _instance_, _source_).
-1. ReturnIfAbrupt(_module_).
-1. // TODO: edge case: what if _module_ is a thenable function?
-1. Resolve _entry_.[[Instantiate]] with _module_.
+1. Let _instance_ be Instantiation(_loader_, _optionalInstance_, _source_).
+1. ReturnIfAbrupt(_instance_).
+1. // TODO: edge case: what if _instance_ is a thenable function?
+1. Resolve _entry_.[[Instantiate]] with _instance_.
 1. Let _deps_ be a new empty List.
-1. If _module_ is a Module Record, then:
-  1. Assert: _module_ is a Source Text Module Record.
-  1. For each _dep_ in _module_.[[ImportedModules]], do:
+1. If _instance_ is a Module Record, then:
+  1. Assert: _instance_ is a Source Text Module Record.
+  1. For each _dep_ in _instance_.[[ImportedModules]], do:
     1. Append the record { [[key]]: _dep_, [[value]]: *undefined* } to _deps_.
 1. Set _entry_.[[Dependencies]] to _deps_.
-1. Set _entry_.[[Module]] to _module_.
+1. Set _entry_.[[Module]] to _instance_.
 1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "link".
 </pre>
 
@@ -310,8 +310,8 @@ A <dfn>registry entry</dfn> is a record with the following fields:
   1. Return the result of transforming RequestTranslate(_loader_, _key_) with a fulfillment handler that, when called with argument _source_, runs the following steps:
     1. // TODO: metadata
     1. Let _p1_ be the result of promise-calling _hook_(_key_, _payload_, _source_).
-    1. Return the result of transforming _p1_ with a fulfillment handler that, when called with argument _instance_, runs the following steps:
-      1. Let _status_ be CommitInstantiated(_loader_, _entry_, _instance_, _source_).
+    1. Return the result of transforming _p1_ with a fulfillment handler that, when called with argument _optionalInstance_, runs the following steps:
+      1. Let _status_ be CommitInstantiated(_loader_, _entry_, _optionalInstance_, _source_).
       1. ReturnIfAbrupt(_status_).
       1. Return _entry_.
 1. Set _entry_.[[Instantiate]] to _p_.
