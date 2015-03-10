@@ -309,7 +309,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Let _p_ be the result of transforming RequestFetch(_loader_, _key_) with a fulfillment handler that, when called with argument _payload_, runs the following steps:
   1. Return the result of transforming RequestTranslate(_loader_, _key_) with a fulfillment handler that, when called with argument _source_, runs the following steps:
     1. // TODO: metadata
-    1. Let _p1_ be the result of promise-calling _hook_(_key_, _payload_, _source_).
+    1. Let _p1_ be the result of promise-calling _hook_(_key_, _source_).
     1. Return the result of transforming _p1_ with a fulfillment handler that, when called with argument _optionalInstance_, runs the following steps:
       1. Let _status_ be CommitInstantiated(_loader_, _entry_, _optionalInstance_, _source_).
       1. ReturnIfAbrupt(_status_).
