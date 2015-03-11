@@ -193,7 +193,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
   <tr>
     <td>\[[Error]]</td>
     <td>Any or <b>nothing</b></td>
-    <td>An error that was encountered during loading, linking, or evaluation; <b>nothing</b> if no error has been encountered.</td>
+    <td>An error that was encountered during one of the phases of the loading pipeline; <b>nothing</b> if no error has been encountered.</td>
   </tr>
 </table>
 
