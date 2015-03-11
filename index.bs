@@ -548,7 +548,7 @@ The modules spec should only invoke this operation from methods of Source Text M
   1. Call SimpleDefine(_result_, "error", *null*).
 1. Else:
   1. Let _opt_ be CreateObject().
-  1. Call SimpleDefine(_opt_, "value", _entry_.[[Error]].
+  1. Call SimpleDefine(_opt_, "value", _entry_.[[Error]]).
   1. Call SimpleDefine(_result_, "error", _opt_).
 1. Return _result_.
 </pre>
