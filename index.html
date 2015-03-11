@@ -36,7 +36,7 @@
    <h1 class="p-name no-ref" id="title">Loader</h1>
   
    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">A Collection of Interesting Ideas — Last Updated
-    <time class="dt-updated" datetime="2015-03-10">10 March 2015</time></span></h2>
+    <time class="dt-updated" datetime="2015-03-11">11 March 2015</time></span></h2>
   
    <div data-fill-with="spec-metadata">
     <dl>
@@ -107,19 +107,21 @@ loading process and customizing loading behavior.</p>
       <li><a href="#auxiliary-operations"><span class="secno">4.1</span> <span class="content">Auxiliary Operations</span></a>
        <ul class="toc">
         <li><a href="#ensure-registered"><span class="secno">4.1.1</span> <span class="content">EnsureRegistered(loader, key)</span></a>
-        <li><a href="#fulfill-fetch"><span class="secno">4.1.2</span> <span class="content">FulfillFetch(loader, entry, payload)</span></a>
-        <li><a href="#fulfill-translate"><span class="secno">4.1.3</span> <span class="content">FulfillTranslate(loader, entry, source)</span></a>
-        <li><a href="#fulfill-instantiate"><span class="secno">4.1.4</span> <span class="content">FulfillInstantiate(loader, entry, optionalInstance, source)</span></a>
-        <li><a href="#commit-instantiated"><span class="secno">4.1.5</span> <span class="content">CommitInstantiated(loader, entry, optionalInstance, source)</span></a>
-        <li><a href="#instantiation"><span class="secno">4.1.6</span> <span class="content">Instantiation(loader, result, source)</span></a>
+        <li><a href="#resolve"><span class="secno">4.1.2</span> <span class="content">Resolve(loader, name, referrer)</span></a>
+        <li><a href="#fulfill-fetch"><span class="secno">4.1.3</span> <span class="content">FulfillFetch(loader, entry, payload)</span></a>
+        <li><a href="#fulfill-translate"><span class="secno">4.1.4</span> <span class="content">FulfillTranslate(loader, entry, source)</span></a>
+        <li><a href="#fulfill-instantiate"><span class="secno">4.1.5</span> <span class="content">FulfillInstantiate(loader, entry, optionalInstance, source)</span></a>
+        <li><a href="#commit-instantiated"><span class="secno">4.1.6</span> <span class="content">CommitInstantiated(loader, entry, optionalInstance, source)</span></a>
+        <li><a href="#instantiation"><span class="secno">4.1.7</span> <span class="content">Instantiation(loader, result, source)</span></a>
        </ul>
       <li><a href="#loading-operations"><span class="secno">4.2</span> <span class="content">Loading Operations</span></a>
        <ul class="toc">
         <li><a href="#request-fetch"><span class="secno">4.2.1</span> <span class="content">RequestFetch(loader, key)</span></a>
         <li><a href="#request-translate"><span class="secno">4.2.2</span> <span class="content">RequestTranslate(loader, key)</span></a>
         <li><a href="#request-instantiate"><span class="secno">4.2.3</span> <span class="content">RequestInstantiate(loader, key)</span></a>
-        <li><a href="#request-link"><span class="secno">4.2.4</span> <span class="content">RequestLink(loader, key)</span></a>
-        <li><a href="#request-ready"><span class="secno">4.2.5</span> <span class="content">RequestReady(loader, key)</span></a>
+        <li><a href="#request-instantiate-all"><span class="secno">4.2.4</span> <span class="content">RequestInstantiateAll(loader, key)</span></a>
+        <li><a href="#request-link"><span class="secno">4.2.5</span> <span class="content">RequestLink(loader, key)</span></a>
+        <li><a href="#request-ready"><span class="secno">4.2.6</span> <span class="content">RequestReady(loader, key)</span></a>
        </ul>
      </ul>
     <li><a href="#linking-semantics"><span class="secno">5</span> <span class="content">Linking Semantics</span></a>
@@ -580,7 +582,15 @@ loading process and customizing loading behavior.</p>
 </pre>
 
 
-   <h4 class="heading settled" data-level="4.1.2" id="fulfill-fetch"><span class="secno">4.1.2. </span><span class="content">FulfillFetch(loader, entry, payload)</span><a class="self-link" href="#fulfill-fetch"></a></h4>
+   <h4 class="heading settled" data-level="4.1.2" id="resolve"><span class="secno">4.1.2. </span><span class="content">Resolve(loader, name, referrer)</span><a class="self-link" href="#resolve"></a></h4>
+
+
+   <pre emu-alg="">1. Let _hook_ be _loader_.[[Resolve]].
+1. Return the result of promise-calling _hook_(_name_, _referrer_).
+</pre>
+
+
+   <h4 class="heading settled" data-level="4.1.3" id="fulfill-fetch"><span class="secno">4.1.3. </span><span class="content">FulfillFetch(loader, entry, payload)</span><a class="self-link" href="#fulfill-fetch"></a></h4>
 
 
    <pre emu-alg="">1. If _entry_.[[Fetch]] is *undefined*, then set _entry_.[[Fetch]] to a new promise.
@@ -589,7 +599,7 @@ loading process and customizing loading behavior.</p>
 </pre>
 
 
-   <h4 class="heading settled" data-level="4.1.3" id="fulfill-translate"><span class="secno">4.1.3. </span><span class="content">FulfillTranslate(loader, entry, source)</span><a class="self-link" href="#fulfill-translate"></a></h4>
+   <h4 class="heading settled" data-level="4.1.4" id="fulfill-translate"><span class="secno">4.1.4. </span><span class="content">FulfillTranslate(loader, entry, source)</span><a class="self-link" href="#fulfill-translate"></a></h4>
 
 
    <pre emu-alg="">1. If _entry_.[[Translate]] is *undefined*, then set _entry_.[[Translate]] to a new promise.
@@ -598,7 +608,7 @@ loading process and customizing loading behavior.</p>
 </pre>
 
 
-   <h4 class="heading settled" data-level="4.1.4" id="fulfill-instantiate"><span class="secno">4.1.4. </span><span class="content">FulfillInstantiate(loader, entry, optionalInstance, source)</span><a class="self-link" href="#fulfill-instantiate"></a></h4>
+   <h4 class="heading settled" data-level="4.1.5" id="fulfill-instantiate"><span class="secno">4.1.5. </span><span class="content">FulfillInstantiate(loader, entry, optionalInstance, source)</span><a class="self-link" href="#fulfill-instantiate"></a></h4>
 
 
    <pre emu-alg="">1. If _entry_.[[Instantiate]] is *undefined*, then set _entry_.[[Instantiate]] to a new promise.
@@ -606,7 +616,7 @@ loading process and customizing loading behavior.</p>
 </pre>
 
 
-   <h4 class="heading settled" data-level="4.1.5" id="commit-instantiated"><span class="secno">4.1.5. </span><span class="content">CommitInstantiated(loader, entry, optionalInstance, source)</span><a class="self-link" href="#commit-instantiated"></a></h4>
+   <h4 class="heading settled" data-level="4.1.6" id="commit-instantiated"><span class="secno">4.1.6. </span><span class="content">CommitInstantiated(loader, entry, optionalInstance, source)</span><a class="self-link" href="#commit-instantiated"></a></h4>
 
 
    <pre emu-alg="">1. Let _instance_ be Instantiation(_loader_, _optionalInstance_, _source_).
@@ -624,7 +634,7 @@ loading process and customizing loading behavior.</p>
 </pre>
 
 
-   <h4 class="heading settled" data-level="4.1.6" id="instantiation"><span class="secno">4.1.6. </span><span class="content">Instantiation(loader, result, source)</span><a class="self-link" href="#instantiation"></a></h4>
+   <h4 class="heading settled" data-level="4.1.7" id="instantiation"><span class="secno">4.1.7. </span><span class="content">Instantiation(loader, result, source)</span><a class="self-link" href="#instantiation"></a></h4>
 
 
    <pre emu-alg="">1. If _result_ is *undefined*, then return ParseModule(_loader_.[[Realm]], _source_).
@@ -691,34 +701,42 @@ loading process and customizing loading behavior.</p>
 </pre>
 
 
-   <h4 class="heading settled" data-level="4.2.4" id="request-link"><span class="secno">4.2.4. </span><span class="content">RequestLink(loader, key)</span><a class="self-link" href="#request-link"></a></h4>
+   <h4 class="heading settled" data-level="4.2.4" id="request-instantiate-all"><span class="secno">4.2.4. </span><span class="content">RequestInstantiateAll(loader, key)</span><a class="self-link" href="#request-instantiate-all"></a></h4>
 
 
-   <pre emu-alg="">1. Let _entry_ be EnsureRegistered(_loader_, _key_).
-1. If _entry_.[[State]] is "ready", return a new promise fulfilled with _entry_.[[Module]].
-1. Return the result of transforming RequestInstantiate(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+   <pre emu-alg="">1. Return the result of transforming RequestInstantiate(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _depLoads_ be a new empty List.
   1. For each _pair_ in _entry_.[[Dependencies]], do:
     1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[key]], _key_) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
-      1. Let _depEntry_ be EnsureRegistered(_loader_, _depKey_).
       1. If _depEntry_.[[State]] is "ready", then:
         1. Let _dep_ be _depEntry_.[[Module]].
         1. Set _pair_.[[value]] to _dep_.
         1. Return _dep_.
-      1. Return the result of transforming RequestInstantiate(_loader_, _depKey_) with a fulfillment handler that, when called with value _dep_, runs the following steps:
+      1. Return the result of transforming RequestInstantiateAll(_loader_, _depKey_) with a fulfillment handler that, when called with value _dep_, runs the following steps:
         1. Set _pair_.[[value]] to _dep_.
         1. Return _dep_.
     1. Append _p_ to _depLoads_.
   1. Let _p_ be the result of waiting for all _depLoads_.
   1. Return the result of transforming _p_ with a fulfillment handler that, when called, runs the following steps:
-    1. Let _status_ be Link(_loader_, _entry_).
-    1. ReturnIfAbrupt(_status_).
-    1. Assert: _entry_’s whole dependency graph is in "ready" state.
     1. Return _entry_.
 </pre>
 
 
-   <h4 class="heading settled" data-level="4.2.5" id="request-ready"><span class="secno">4.2.5. </span><span class="content">RequestReady(loader, key)</span><a class="self-link" href="#request-ready"></a></h4>
+   <h4 class="heading settled" data-level="4.2.5" id="request-link"><span class="secno">4.2.5. </span><span class="content">RequestLink(loader, key)</span><a class="self-link" href="#request-link"></a></h4>
+
+
+   <pre emu-alg="">1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. If _entry_.[[State]] is "ready", return a new promise fulfilled with _entry_.[[Module]].
+1. Return the result of transforming RequestInstantiateAll(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+  1. Assert: _entry_’s whole dependency graph is in "link" state.
+  1. Let _status_ be Link(_loader_, _entry_).
+  1. ReturnIfAbrupt(_status_).
+  1. Assert: _entry_’s whole dependency graph is in "ready" state.
+  1. Return _entry_.
+</pre>
+
+
+   <h4 class="heading settled" data-level="4.2.6" id="request-ready"><span class="secno">4.2.6. </span><span class="content">RequestReady(loader, key)</span><a class="self-link" href="#request-ready"></a></h4>
 
 
    <pre emu-alg="">1. Return the result of transforming RequestLink(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
@@ -935,7 +953,7 @@ loading process and customizing loading behavior.</p>
   1. Call SimpleDefine(_result_, "error", *null*).
 1. Else:
   1. Let _opt_ be CreateObject().
-  1. Call SimpleDefine(_opt_, "value", _entry_.[[Error]].
+  1. Call SimpleDefine(_opt_, "value", _entry_.[[Error]]).
   1. Call SimpleDefine(_result_, "error", _opt_).
 1. Return _result_.
 </pre>
