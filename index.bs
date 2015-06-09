@@ -381,10 +381,10 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. Assert: _module_ is a Source Text Module Record.
 1. Let _entry_ be _module_.[[RegistryEntry]].
 1. Assert: _entry_ is in "link" or "ready" state.
-1. Let _pair_ be the pair in _state_.[[Dependencies]] such that _pair_.[[key]] is equal to _requestName_.
+1. Let _pair_ be the pair in _entry_.[[Dependencies]] such that _pair_.[[key]] is equal to _requestName_.
 1. Assert: _pair_ is defined.
 1. Let _dep_ be _pair_.[[value]].
-1. Assert: _def_.[[State]] is greater than or equal to "link".
+1. Assert: _dep_.[[State]] is greater than or equal to "link".
 1. Return _dep_.[[Module]].
 </pre>
 
