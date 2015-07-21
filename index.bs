@@ -43,7 +43,7 @@ The authoring format was carefully designed to support pre-compilation (like Bro
 
 The JavaScript Loader allows host environments, like Node.js and browsers, to fetch and load modules on demand. It provides a hookable pipeline, to allow front-end packaging solutions like Browserify, WebPack and jspm to hook into the loading process.
 
-This division provides a single format that developers can use in all JavaScript environments, and a separate loading mechanism for each environment. For example, a Node Loader would load its modules from the file system, consulting <code>package.json</code>, while a Browser Loader would fetch modules and use browser-supplied packaging formats.
+This division provides a single format that developers can use in all JavaScript environments, and a separate loading mechanism for each environment. For example, a Node Loader would load its modules from the file system, using its own module lookup algorithm, while a Browser Loader would fetch modules and use browser-supplied packaging formats.
 
 JavaScript itself, in ECMAScript 2015, defines the module syntax and the "linking semantics" between modules. When a module is requested, it delegates responsibility for loading the module to the host environment. The Loader defines how host environments can allow JavaScript code to configure that process.
 
