@@ -3,6 +3,8 @@ Title: Loader
 Group: WHATWG
 H1: Loader
 Shortname: loader
+Repository: whatwg/loader
+Inline Github Issues: true
 Level: 1
 Status: DREAM
 ED: https://whatwg.github.io/loader
@@ -16,11 +18,20 @@ Abstract: loading process and customizing loading behavior.
 Logo: https://resources.whatwg.org/logo-javascript.svg
 !Version History: <a href="https://github.com/whatwg/loader/commits">https://github.com/whatwg/loader/commits</a>
 !Participate: <a href="https://github.com/whatwg/loader/issues/new">File an issue</a> (<a href="https://github.com/whatwg/loader/issues?state=open">open issues</a>)
+
+Opaque Elements: emu-alg
 </pre>
 
 <style>
-  ol > li { margin: 0; }
+  .note + .example, .note + .note { margin-top: 1em; }
+
+  emu-val { font-weight: bold; }
+  emu-alg > ol, emu-alg > ol ol ol ol { list-style-type: decimal; }
+  emu-alg > ol ol, emu-alg > ol ol ol ol ol { list-style-type: lower-alpha; }
+  emu-alg > ol ol ol, emu-alg > ol ol ol ol ol ol { list-style-type: lower-roman; }
+  emu-alg li { margin: 0; }
 </style>
+<script src="https://resources.whatwg.org/file-issue.js" async></script>
 
 <h2 id="status" class="no-num no-toc">Status</h2>
 
@@ -61,36 +72,36 @@ This spec makes heavy use of promises, and adopts the notational conventions est
 
 <h3 id="shorthand-phrases">Shorthand Phrases</h3>
 
-<h4 id="reject-if-abrupt">RejectIfAbrupt(x)</h4>
+<h4 id="reject-if-abrupt" aoid="RejectIfAbrupt">RejectIfAbrupt(x)</h4>
 
 Algorithm steps that say
 
-<pre emu-alg>
+<emu-alg>
 1. RejectIfAbrupt(_x_).
-</pre>
+</emu-alg>
 
 mean the same thing as:
 
-<pre emu-alg>
+<emu-alg>
 1. If _x_ is an abrupt completion, then return a promise rejected with _x_.[[value]].
 1. Else if _x_ is a Completion Record, then let _x_ be _x_.[[value]].
-</pre>
+</emu-alg>
 
 <h3 id="common-operations">Common Operations</h3>
 
-<h4 id="create-object">CreateObject()</h4>
+<h4 id="create-object" aoid="CreateObject">CreateObject()</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _obj_ be ObjectCreate(%ObjectPrototype%).
 1. Return _obj_.
-</pre>
+</emu-alg>
 
-<h4 id="simple-define">SimpleDefine(obj, name, value)</h4>
+<h4 id="simple-define" aoid="SimpleDefine">SimpleDefine(obj, name, value)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _desc_ be a new PropertyDescriptor record {[[Value]]: _value_, [[Writable]]: *true*, [[Enumerable]]: *true*, [[Configurable]]: *true*}.
 1. Return the result of calling OrdinaryDefineOwnProperty(obj, name, value).
-</pre>
+</emu-alg>
 
 
 
@@ -203,9 +214,9 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 
 <h3 id="auxiliary-operations">Auxiliary Operations</h3>
 
-<h4 id="ensure-registered">EnsureRegistered(loader, key)</h4>
+<h4 id="ensure-registered" aoid="EnsureRegistered">EnsureRegistered(loader, key)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Assert: _loader_ has a [[Registry]] internal slot.
 1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
 1. If _pair_ exists, then:
@@ -214,41 +225,41 @@ A <dfn>registry entry</dfn> is a record with the following fields:
   1. Let _entry_ be a new registry entry record { [[Key]]: _key_, [[State]]: "fetch", [[Metadata]]: *undefined*, [[Fetch]]: *undefined*, [[Translate]]: *undefined*, [[Instantiate]]: *undefined*, [[Dependencies]]: *undefined*, [[Module]]: *undefined*, [[Error]]: *nothing* }.
   1. Append { [[key]]: _key_, [[value]]: _entry_ } to _loader_.[[Registry]].
 1. Return _entry_.
-</pre>
+</emu-alg>
 
-<h4 id="resolve">Resolve(loader, name, referrer)</h4>
+<h4 id="resolve" aoid="Resolve">Resolve(loader, name, referrer)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _hook_ be _loader_.[[Resolve]].
 1. Return the result of promise-calling _hook_(_name_, _referrer_).
-</pre>
+</emu-alg>
 
-<h4 id="fulfill-fetch">FulfillFetch(loader, entry, payload)</h4>
+<h4 id="fulfill-fetch" aoid="FulfillFetch">FulfillFetch(loader, entry, payload)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. If _entry_.[[Fetch]] is *undefined*, then set _entry_.[[Fetch]] to a new promise.
 1. Fulfill _entry_.[[Fetch]] with _payload_.
 1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "translate".
-</pre>
+</emu-alg>
 
-<h4 id="fulfill-translate">FulfillTranslate(loader, entry, source)</h4>
+<h4 id="fulfill-translate" aoid="FulfillTranslate">FulfillTranslate(loader, entry, source)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. If _entry_.[[Translate]] is *undefined*, then set _entry_.[[Translate]] to a new promise.
 1. Fulfill _entry_.[[Translate]] with _source_.
 1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "instantiate".
-</pre>
+</emu-alg>
 
-<h4 id="fulfill-instantiate">FulfillInstantiate(loader, entry, optionalInstance, source)</h4>
+<h4 id="fulfill-instantiate" aoid="FulfillInstantiate">FulfillInstantiate(loader, entry, optionalInstance, source)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. If _entry_.[[Instantiate]] is *undefined*, then set _entry_.[[Instantiate]] to a new promise.
 1. Return CommitInstantiated(_loader_, _entry_, _optionalInstance_, _source_).
-</pre>
+</emu-alg>
 
-<h4 id="commit-instantiated">CommitInstantiated(loader, entry, optionalInstance, source)</h4>
+<h4 id="commit-instantiated" aoid="CommitInstantiated">CommitInstantiated(loader, entry, optionalInstance, source)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _instance_ be Instantiation(_loader_, _optionalInstance_, _source_).
 1. ReturnIfAbrupt(_instance_).
 1. // TODO: edge case: what if _instance_ is a thenable function?
@@ -261,21 +272,21 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Set _entry_.[[Dependencies]] to _deps_.
 1. Set _entry_.[[Module]] to _instance_.
 1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "link".
-</pre>
+</emu-alg>
 
-<h4 id="instantiation">Instantiation(loader, result, source)</h4>
+<h4 id="instantiation" aoid="Instantiation">Instantiation(loader, result, source)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. If _result_ is *undefined*, then return ParseModule(_loader_.[[Realm]], _source_).
 1. If IsCallable(_result_) is *false* then throw a new TypeError.
 1. Return _result_.
-</pre>
+</emu-alg>
 
 <h3 id="loading-operations">Loading Operations</h3>
 
-<h4 id="request-fetch">RequestFetch(loader, key)</h4>
+<h4 id="request-fetch" aoid="RequestFetch">RequestFetch(loader, key)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
 1. If _entry_.[[State]] is greater than "link", return a new error promise.
 1. If _entry_.[[Fetch]] is not *undefined*, return _entry_.[[Fetch]].
@@ -287,11 +298,11 @@ A <dfn>registry entry</dfn> is a record with the following fields:
   1. Return _payload_.
 1. Set _entry_.[[Fetch]] to _p_.
 1. Return _p_.
-</pre>
+</emu-alg>
 
-<h4 id="request-translate">RequestTranslate(loader, key)</h4>
+<h4 id="request-translate" aoid="RequestTranslate">RequestTranslate(loader, key)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
 1. If _entry_.[[State]] is greater than "link", return a new error promise.
 1. If _entry_.[[Translate]] is not *undefined*, return _entry_.[[Translate]].
@@ -304,11 +315,11 @@ A <dfn>registry entry</dfn> is a record with the following fields:
     1. Return _source_.
 1. Set _entry_.[[Translate]] to _p_.
 1. Return _p_.
-</pre>
+</emu-alg>
 
-<h4 id="request-instantiate">RequestInstantiate(loader, key)</h4>
+<h4 id="request-instantiate" aoid="RequestInstantiate">RequestInstantiate(loader, key)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
 1. If _entry_.[[State]] is "ready", return a new error promise.
 1. If _entry_.[[Instantiate]] is not *undefined*, return _entry_.[[Instantiate]].
@@ -323,11 +334,11 @@ A <dfn>registry entry</dfn> is a record with the following fields:
       1. Return _entry_.
 1. Set _entry_.[[Instantiate]] to _p_.
 1. Return _p_.
-</pre>
+</emu-alg>
 
-<h4 id="request-instantiate-all">RequestInstantiateAll(loader, key)</h4>
+<h4 id="request-instantiate-all" aoid="RequestInstantiateAll">RequestInstantiateAll(loader, key)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Return the result of transforming RequestInstantiate(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _depLoads_ be a new empty List.
   1. For each _pair_ in _entry_.[[Dependencies]], do:
@@ -343,11 +354,11 @@ A <dfn>registry entry</dfn> is a record with the following fields:
   1. Let _p_ be the result of waiting for all _depLoads_.
   1. Return the result of transforming _p_ with a fulfillment handler that, when called, runs the following steps:
     1. Return _entry_.
-</pre>
+</emu-alg>
 
-<h4 id="request-link">RequestLink(loader, key)</h4>
+<h4 id="request-link" aoid="RequestLink">RequestLink(loader, key)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
 1. If _entry_.[[State]] is "ready", return a new promise fulfilled with _entry_.[[Module]].
 1. Return the result of transforming RequestInstantiateAll(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
@@ -356,28 +367,28 @@ A <dfn>registry entry</dfn> is a record with the following fields:
   1. ReturnIfAbrupt(_status_).
   1. Assert: _entry_'s whole dependency graph is in "ready" state.
   1. Return _entry_.
-</pre>
+</emu-alg>
 
-<h4 id="request-ready">RequestReady(loader, key)</h4>
+<h4 id="request-ready" aoid="RequestReady">RequestReady(loader, key)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Return the result of transforming RequestLink(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _module_ be _entry_.[[Module]].
   1. Let _status_ be _module_.ModuleEvaluation().
   1. ReturnIfAbrupt(_status_).
   1. Return _module_.
-</pre>
+</emu-alg>
 
 
 <h2 id="linking-semantics">Linking Semantics</h2>
 
 <h3 id="resolving-dependencies">Resolving Dependencies</h3>
 
-<h4 id="host-resolve-imported-module">HostResolveImportedModule(module, requestName)</h4>
+<h4 id="host-resolve-imported-module" aoid="HostResolveImportedModule">HostResolveImportedModule(module, requestName)</h4>
 
 The modules spec should only invoke this operation from methods of Source Text Module Records, and this spec does not invoke the operation at all.
 
-<pre emu-alg>
+<emu-alg>
 1. Assert: _module_ is a Source Text Module Record.
 1. Let _entry_ be _module_.[[RegistryEntry]].
 1. Assert: _entry_ is in "link" or "ready" state.
@@ -386,14 +397,14 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. Let _dep_ be _pair_.[[value]].
 1. Assert: _def_.[[State]] is greater than or equal to "link".
 1. Return _dep_.[[Module]].
-</pre>
+</emu-alg>
 
 
 <h3 id="linking">Linking</h3>
 
-<h4 id="link">Link(loader, root)</h4>
+<h4 id="link" aoid="Link">Link(loader, root)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Assert: _root_ is a registry entry record in "link" state.
 1. Let _deps_ be DependencyGraph(_root_).
 1. For each _dep_ in _deps_, do:
@@ -412,26 +423,26 @@ The modules spec should only invoke this operation from methods of Source Text M
     1. ReturnIfAbrupt(_status_).
     1. Set _dep_.[[State]] to "ready".
 1. Return *undefined*.
-</pre>
+</emu-alg>
 
-<h4 id="dependency-graph">DependencyGraph(root)</h4>
+<h4 id="dependency-graph" aoid="DependencyGraph">DependencyGraph(root)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _result_ be a new empty List.
 1. Call ComputeDependencyGraph(_root_, _result_).
 1. Return _result_.
-</pre>
+</emu-alg>
 
-<h4 id="compute-dependency-graph">ComputeDependencyGraph(entry, result)</h4>
+<h4 id="compute-dependency-graph" aoid="ComputeDependencyGraph">ComputeDependencyGraph(entry, result)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. If _entry_ is already in _result_, then return *undefined*.
 1. Append _entry_ to _result_.
 1. For each _pair_ in _entry_.[[Dependencies]], do:
   1. Assert: _pair_.[[value]] is defined.
   1. Call ComputeDependencyGraph(_pair_.[[value]], _result_).
 1. Return *undefined*.
-</pre>
+</emu-alg>
 
 
 <h2 id="api">API</h2>
@@ -440,32 +451,32 @@ The modules spec should only invoke this operation from methods of Source Text M
 
 <h4 id="reflect-loader-import">Reflect.Loader.import(name[, referrer])</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a TypeError exception.
 1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
   1. Return RequestReady(_loader_, _key_).
-</pre>
+</emu-alg>
 
 
 <h3 id="resolution-api">Resolution</h3>
 
 <h4 id="reflect-load-resolve">Reflect.Loader.resolve(name[, referrer])</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a TypeError exception.
 1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Return Resolve(_loader_, _name_, _referrer_).
-</pre>
+</emu-alg>
 
 
 <h3 id="request-api">Requests</h3>
 
 <h4 id="reflect-loader-load">Reflect.Loader.load(key[, stage])</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a TypeError exception.
 1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
@@ -484,14 +495,14 @@ The modules spec should only invoke this operation from methods of Source Text M
   1. Return the result of transforming RequestReady(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
     1. Return GetModuleNamespace(_entry_.[[Module]]).
 1. Throw a new TypeError.
-</pre>
+</emu-alg>
 
 
 <h3 id="response-api">Responses</h3>
 
 <h4 id="reflect-loader-provide">Reflect.Loader.provide(key, stage, value)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
 1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
@@ -515,20 +526,20 @@ The modules spec should only invoke this operation from methods of Source Text M
   1. Call FulfillInstantiate(_loader_, _entry_, _value_, _source_).
   1. Return *undefined*.
 1. Throw a new TypeError.
-</pre>
+</emu-alg>
 
 <h4 id="reflect-loader-error">Reflect.Loader.error(key, stage, value)</h4>
 
-<pre emu-alg>
-1.
-</pre>
+<emu-alg>
+1. // TODO
+</emu-alg>
 
 
 <h3 id="registry-api">Registry</h3>
 
 <h4 id="reflect-loader-lookup">Reflect.Loader.lookup(key)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
 1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
@@ -558,11 +569,11 @@ The modules spec should only invoke this operation from methods of Source Text M
   1. Call SimpleDefine(_opt_, "value", _entry_.[[Error]]).
   1. Call SimpleDefine(_result_, "error", _opt_).
 1. Return _result_.
-</pre>
+</emu-alg>
 
 <h4 id="reflect-loader-install">Reflect.Loader.install(key, module)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
 1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
@@ -570,11 +581,11 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. If _pair_ exists, then throw a new TypeError.
 1. Let _entry_ be a new registry entry record { [[Key]]: _key_, [[State]]: "ready", [[Metadata]]: *undefined*, [[Fetch]]: *undefined*, [[Translate]]: *undefined*, [[Instantiate]]: *undefined*, [[Dependencies]]: *undefined*, [[Module]]: _module_ }.
 1. Append { [[key]]: _key_, [[value]]: _entry_ } to _loader_.[[Registry]].
-</pre>
+</emu-alg>
 
 <h4 id="reflect-loader-uninstall">Reflect.Loader.uninstall(key)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
 1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
@@ -582,11 +593,11 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. If _pair_ does not exist, then throw a new TypeError.
 1. If _pair_.[[value]].[[State]] is less than "link", then throw a new TypeError.
 1. Remove _pair_ from _loader_.[[Registry]].
-</pre>
+</emu-alg>
 
 <h4 id="reflect-loader-cancel">Reflect.Loader.cancel(key)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
 1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
@@ -595,7 +606,7 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. Let _entry_ be _pair_.[[value]].
 1. If _entry_.[[State]] is "link" or greater, throw a new TypeError.
 1. Remove _pair_ from _loader_.[[Registry]].
-</pre>
+</emu-alg>
 
 
 <h3 id="loading-hooks">Pipeline Intercession</h3>
@@ -643,9 +654,9 @@ A <dfn>reflective module record</dfn> is a kind of module record. It extends
   </tr>
 </table>
 
-<h5 id="reflective-get-export-names">Reflective Module.GetExportNames(exportStarStack)</h5>
+<h5 id="reflective-get-export-names" aoid="GetExportNames">Reflective Module.GetExportNames(exportStarStack)</h5>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _module_ be this Reflective Module Record.
 1. Let _exports_ be a new empty List.
 1. For each _name_ in _module_.[[LocalExports]], do:
@@ -653,11 +664,11 @@ A <dfn>reflective module record</dfn> is a kind of module record. It extends
 1. For each _pair_ in _module_.[[IndirectExports]], do:
   1. Append _pair_.[[key]] to _exports_.
 1. Return _exports_.
-</pre>
+</emu-alg>
 
-<h5 id="reflective-resolve-export">Reflective Module.ResolveExport(exportName, resolveStack, exportStarStack)</h5>
+<h5 id="reflective-resolve-export" aoid="ResolveExport">Reflective Module.ResolveExport(exportName, resolveStack, exportStarStack)</h5>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _module_ be this Reflective Module Record.
 1. If _resolveStack_ contains a record _r_ such that _r_.[[module]] is equal to _module_ and _r_.[[exportName]] is equal to _exportName_, then
   1. Assert: this is a circular import request.
@@ -671,26 +682,26 @@ A <dfn>reflective module record</dfn> is a kind of module record. It extends
 1. Let _pair_ be the pair in _exports_ such that _pair_.[[key]] is equal to _exportName_.
 1. If _pair_ is defined, then return _pair_.[[value]].
 1. Return *null*.
-</pre>
+</emu-alg>
 
-<h5 id="reflective-instantiate">Reflective Module.ModuleDeclarationInstantiation()</h5>
+<h5 id="reflective-instantiate" aoid="ModuleDeclarationInstantiation">Reflective Module.ModuleDeclarationInstantiation()</h5>
 
 Reflective modules are always already instantiated.
 
-<pre emu-alg>
+<emu-alg>
 1. Return *undefined*.
-</pre>
+</emu-alg>
 
-<h5 id="reflective-evaluate">Reflective Module.ModuleEvaluation()</h5>
+<h5 id="reflective-evaluate" aoid="ModuleEvaluation">Reflective Module.ModuleEvaluation()</h5>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _module_ be this Reflective Module Record.
 1. Let _evaluate_ be _module_.[[Evaluate]].
 1. Set _module_.[[Evaluate]] to *undefined*.
 1. Return _evaluate_().
-</pre>
+</emu-alg>
 
-<h4 id="parse-exports-descriptors">ParseExportsDescriptors(obj)</h4>
+<h4 id="parse-exports-descriptors" aoid="ParseExportsDescriptors">ParseExportsDescriptors(obj)</h4>
 
 <b>TODO:</b> parse as in <a href="https://gist.github.com/dherman/fbf3077a2781df74b6d8">these examples</a>
 <ul>
@@ -701,19 +712,19 @@ Reflective modules are always already instantiated.
   <li>re-export (immutable): <code>{ module: m, import: "foo" }</code>
 </ul>
 
-<pre emu-alg>
+<emu-alg>
 1. // TODO: spec me
-</pre>
+</emu-alg>
 
-<h4 id="create-module-mutator">CreateModuleMutator(module)</h4>
+<h4 id="create-module-mutator" aoid="CreateModuleMutator">CreateModuleMutator(module)</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. // TODO: spec me
-</pre>
+</emu-alg>
 
 <h4 id="reflect-module">Reflect.Module(descriptors[, executor, evaluate])</h4>
 
-<pre emu-alg>
+<emu-alg>
 1. Let _realm_ be the current Realm.
 1. Let _env_ be NewModuleEnvironment(_realm_.[[globalEnv]]).
 1. Let _exportDescriptors_ be ParseExportsDescriptors(_descriptors_). // TODO: interleave the subsequent loop with parsing?
@@ -750,7 +761,7 @@ Reflective modules are always already instantiated.
   1. Let _status_ be _executor_(_mutator_, _ns_).
   1. ReturnIfAbrupt(_status_).
 1. Return _ns_.
-</pre>
+</emu-alg>
 
 <h2 id="local">Local Loading</h2>
 
