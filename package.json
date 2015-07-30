@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "description": "Build process supporting stuff for WHATWG Loader Standard document",
+  "scripts": {
+    "ecmarkupify": "node ./ecmarkupify.js",
+    "local-watch": "node ./local-watch.js"
+  },
+  "devDependencies": {
+    "ecmarkup": "^1.3.0",
+    "jsdom": "^5.0.1",
+    "promise-debounce": "^1.0.0"
+  }
+}
