@@ -100,7 +100,7 @@ mean the same thing as:
 
 <emu-alg>
 1. Let _desc_ be a new PropertyDescriptor record {[[Value]]: _value_, [[Writable]]: *true*, [[Enumerable]]: *true*, [[Configurable]]: *true*}.
-1. Return the result of calling OrdinaryDefineOwnProperty(obj, name, value).
+1. Return the result of calling OrdinaryDefineOwnProperty(_obj_, _name_, _value_).
 </emu-alg>
 
 
