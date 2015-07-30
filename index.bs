@@ -103,7 +103,24 @@ mean the same thing as:
 1. Return the result of calling OrdinaryDefineOwnProperty(_obj_, _name_, _value_).
 </emu-alg>
 
+<h4 id="get-state-value" aoid="GetStateValue">GetStateValue(state)</h4>
 
+<emu-alg>
+1. If _state_ is the string "fetch" return 0.
+1. If _state_ is the string "translate" return 1.
+1. If _state_ is the string "instantiate" return 2.
+1. If _state_ is the string "link" return 3.
+1. If _state_ is the string "ready" return 4.
+</emu-alg>
+
+<h4 id="set-state-to-max" aoid="SetStateToMax">SetStateToMax(entry, newState)</h4>
+
+<emu-alg>
+1. Let _state_ be _entry_.[[State]].
+1. Let _stateValue_ be GetStateValue(_state_).
+1. Let _newStateValue_ be GetStateValue(_newState_).
+1. If _newStateValue_ is larger than _stateValue_, set _entry_.[[State]] to _newState_.
+</emu-alg>
 
 <h2 id="loader-object">Loader Object</h2>
 
@@ -239,7 +256,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 <emu-alg>
 1. If _entry_.[[Fetch]] is *undefined*, then set _entry_.[[Fetch]] to a new promise.
 1. Fulfill _entry_.[[Fetch]] with _payload_.
-1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "translate".
+1. SetStateToMax(_entry_, "translate").
 </emu-alg>
 
 <h4 id="fulfill-translate" aoid="FulfillTranslate">FulfillTranslate(loader, entry, source)</h4>
@@ -247,7 +264,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 <emu-alg>
 1. If _entry_.[[Translate]] is *undefined*, then set _entry_.[[Translate]] to a new promise.
 1. Fulfill _entry_.[[Translate]] with _source_.
-1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "instantiate".
+1. SetStateToMax(_entry_, "instantiate").
 </emu-alg>
 
 <h4 id="fulfill-instantiate" aoid="FulfillInstantiate">FulfillInstantiate(loader, entry, optionalInstance, source)</h4>
@@ -271,7 +288,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
     1. Append the record { [[key]]: _dep_, [[value]]: *undefined* } to _deps_.
 1. Set _entry_.[[Dependencies]] to _deps_.
 1. Set _entry_.[[Module]] to _instance_.
-1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "link".
+1. SetStateToMax(_entry_, "link").
 </emu-alg>
 
 <h4 id="instantiation" aoid="Instantiation">Instantiation(loader, result, source)</h4>
@@ -294,7 +311,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. // TODO: metadata object
 1. Let _p0_ be the result of promise-calling _hook_(_key_).
 1. Let _p_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _payload_, runs the following steps:
-  1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "translate".
+  1. SetStateToMax(_entry_, "translate").
   1. Return _payload_.
 1. Set _entry_.[[Fetch]] to _p_.
 1. Return _p_.
@@ -311,7 +328,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
   1. // TODO: metadata
   1. Let _p1_ be the result of promise-calling _hook_(_key_, _payload_).
   1. Return the result of transforming _p1_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
-    1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "instantiate".
+    1. SetStateToMax(_entry_, "instantiate").
     1. Return _source_.
 1. Set _entry_.[[Translate]] to _p_.
 1. Return _p_.
