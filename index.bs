@@ -277,8 +277,9 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 <h4 id="instantiation" aoid="Instantiation">Instantiation(loader, result, source)</h4>
 
 <emu-alg>
-1. If _result_ is *undefined*, then return ParseModule(_loader_.[[Realm]], _source_).
+1. If _result_ is *undefined*, then return ParseModule(_source_).
 1. If IsCallable(_result_) is *false* then throw a new TypeError.
+1. Set _result_.[[Realm]] to _loader_.[[Realm]].
 1. Return _result_.
 </emu-alg>
 
