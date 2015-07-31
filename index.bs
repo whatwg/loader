@@ -344,6 +344,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
   1. Let _depLoads_ be a new empty List.
   1. For each _pair_ in _entry_.[[Dependencies]], do:
     1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[key]], _key_) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
+      1. Let _depEntry_ be EnsureRegistered(_loader_, _depKey_).
       1. If _depEntry_.[[State]] is "ready", then:
         1. Let _dep_ be _depEntry_.[[Module]].
         1. Set _pair_.[[value]] to _dep_.
