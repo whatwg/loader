@@ -169,7 +169,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
   <tr>
     <td>\[[State]]</td>
     <td><code>"fetch"</code>, <code>"translate"</code>, <code>"instantiate"</code>, <code>"link"</code>, <code>"ready"</code></td>
-    <td>The metadata object passed through the pipeline.</td>
+    <td>A constant value to indicating which phase the entry is at.</td>
   </tr>
   <tr>
     <td>\[[Metadata]]</td>
