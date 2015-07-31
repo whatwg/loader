@@ -272,6 +272,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Set _entry_.[[Dependencies]] to _deps_.
 1. Set _entry_.[[Module]] to _instance_.
 1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "link".
+1. Set _instance_.[[RegistryEntry]] to _entry_.
 </emu-alg>
 
 <h4 id="instantiation" aoid="Instantiation">Instantiation(loader, result, source)</h4>
