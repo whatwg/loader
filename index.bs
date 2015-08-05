@@ -103,7 +103,24 @@ mean the same thing as:
 1. Return the result of calling OrdinaryDefineOwnProperty(_obj_, _name_, _value_).
 </emu-alg>
 
+<h4 id="get-state-value" aoid="GetStateValue">GetStateValue(state)</h4>
 
+<emu-alg>
+1. If _state_ is the string "fetch" return 0.
+1. If _state_ is the string "translate" return 1.
+1. If _state_ is the string "instantiate" return 2.
+1. If _state_ is the string "link" return 3.
+1. If _state_ is the string "ready" return 4.
+</emu-alg>
+
+<h4 id="set-state-to-max" aoid="SetStateToMax">SetStateToMax(entry, newState)</h4>
+
+<emu-alg>
+1. Let _state_ be _entry_.[[State]].
+1. Let _stateValue_ be GetStateValue(_state_).
+1. Let _newStateValue_ be GetStateValue(_newState_).
+1. If _newStateValue_ is larger than _stateValue_, set _entry_.[[State]] to _newState_.
+</emu-alg>
 
 <h2 id="loader-object">Loader Object</h2>
 
@@ -239,7 +256,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 <emu-alg>
 1. If _entry_.[[Fetch]] is *undefined*, then set _entry_.[[Fetch]] to a new promise.
 1. Fulfill _entry_.[[Fetch]] with _payload_.
-1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "translate".
+1. SetStateToMax(_entry_, "translate").
 </emu-alg>
 
 <h4 id="fulfill-translate" aoid="FulfillTranslate">FulfillTranslate(loader, entry, source)</h4>
@@ -247,7 +264,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 <emu-alg>
 1. If _entry_.[[Translate]] is *undefined*, then set _entry_.[[Translate]] to a new promise.
 1. Fulfill _entry_.[[Translate]] with _source_.
-1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "instantiate".
+1. SetStateToMax(_entry_, "instantiate").
 </emu-alg>
 
 <h4 id="fulfill-instantiate" aoid="FulfillInstantiate">FulfillInstantiate(loader, entry, optionalInstance, source)</h4>
@@ -271,7 +288,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
     1. Append the record { [[key]]: _dep_, [[value]]: *undefined* } to _deps_.
 1. Set _entry_.[[Dependencies]] to _deps_.
 1. Set _entry_.[[Module]] to _instance_.
-1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "link".
+1. SetStateToMax(_entry_, "link").
 1. Set _instance_.[[RegistryEntry]] to _entry_.
 </emu-alg>
 
@@ -290,13 +307,15 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 
 <emu-alg>
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
-1. If _entry_.[[State]] is greater than "link", return a new error promise.
+1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
+1. Let _linkStateValue_ be GetStateValue("link").
+1. If _stateValue_ is greater than _linkStateValue_, return a new error promise.
 1. If _entry_.[[Fetch]] is not *undefined*, return _entry_.[[Fetch]].
 1. Let _hook_ be _loader_.[[Fetch]].
 1. // TODO: metadata object
 1. Let _p0_ be the result of promise-calling _hook_(_key_).
 1. Let _p_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _payload_, runs the following steps:
-  1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "translate".
+  1. SetStateToMax(_entry_, "translate").
   1. Return _payload_.
 1. Set _entry_.[[Fetch]] to _p_.
 1. Return _p_.
@@ -306,14 +325,16 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 
 <emu-alg>
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
-1. If _entry_.[[State]] is greater than "link", return a new error promise.
+1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
+1. Let _linkStateValue_ be GetStateValue("link").
+1. If _stateValue_ is greater than _linkStateValue_, return a new error promise.
 1. If _entry_.[[Translate]] is not *undefined*, return _entry_.[[Translate]].
 1. Let _hook_ be _loader_.[[Translate]].
 1. Let _p_ be the result of transforming RequestFetch(_loader_, _key_) with a fulfillment handler that, when called with argument _payload_, runs the following steps:
   1. // TODO: metadata
   1. Let _p1_ be the result of promise-calling _hook_(_key_, _payload_).
   1. Return the result of transforming _p1_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
-    1. Set _entry_.[[State]] to the max of _entry_.[[State]] and "instantiate".
+    1. SetStateToMax(_entry_, "instantiate").
     1. Return _source_.
 1. Set _entry_.[[Translate]] to _p_.
 1. Return _p_.
@@ -397,7 +418,9 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. Let _pair_ be the pair in _entry_.[[Dependencies]] such that _pair_.[[key]] is equal to _requestName_.
 1. Assert: _pair_ is defined.
 1. Let _dep_ be _pair_.[[value]].
-1. Assert: _dep_.[[State]] is greater than or equal to "link".
+1. Let _stateValue_ be GetStateValue(_dep_.[[State]]).
+1. Let _linkStateValue_ be GetStateValue("link").
+1. Assert: _stateValue_ is greater than or equal to _linkStateValue_.
 1. Return _dep_.[[Module]].
 </emu-alg>
 
@@ -510,16 +533,22 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
 1. If _stage_ is "fetch", then:
-  1. If _entry_.[[State]] is greater than "fetch", throw a new TypeError.
+  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
+  1. Let _fetchStateValue_ be GetStateValue("fetch").
+  1. If _stateValue_ is greater than _fetchStateValue_, throw a new TypeError.
   1. Call FulfillFetch(_loader_, _entry_, _value_).
   1. Return *undefined*.
 1. If _stage_ is "translate", then:
-  1. If _entry_.[[State]] is greater than "translate", throw a new TypeError.
+  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
+  1. Let _translateStateValue_ be GetStateValue("translate").
+  1. If _stateValue_ is greater than _translateStateValue_, throw a new TypeError.
   1. Call FulfillFetch(_loader_, _entry_, *undefined*).
   1. Call FulfillTranslate(_loader_, _entry_, _value_).
   1. Return *undefined*.
 1. If _stage_ is "instantiate", then:
-  1. If _entry_.[[State]] is greater than "instantiate", throw a new TypeError.
+  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
+  1. Let _instantiateStateValue_ be GetStateValue("instantiate").
+  1. If _stateValue_ is greater than _instantiateStateValue_, throw a new TypeError.
   1. Call FulfillFetch(_loader_, _entry_, *undefined*).
   1. Call FulfillTranslate(_loader_, _entry_, *undefined*).
   1. Assert: _entry_.[[Translate]] is resolved or rejected.
@@ -593,7 +622,9 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
 1. If _pair_ does not exist, then throw a new TypeError.
-1. If _pair_.[[value]].[[State]] is less than "link", then throw a new TypeError.
+1. Let _stateValue_ be GetStateValue(_pair_.[[value]].[[State]]).
+1. Let _linkStateValue_ be GetStateValue("link").
+1. If _stateValue_ is less than _linkStateValue_, then throw a new TypeError.
 1. Remove _pair_ from _loader_.[[Registry]].
 </emu-alg>
 
@@ -606,7 +637,9 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
 1. If _pair_ does not exist, then throw a new TypeError.
 1. Let _entry_ be _pair_.[[value]].
-1. If _entry_.[[State]] is "link" or greater, throw a new TypeError.
+1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
+1. Let _linkStateValue_ be GetStateValue("link").
+1. If _stateValue_ is greater than or equal to _linkStateValue_, throw a new TypeError.
 1. Remove _pair_ from _loader_.[[Registry]].
 </emu-alg>
 
