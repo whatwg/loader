@@ -511,7 +511,7 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. If _stage_ is "translate", then:
   1. Return RequestTranslate(_loader_, _key_).
 1. If _stage_ is "instantiate", then:
-  1. Return the result of transforming RequestInstantiate(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+  1. Return the result of transforming RequestInstantiateAll(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
     1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
     1. Return *undefined*.
 1. If _stage_ is "link", then:
