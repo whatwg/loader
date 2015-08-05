@@ -284,12 +284,12 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Let _deps_ be a new empty List.
 1. If _instance_ is a Module Record, then:
   1. Assert: _instance_ is a Source Text Module Record.
+  1. Set _instance_.[[RegistryEntry]] to _entry_.
   1. For each _dep_ in _instance_.[[RequestedModules]], do:
     1. Append the record { [[key]]: _dep_, [[value]]: *undefined* } to _deps_.
 1. Set _entry_.[[Dependencies]] to _deps_.
 1. Set _entry_.[[Module]] to _instance_.
 1. SetStateToMax(_entry_, "link").
-1. Set _instance_.[[RegistryEntry]] to _entry_.
 </emu-alg>
 
 <h4 id="instantiation" aoid="Instantiation">Instantiation(loader, result, source)</h4>
