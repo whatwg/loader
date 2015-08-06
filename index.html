@@ -310,7 +310,7 @@ loading process and customizing loading behavior.</p>
    <h4 aoid="SimpleDefine" class="heading settled" data-level="2.3.2" id="simple-define"><span class="secno">2.3.2. </span><span class="content">SimpleDefine(obj, name, value)</span><a class="self-link" href="#simple-define"></a></h4>
 
 
-   <emu-alg><ol><li>Let <var>desc</var> be a new PropertyDescriptor record {[[Value]]: <var>value</var>, [[Writable]]: <emu-val>true</emu-val>, [[Enumerable]]: <emu-val>true</emu-val>, [[Configurable]]: <emu-val>true</emu-val>}.</li><li>Return the result of calling <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ordinarydefineownproperty">OrdinaryDefineOwnProperty</a>(<var>obj</var>, <var>name</var>, <var>value</var>).</li></ol></emu-alg>
+   <emu-alg><ol><li>Let <var>desc</var> be a new PropertyDescriptor record {[[Value]]: <var>value</var>, [[Writable]]: <emu-val>true</emu-val>, [[Enumerable]]: <emu-val>true</emu-val>, [[Configurable]]: <emu-val>true</emu-val>}.</li><li>Return the result of calling <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ordinarydefineownproperty">OrdinaryDefineOwnProperty</a>(<var>obj</var>, <var>name</var>, <var>desc</var>).</li></ol></emu-alg>
 
 
    <h4 aoid="GetStateValue" class="heading settled" data-level="2.3.3" id="get-state-value"><span class="secno">2.3.3. </span><span class="content">GetStateValue(state)</span><a class="self-link" href="#get-state-value"></a></h4>
