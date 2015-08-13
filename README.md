@@ -37,3 +37,15 @@ npm run local-watch
 ```
 
 to start a watcher on `index.bs` that will update `index.html` as you edit.
+
+### Implementation status
+
+It is to early to know about the Loader, first we need ES2015 modules implemented by the various engines. Current status:
+
+ * IE: [Under Consideration](https://status.modern.ie/moduleses6?term=modules)
+ * V8: [In progress](https://code.google.com/p/v8/issues/detail?id=1569)
+ * Webkit: [Meta Bug](https://bugs.webkit.org/show_bug.cgi?id=147340)
+
+### Feedback
+
+Please feel free to open a new issue, or send a pull request!
