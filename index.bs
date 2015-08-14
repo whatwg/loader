@@ -249,8 +249,74 @@ The following steps are taken:
 <emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
-1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
 1. Return Resolve(_loader_, _name_, _referrer_).
+</emu-alg>
+
+<h4 id="reflect-loader-load">Reflect.Loader.prototype.load(key[, stage])</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _stage_ is *undefined* then let _stage_ be "ready".
+1. If _stage_ is "fetch", then:
+  1. Return RequestFetch(_loader_, _key_).
+1. If _stage_ is "translate", then:
+  1. Return RequestTranslate(_loader_, _key_).
+1. If _stage_ is "instantiate", then:
+  1. Return the result of transforming RequestInstantiateAll(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+    1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
+    1. Return *undefined*.
+1. If _stage_ is "link", then:
+  1. Return the result of transforming RequestLink(_loader_, _key_) with a fulfillment handler that returns *undefined*.
+1. If _stage_ is "ready", then:
+  1. Return the result of transforming RequestReady(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+    1. Return GetModuleNamespace(_entry_.[[Module]]).
+1. Throw a new *TypeError*.
+</emu-alg>
+
+<h4 id="reflect-loader-provide">Reflect.Loader.prototype.provide(key, stage, value)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. If _stage_ is "fetch", then:
+  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
+  1. Let _fetchStateValue_ be GetStateValue("fetch").
+  1. If _stateValue_ is greater than _fetchStateValue_, throw a new *TypeError*.
+  1. Call FulfillFetch(_loader_, _entry_, _value_).
+  1. Return *undefined*.
+1. If _stage_ is "translate", then:
+  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
+  1. Let _translateStateValue_ be GetStateValue("translate").
+  1. If _stateValue_ is greater than _translateStateValue_, throw a new *TypeError*.
+  1. Call FulfillFetch(_loader_, _entry_, *undefined*).
+  1. Call FulfillTranslate(_loader_, _entry_, _value_).
+  1. Return *undefined*.
+1. If _stage_ is "instantiate", then:
+  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
+  1. Let _instantiateStateValue_ be GetStateValue("instantiate").
+  1. If _stateValue_ is greater than _instantiateStateValue_, throw a new *TypeError*.
+  1. Call FulfillFetch(_loader_, _entry_, *undefined*).
+  1. Call FulfillTranslate(_loader_, _entry_, *undefined*).
+  1. Assert: _entry_.[[Translate]] is resolved or rejected.
+  1. TODO: need to propagate rejections
+  1. Let _source_ be the fulfillment value of _entry_.[[Translate]].
+  1. Call FulfillInstantiate(_loader_, _entry_, _value_, _source_).
+  1. Return *undefined*.
+1. Throw a new *TypeError*.
+</emu-alg>
+
+<h4 id="reflect-loader-error">Reflect.Loader.prototype.error(key, stage, value)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. // TODO
 </emu-alg>
 
 <h4 id="relect-loader-registry">get Reflect.Loader.prototype.registry</h4>
@@ -268,7 +334,7 @@ The initial value of the @@toStringTag property is the String value "Object".
 
 This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: true }.
 
-<h3 id="loader-internal-slots">Properties of Reflect.Loader Instances</h3>
+<h3 id="reflect-loader-internal-slots">Properties of Reflect.Loader Instances</h3>
 
 Loader instances are ordinary objects that inherit properties from the *Reflect.Loader.prototype*.
 
@@ -300,6 +366,42 @@ Loader instances are initially created with the internal slots described in the 
 
 The ModuleRegistry constructor is the %ModuleRegistry% intrinsic object. When called as a constructor it creates and initializes a new %ModuleRegistry% object. %ModuleRegistry% is not intended to be called as a function and will throw an exception when called in that manner.
 
+<h3 id="registry-abstract-operations">Abstract Operations for ModuleRegistry Objects</h3>
+
+<h4 id="registry-GetRegistryEntry" aoid="EntryLookup">GetRegistryEntry(registry, key)</h4>
+
+The abstract operation GetRegistryEntry with arguments registry and key performs the following steps:
+
+<emu-alg>
+1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. Let _entries_ be _registry_.[[RegistryData]].
+1. Let _pair_ be the entry in _entries_ such that _pair_.[[key]] is equal to _key_.
+1. If _pair_ does not exist, then return *null*.
+1. Let _entry_ be _pair_.[[value]].
+1. Let _result_ be CreateObject().
+1. Call SimpleDefine(_result_, "state", _entry_.[[State]]).
+1. Let _statePromise_ be *undefined*.
+1. If _entry_.[[State]] is "fetch" and _entry_.[[Fetch]] is not *undefined*, then
+  1. Set _statePromise_ to the result of transforming _entry_.[[Fetch]] with a new pass-through promise.
+1. Else If _entry_.[[State]] is "translate" and _entry_.[[Translate]] is not *undefined*, then
+  1. Set _statePromise_ to the result of transforming _entry_.[[Translate]] with a new pass-through promise.
+1. Else If _entry_.[[State]] is "instantiate" and _entry_.[[Instantiate]] is not *undefined*, then
+  1. Set _statePromise_ to the result of transforming _entry_.[[Instantiate]] with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+    1. If _entry_.[[Module]] is a Function object, then return _entry_.[[Module]].
+    1. Return *undefined*.
+1. Call SimpleDefine(_result_, "statePromise", _statePromise_).
+1. If _entry_.[[State]] is "ready" then let _module_ be _entry_.[[Module]].
+1. Else let _module_ be *undefined*.
+1. Call SimpleDefine(_result_, "module", _module_).
+1. If _entry_.[[Error]] is *nothing*, then:
+  1. Call SimpleDefine(_result_, "error", *null*).
+1. Else:
+  1. Let _opt_ be CreateObject().
+  1. Call SimpleDefine(_opt_, "value", _entry_.[[Error]]).
+  1. Call SimpleDefine(_result_, "error", _opt_).
+1. Return _result_.
+</emu-alg>
+
 <h3 id="properties-of-the-registry-constructor">Properties of the ModuleRegistry Constructor</h3>
 
 The value of the \[[Prototype]] internal slot of the ModuleRegistry constructor is the intrinsic object %FunctionPrototype%.
@@ -318,126 +420,32 @@ This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false,
 
 The initial value of ModuleRegistry.prototype.constructor is %ModuleRegistry%.
 
-<h4 id="loader-registry-@@iterator">ModuleRegistry.prototype[ @@iterator ]()</h4>
+<h4 id="registry-prototype-@@iterator">ModuleRegistry.prototype[ @@iterator ]()</h4>
 
 When the @@iterator method is called it returns an Iterator object (ES2015 25.1.1.2) that iterates over the module registry entries of the \[[RegistryData]] internal slot, returning each entry as a key value pair. The following steps are taken:
 
 <emu-alg>
 1. Let _registry_ be *this* value.
-1. Let _O_ be _registry_.[[RegistryData]].
-1. Return CreateArrayIterator(_O_, "key+value").
+1. Let _entries_ be a new List.
+1. For each _pair_ in _registry_.[[RegistryData]], do:
+  1. Let _key_ be _pair_.[[key]].
+  1. Let _entry_ be GetRegistryEntry(_registry_, _key_).
+  1. Append { [[key]]: _key_, [[value]]: _entry_ } to _entries_.
+1. Return CreateListIterator(_entries_).
 </emu-alg>
 
 The value of the name property of this function is "[Symbol.iterator]".
 
-<h4 id="reflect-loader-load">ModuleRegistry.prototype.load(key[, stage])</h4>
+<h4 id="registry-prototype-lookup">ModuleRegistry.prototype.lookup(key)</h4>
 
 The following steps are taken:
 
 <emu-alg>
 1. Let _registry_ be *this* value.
-1. If Type(_registry_) is not Object, throw a *TypeError* exception.
-1. If _registry_ does not have a [[Loader]] internal slot throw a *TypeError* exception.
-1. Let _loader_ be _registry_.[[Loader]].
-1. If _stage_ is *undefined* then let _stage_ be "ready".
-1. If _stage_ is "fetch", then:
-  1. Return RequestFetch(_loader_, _key_).
-1. If _stage_ is "translate", then:
-  1. Return RequestTranslate(_loader_, _key_).
-1. If _stage_ is "instantiate", then:
-  1. Return the result of transforming RequestInstantiateAll(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
-    1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
-    1. Return *undefined*.
-1. If _stage_ is "link", then:
-  1. Return the result of transforming RequestLink(_loader_, _key_) with a fulfillment handler that returns *undefined*.
-1. If _stage_ is "ready", then:
-  1. Return the result of transforming RequestReady(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
-    1. Return GetModuleNamespace(_entry_.[[Module]]).
-1. Throw a new *TypeError*.
+1. Return GetRegistryEntry(_registry_, _key_).
 </emu-alg>
 
-<h4 id="reflect-loader-provide">ModuleRegistry.prototype.provide(key, stage, value)</h4>
-
-The following steps are taken:
-
-<emu-alg>
-1. Let _registry_ be *this* value.
-1. If Type(_registry_) is not Object, throw a *TypeError* exception.
-1. If _registry_ does not have a [[Loader]] internal slot throw a *TypeError* exception.
-1. Let _loader_ be _registry_.[[Loader]].
-1. Let _entry_ be EnsureRegistered(_loader_, _key_).
-1. If _stage_ is "fetch", then:
-  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
-  1. Let _fetchStateValue_ be GetStateValue("fetch").
-  1. If _stateValue_ is greater than _fetchStateValue_, throw a new *TypeError*.
-  1. Call FulfillFetch(_loader_, _entry_, _value_).
-  1. Return *undefined*.
-1. If _stage_ is "translate", then:
-  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
-  1. Let _translateStateValue_ be GetStateValue("translate").
-  1. If _stateValue_ is greater than _translateStateValue_, throw a new *TypeError*.
-  1. Call FulfillFetch(_loader_, _entry_, *undefined*).
-  1. Call FulfillTranslate(_loader_, _entry_, _value_).
-  1. Return *undefined*.
-1. If _stage_ is "instantiate", then:
-  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
-  1. Let _instantiateStateValue_ be GetStateValue("instantiate").
-  1. If _stateValue_ is greater than _instantiateStateValue_, throw a new *TypeError*.
-  1. Call FulfillFetch(_loader_, _entry_, *undefined*).
-  1. Call FulfillTranslate(_loader_, _entry_, *undefined*).
-  1. Assert: _entry_.[[Translate]] is resolved or rejected.
-  1. TODO: need to propagate rejections
-  1. Let _source_ be the fulfillment value of _entry_.[[Translate]].
-  1. Call FulfillInstantiate(_loader_, _entry_, _value_, _source_).
-  1. Return *undefined*.
-1. Throw a new *TypeError*.
-</emu-alg>
-
-<h4 id="reflect-loader-error">ModuleRegistry.prototype.error(key, stage, value)</h4>
-
-The following steps are taken:
-
-<emu-alg>
-1. // TODO
-</emu-alg>
-
-<h4 id="reflect-loader-lookup">ModuleRegistry.prototype.lookup(key)</h4>
-
-The following steps are taken:
-
-<emu-alg>
-1. Let _registry_ be *this* value.
-1. If Type(_registry_) is not Object, throw a *TypeError* exception.
-1. Let _entries_ be _registry_.[[RegistryData]].
-1. Let _pair_ be the entry in _entries_ such that _pair_.[[key]] is equal to _key_.
-1. If _pair_ does not exist, then return *null*.
-1. Let _entry_ be _pair_.[[value]].
-1. Let _result_ be CreateObject().
-1. Call SimpleDefine(_result_, "state", _entry_.[[State]]).
-1. If _entry_.[[Fetch]] is *undefined* then let _fetch_ be *undefined*.
-1. Else let _fetch_ be the result of transforming _entry_.[[Fetch]] with a new pass-through promise.
-1. Call SimpleDefine(_result_, "fetch", _fetch_).
-1. If _entry_.[[Translate]] is *undefined*, then let _translate_ be *undefined*.
-1. Else let _translate_ be the result of transforming _entry_.[[Translate]] with a new pass-through promise.
-1. Call SimpleDefine(_result_, "translate", _translate_).
-1. If _entry_.[[Instantiate]] is *undefined*, then let _instantiate_ be *undefined*.
-1. Else let _instantiate_ be the result of transforming _entry_.[[Instantiate]] with a fulfillment handler that, when called with argument _entry_, runs the following steps:
-  1. If _entry_.[[Module]] is a Function object, then return _entry_.[[Module]].
-  1. Return *undefined*.
-1. Call SimpleDefine(_result_, "instantiate", _instantiate_).
-1. If _entry_.[[State]] is "ready" then let _module_ be _entry_.[[Module]].
-1. Else let _module_ be *undefined*.
-1. Call SimpleDefine(_result_, "module", _module_).
-1. If _entry_.[[Error]] is *nothing*, then:
-  1. Call SimpleDefine(_result_, "error", *null*).
-1. Else:
-  1. Let _opt_ be CreateObject().
-  1. Call SimpleDefine(_opt_, "value", _entry_.[[Error]]).
-  1. Call SimpleDefine(_result_, "error", _opt_).
-1. Return _result_.
-</emu-alg>
-
-<h4 id="reflect-loader-install">ModuleRegistry.prototype.install(key, module)</h4>
+<h4 id="registry-prototype-install">ModuleRegistry.prototype.install(key, module)</h4>
 
 The following steps are taken:
 
@@ -451,7 +459,7 @@ The following steps are taken:
 1. Append { [[key]]: _key_, [[value]]: _entry_ } to _entries_.
 </emu-alg>
 
-<h4 id="reflect-loader-uninstall">ModuleRegistry.prototype.uninstall(key)</h4>
+<h4 id="registry-prototype-uninstall">ModuleRegistry.prototype.uninstall(key)</h4>
 
 The following steps are taken:
 
@@ -467,7 +475,7 @@ The following steps are taken:
 1. Remove _pair_ from _entries_.
 </emu-alg>
 
-<h4 id="reflect-loader-cancel">ModuleRegistry.prototype.cancel(key)</h4>
+<h4 id="registry-prototype-cancel">ModuleRegistry.prototype.cancel(key)</h4>
 
 The following steps are taken:
 
@@ -1123,11 +1131,11 @@ This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false,
 
 <h4 id="system-loader-site-@@iterator">SitePackage.prototype[ @@iterator ]()</h4>
 
-When the @@iterator method is called it returns an Iterator object (ES2015 25.1.1.2) that iterates over the site packages of the \[[SiteData]] internal slot, returning each site package as a key value pair. The following steps are taken:
+When the @@iterator method is called it returns an Iterator object (ES2015 25.1.1.2) that iterates over the site packages of the \[[PackageData]] internal slot, returning each site package as a key value pair. The following steps are taken:
 
 <emu-alg>
 1. Let _site_ be *this* value.
-1. Let _O_ be _site_.[[SiteData]].
+1. Let _O_ be _site_.[[PackageData]].
 1. Return CreateArrayIterator(_O_, "key+value").
 </emu-alg>
 
@@ -1148,7 +1156,7 @@ SitePackage instances are initially created with the internal slots described in
     </tr>
   </thead>
   <tr>
-    <td>\[[SitePackage]]</td>
+    <td>\[[PackageData]]</td>
     <td>An object</td>
     <td>A table that maps package names to URLs.</td>
   </tr>
