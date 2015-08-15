@@ -370,7 +370,8 @@ A <dfn>registry entry</dfn> is a record with the following fields:
         1. Let _dep_ be _depEntry_.[[Module]].
         1. Set _pair_.[[value]] to _dep_.
         1. Return _dep_.
-      1. Return the result of transforming RequestInstantiateAll(_loader_, _depKey_) with a fulfillment handler that, when called with value _dep_, runs the following steps:
+      1. Return the result of transforming RequestInstantiateAll(_loader_, _depKey_) with a fulfillment handler that, when called with value _depEntry_, runs the following steps:
+        1. Let _dep_ be _depEntry_.[[Module]].
         1. Set _pair_.[[value]] to _dep_.
         1. Return _dep_.
     1. Append _p_ to _depLoads_.
