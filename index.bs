@@ -271,7 +271,8 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 
 <emu-alg>
 1. If _entry_.[[Instantiate]] is *undefined*, then set _entry_.[[Instantiate]] to a new promise.
-1. Return CommitInstantiated(_loader_, _entry_, _optionalInstance_, _source_).
+1. CommitInstantiated(_loader_, _entry_, _optionalInstance_, _source_).
+1. Fulfill _entry_.[[Instantiate]] with _entry_.
 </emu-alg>
 
 <h4 id="commit-instantiated" aoid="CommitInstantiated">CommitInstantiated(loader, entry, optionalInstance, source)</h4>
@@ -280,7 +281,6 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Let _instance_ be Instantiation(_loader_, _optionalInstance_, _source_).
 1. ReturnIfAbrupt(_instance_).
 1. // TODO: edge case: what if _instance_ is a thenable function?
-1. Fulfill _entry_.[[Instantiate]] with _instance_.
 1. Let _deps_ be a new empty List.
 1. If _instance_ is a Module Record, then:
   1. Assert: _instance_ is a Source Text Module Record.
