@@ -182,7 +182,7 @@ mean the same thing as:
 
 <emu-alg>
 1. Let _desc_ be a new PropertyDescriptor record {[[Value]]: _value_, [[Writable]]: *true*, [[Enumerable]]: *true*, [[Configurable]]: *true*}.
-1. Return the result of calling OrdinaryDefineOwnProperty(_obj_, _name_, _value_).
+1. Return the result of calling OrdinaryDefineOwnProperty(_obj_, _name_, _desc_).
 </emu-alg>
 
 <h4 id="get-state-value" aoid="GetStateValue">GetStateValue(state)</h4>
