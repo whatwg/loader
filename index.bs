@@ -174,7 +174,7 @@ The Reflect.Loader constructor is designed to be subclassable. It may be used as
 
 <h4 id="new-reflect-loader">Reflect.Loader()</h4>
 
-When Registry is called with no arguments, the following steps are taken:
+When Reflect.Loader is called with no arguments, the following steps are taken:
 
 <emu-alg>
 1. If NewTarget is *undefined*, then throw a *TypeError* exception.
@@ -837,7 +837,7 @@ The Module constructor is the initial value of the Module property of the the Re
 
 The Reflect.Module constructor is designed to be subclassable. It may be used as the value in an extends clause of a class definition. Subclass constructors that intend to inherit the specified Module behaviour must include a super call to the Reflect.Module constructor to create and initialize the subclass instance with the internal state necessary to support the Reflect.Module.prototype built-in methods.
 
-<h4 id="new-reflect-module">Reflect.Module(descriptors[, executor, evaluate])</h4>
+<h4 id="new-reflect-module">Reflect.Module(descriptors[, executor[, evaluate]])</h4>
 
 When Reflect.Module is called with arguments <i>descriptors</i>, <i>executor</i>, and <i>evaluate</i>, the following steps are taken:
 
