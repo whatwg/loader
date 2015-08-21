@@ -39,7 +39,7 @@
    <h1 class="p-name no-ref" id="title">Loader</h1>
   
    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">A Collection of Interesting Ideas — Last Updated
-    <time class="dt-updated" datetime="2015-08-05">5 August 2015</time></span></h2>
+    <time class="dt-updated" datetime="2015-08-21">21 August 2015</time></span></h2>
   
    <div data-fill-with="spec-metadata">
     <dl>
@@ -93,117 +93,150 @@ loading process and customizing loading behavior.</p>
      </li></ul>
     </li><li><a href="#conventions"><span class="secno">2</span> <span class="content">Conventions</span></a>
      <ul class="toc">
-      <li><a href="#promises"><span class="secno">2.1</span> <span class="content">Promises</span></a>
-      </li><li><a href="#shorthand-phrases"><span class="secno">2.2</span> <span class="content">Shorthand Phrases</span></a>
+      <li><a href="#well-known-symbols"><span class="secno">2.1</span> <span class="content">Well-Known Symbols</span></a>
+      </li><li><a href="#well-known-intrinsic-objects"><span class="secno">2.2</span> <span class="content">Well-Known Intrinsic Objects</span></a>
+      </li><li><a href="#promises"><span class="secno">2.3</span> <span class="content">Promises</span></a>
+      </li><li><a href="#shorthand-phrases"><span class="secno">2.4</span> <span class="content">Shorthand Phrases</span></a>
        <ul class="toc">
-        <li><a href="#reject-if-abrupt"><span class="secno">2.2.1</span> <span class="content">RejectIfAbrupt(x)</span></a>
+        <li><a href="#reject-if-abrupt"><span class="secno">2.4.1</span> <span class="content">RejectIfAbrupt(x)</span></a>
        </li></ul>
-      </li><li><a href="#common-operations"><span class="secno">2.3</span> <span class="content">Common Operations</span></a>
+      </li><li><a href="#common-operations"><span class="secno">2.5</span> <span class="content">Common Operations</span></a>
        <ul class="toc">
-        <li><a href="#create-object"><span class="secno">2.3.1</span> <span class="content">CreateObject()</span></a>
-        </li><li><a href="#simple-define"><span class="secno">2.3.2</span> <span class="content">SimpleDefine(obj, name, value)</span></a>
-        </li><li><a href="#get-state-value"><span class="secno">2.3.3</span> <span class="content">GetStateValue(state)</span></a>
-        </li><li><a href="#set-state-to-max"><span class="secno">2.3.4</span> <span class="content">SetStateToMax(entry, newState)</span></a>
-       </li></ul>
-     </li></ul>
-    </li><li><a href="#loader-object"><span class="secno">3</span> <span class="content">Loader Object</span></a>
-     <ul class="toc">
-      <li><a href="#registry"><span class="secno">3.1</span> <span class="content">Module Registry</span></a>
-     </li></ul>
-    </li><li><a href="#pipeline-semantics"><span class="secno">4</span> <span class="content">Loading Semantics</span></a>
-     <ul class="toc">
-      <li><a href="#auxiliary-operations"><span class="secno">4.1</span> <span class="content">Auxiliary Operations</span></a>
-       <ul class="toc">
-        <li><a href="#ensure-registered"><span class="secno">4.1.1</span> <span class="content">EnsureRegistered(loader, key)</span></a>
-        </li><li><a href="#resolve"><span class="secno">4.1.2</span> <span class="content">Resolve(loader, name, referrer)</span></a>
-        </li><li><a href="#fulfill-fetch"><span class="secno">4.1.3</span> <span class="content">FulfillFetch(loader, entry, payload)</span></a>
-        </li><li><a href="#fulfill-translate"><span class="secno">4.1.4</span> <span class="content">FulfillTranslate(loader, entry, source)</span></a>
-        </li><li><a href="#fulfill-instantiate"><span class="secno">4.1.5</span> <span class="content">FulfillInstantiate(loader, entry, optionalInstance, source)</span></a>
-        </li><li><a href="#commit-instantiated"><span class="secno">4.1.6</span> <span class="content">CommitInstantiated(loader, entry, optionalInstance, source)</span></a>
-        </li><li><a href="#instantiation"><span class="secno">4.1.7</span> <span class="content">Instantiation(loader, result, source)</span></a>
-       </li></ul>
-      </li><li><a href="#loading-operations"><span class="secno">4.2</span> <span class="content">Loading Operations</span></a>
-       <ul class="toc">
-        <li><a href="#request-fetch"><span class="secno">4.2.1</span> <span class="content">RequestFetch(loader, key)</span></a>
-        </li><li><a href="#request-translate"><span class="secno">4.2.2</span> <span class="content">RequestTranslate(loader, key)</span></a>
-        </li><li><a href="#request-instantiate"><span class="secno">4.2.3</span> <span class="content">RequestInstantiate(loader, key)</span></a>
-        </li><li><a href="#request-instantiate-all"><span class="secno">4.2.4</span> <span class="content">RequestInstantiateAll(loader, key)</span></a>
-        </li><li><a href="#request-link"><span class="secno">4.2.5</span> <span class="content">RequestLink(loader, key)</span></a>
-        </li><li><a href="#request-ready"><span class="secno">4.2.6</span> <span class="content">RequestReady(loader, key)</span></a>
+        <li><a href="#create-object"><span class="secno">2.5.1</span> <span class="content">CreateObject()</span></a>
+        </li><li><a href="#simple-define"><span class="secno">2.5.2</span> <span class="content">SimpleDefine(obj, name, value)</span></a>
+        </li><li><a href="#get-state-value"><span class="secno">2.5.3</span> <span class="content">GetStateValue(state)</span></a>
+        </li><li><a href="#set-state-to-max"><span class="secno">2.5.4</span> <span class="content">SetStateToMax(entry, newState)</span></a>
        </li></ul>
      </li></ul>
-    </li><li><a href="#linking-semantics"><span class="secno">5</span> <span class="content">Linking Semantics</span></a>
+    </li><li><a href="#loader-objects"><span class="secno">3</span> <span class="content">Loader Objects</span></a>
      <ul class="toc">
-      <li><a href="#resolving-dependencies"><span class="secno">5.1</span> <span class="content">Resolving Dependencies</span></a>
+      <li><a href="#loader-constructor"><span class="secno">3.1</span> <span class="content">The Reflect.Loader Constructor</span></a>
        <ul class="toc">
-        <li><a href="#host-resolve-imported-module"><span class="secno">5.1.1</span> <span class="content">HostResolveImportedModule(module, requestName)</span></a>
+        <li><a href="#new-reflect-loader"><span class="secno">3.1.1</span> <span class="content">Reflect.Loader()</span></a>
        </li></ul>
-      </li><li><a href="#linking"><span class="secno">5.2</span> <span class="content">Linking</span></a>
+      </li><li><a href="#properties-of-the-loader-constructor"><span class="secno">3.2</span> <span class="content">Properties of the Reflect.Loader Constructor</span></a>
        <ul class="toc">
-        <li><a href="#link"><span class="secno">5.2.1</span> <span class="content">Link(loader, root)</span></a>
-        </li><li><a href="#dependency-graph"><span class="secno">5.2.2</span> <span class="content">DependencyGraph(root)</span></a>
-        </li><li><a href="#compute-dependency-graph"><span class="secno">5.2.3</span> <span class="content">ComputeDependencyGraph(entry, result)</span></a>
+        <li><a href="#Reflect.Loader.prototype"><span class="secno">3.2.1</span> <span class="content">Reflect.Loader.prototype</span></a>
+       </li></ul>
+      </li><li><a href="#sec-properties-of-the-loader-prototype-object"><span class="secno">3.3</span> <span class="content">Properties of the Reflect.Loader Prototype Object</span></a>
+       <ul class="toc">
+        <li><a href="#Reflect.Loader.prototype.constructor"><span class="secno">3.3.1</span> <span class="content">Reflect.Loader.prototype.constructor</span></a>
+        </li><li><a href="#reflect-loader-import"><span class="secno">3.3.2</span> <span class="content">Reflect.Loader.prototype.import(name[, referrer])</span></a>
+        </li><li><a href="#reflect-load-resolve"><span class="secno">3.3.3</span> <span class="content">Reflect.Loader.prototype.resolve(name[, referrer])</span></a>
+        </li><li><a href="#reflect-loader-load"><span class="secno">3.3.4</span> <span class="content">Reflect.Loader.prototype.load(name[, referrer[, stage]])</span></a>
+        </li><li><a href="#relect-loader-registry"><span class="secno">3.3.5</span> <span class="content">get Reflect.Loader.prototype.registry</span></a>
+        </li><li><a href="#relect-loader-@@tostringtag"><span class="secno">3.3.6</span> <span class="content">Reflect.Loader.prototype [ @@toStringTag ]</span></a>
+       </li></ul>
+      </li><li><a href="#reflect-loader-internal-slots"><span class="secno">3.4</span> <span class="content">Properties of Reflect.Loader Instances</span></a>
+     </li></ul>
+    </li><li><a href="#registry"><span class="secno">4</span> <span class="content">Registry Objects</span></a>
+     <ul class="toc">
+      <li><a href="#registry-abstract-operations"><span class="secno">4.1</span> <span class="content">Abstract Operations for Registry Objects</span></a>
+       <ul class="toc">
+        <li><a href="#registry-GetRegistryEntry"><span class="secno">4.1.1</span> <span class="content">GetRegistryEntry(registry, key)</span></a>
+       </li></ul>
+      </li><li><a href="#registry-constructor"><span class="secno">4.2</span> <span class="content">The Registry Constructor</span></a>
+       <ul class="toc">
+        <li><a href="#new-registry"><span class="secno">4.2.1</span> <span class="content">Registry(loader)</span></a>
+       </li></ul>
+      </li><li><a href="#properties-of-the-registry-constructor"><span class="secno">4.3</span> <span class="content">Properties of the Registry Constructor</span></a>
+       <ul class="toc">
+        <li><a href="#registry-prototype"><span class="secno">4.3.1</span> <span class="content">Registry.prototype</span></a>
+       </li></ul>
+      </li><li><a href="#registry-prototype-object"><span class="secno">4.4</span> <span class="content">Properties of the Registry Prototype Object</span></a>
+       <ul class="toc">
+        <li><a href="#registry-prototype-constructor"><span class="secno">4.4.1</span> <span class="content">Registry.prototype.constructor</span></a>
+        </li><li><a href="#registry-prototype-@@iterator"><span class="secno">4.4.2</span> <span class="content">Registry.prototype[ @@iterator ]()</span></a>
+        </li><li><a href="#registry-prototype-lookup"><span class="secno">4.4.3</span> <span class="content">Registry.prototype.lookup(key)</span></a>
+        </li><li><a href="#registry-prototype-install"><span class="secno">4.4.4</span> <span class="content">Registry.prototype.install(key, module)</span></a>
+        </li><li><a href="#registry-prototype-uninstall"><span class="secno">4.4.5</span> <span class="content">Registry.prototype.uninstall(key)</span></a>
+        </li><li><a href="#registry-prototype-cancel"><span class="secno">4.4.6</span> <span class="content">Registry.prototype.cancel(key)</span></a>
+        </li><li><a href="#registry-prototype-provide"><span class="secno">4.4.7</span> <span class="content">Registry.prototype.provide(key, stage, value)</span></a>
+        </li><li><a href="#registry-prototype-error"><span class="secno">4.4.8</span> <span class="content">Registry.prototype.error(key, stage, value)</span></a>
+       </li></ul>
+      </li><li><a href="#registry-internal-slots"><span class="secno">4.5</span> <span class="content">Properties of Registry Instances</span></a>
+     </li></ul>
+    </li><li><a href="#pipeline-semantics"><span class="secno">5</span> <span class="content">Loading Semantics</span></a>
+     <ul class="toc">
+      <li><a href="#auxiliary-operations"><span class="secno">5.1</span> <span class="content">Auxiliary Operations</span></a>
+       <ul class="toc">
+        <li><a href="#ensure-registered"><span class="secno">5.1.1</span> <span class="content">EnsureRegistered(loader, key)</span></a>
+        </li><li><a href="#resolve"><span class="secno">5.1.2</span> <span class="content">Resolve(loader, name, referrer)</span></a>
+        </li><li><a href="#fulfill-fetch"><span class="secno">5.1.3</span> <span class="content">FulfillFetch(loader, entry, payload)</span></a>
+        </li><li><a href="#fulfill-translate"><span class="secno">5.1.4</span> <span class="content">FulfillTranslate(loader, entry, source)</span></a>
+        </li><li><a href="#fulfill-instantiate"><span class="secno">5.1.5</span> <span class="content">FulfillInstantiate(loader, entry, optionalInstance, source)</span></a>
+        </li><li><a href="#commit-instantiated"><span class="secno">5.1.6</span> <span class="content">CommitInstantiated(loader, entry, optionalInstance, source)</span></a>
+        </li><li><a href="#instantiation"><span class="secno">5.1.7</span> <span class="content">Instantiation(loader, result, source)</span></a>
+       </li></ul>
+      </li><li><a href="#loading-operations"><span class="secno">5.2</span> <span class="content">Loading Operations</span></a>
+       <ul class="toc">
+        <li><a href="#request-fetch"><span class="secno">5.2.1</span> <span class="content">RequestFetch(loader, key)</span></a>
+        </li><li><a href="#request-translate"><span class="secno">5.2.2</span> <span class="content">RequestTranslate(loader, key)</span></a>
+        </li><li><a href="#request-instantiate"><span class="secno">5.2.3</span> <span class="content">RequestInstantiate(loader, key)</span></a>
+        </li><li><a href="#request-instantiate-all"><span class="secno">5.2.4</span> <span class="content">RequestInstantiateAll(loader, key)</span></a>
+        </li><li><a href="#request-link"><span class="secno">5.2.5</span> <span class="content">RequestLink(loader, key)</span></a>
+        </li><li><a href="#request-ready"><span class="secno">5.2.6</span> <span class="content">RequestReady(loader, key)</span></a>
        </li></ul>
      </li></ul>
-    </li><li><a href="#api"><span class="secno">6</span> <span class="content">API</span></a>
+    </li><li><a href="#linking-semantics"><span class="secno">6</span> <span class="content">Linking Semantics</span></a>
      <ul class="toc">
-      <li><a href="#loading-api"><span class="secno">6.1</span> <span class="content">Importing</span></a>
+      <li><a href="#resolving-dependencies"><span class="secno">6.1</span> <span class="content">Resolving Dependencies</span></a>
        <ul class="toc">
-        <li><a href="#reflect-loader-import"><span class="secno">6.1.1</span> <span class="content">Reflect.Loader.import(name[, referrer])</span></a>
+        <li><a href="#host-resolve-imported-module"><span class="secno">6.1.1</span> <span class="content">HostResolveImportedModule(module, requestName)</span></a>
        </li></ul>
-      </li><li><a href="#resolution-api"><span class="secno">6.2</span> <span class="content">Resolution</span></a>
+      </li><li><a href="#linking"><span class="secno">6.2</span> <span class="content">Linking</span></a>
        <ul class="toc">
-        <li><a href="#reflect-load-resolve"><span class="secno">6.2.1</span> <span class="content">Reflect.Loader.resolve(name[, referrer])</span></a>
-       </li></ul>
-      </li><li><a href="#request-api"><span class="secno">6.3</span> <span class="content">Requests</span></a>
-       <ul class="toc">
-        <li><a href="#reflect-loader-load"><span class="secno">6.3.1</span> <span class="content">Reflect.Loader.load(key[, stage])</span></a>
-       </li></ul>
-      </li><li><a href="#response-api"><span class="secno">6.4</span> <span class="content">Responses</span></a>
-       <ul class="toc">
-        <li><a href="#reflect-loader-provide"><span class="secno">6.4.1</span> <span class="content">Reflect.Loader.provide(key, stage, value)</span></a>
-        </li><li><a href="#reflect-loader-error"><span class="secno">6.4.2</span> <span class="content">Reflect.Loader.error(key, stage, value)</span></a>
-       </li></ul>
-      </li><li><a href="#registry-api"><span class="secno">6.5</span> <span class="content">Registry</span></a>
-       <ul class="toc">
-        <li><a href="#reflect-loader-lookup"><span class="secno">6.5.1</span> <span class="content">Reflect.Loader.lookup(key)</span></a>
-        </li><li><a href="#reflect-loader-install"><span class="secno">6.5.2</span> <span class="content">Reflect.Loader.install(key, module)</span></a>
-        </li><li><a href="#reflect-loader-uninstall"><span class="secno">6.5.3</span> <span class="content">Reflect.Loader.uninstall(key)</span></a>
-        </li><li><a href="#reflect-loader-cancel"><span class="secno">6.5.4</span> <span class="content">Reflect.Loader.cancel(key)</span></a>
-       </li></ul>
-      </li><li><a href="#loading-hooks"><span class="secno">6.6</span> <span class="content">Pipeline Intercession</span></a>
-       <ul class="toc">
-        <li><a href="#reflect-load-hook"><span class="secno">6.6.1</span> <span class="content">Reflect.Loader.hook(name[, value])</span></a>
-       </li></ul>
-      </li><li><a href="#module-reflection-api"><span class="secno">6.7</span> <span class="content">Module Reflection</span></a>
-       <ul class="toc">
-        <li><a href="#reflective-module-record"><span class="secno">6.7.1</span> <span class="content">Reflective Module Records</span></a>
-         <ul class="toc">
-          <li><a href="#reflective-get-export-names"><span class="secno">6.7.1.1</span> <span class="content">Reflective Module.GetExportNames(exportStarStack)</span></a>
-          </li><li><a href="#reflective-resolve-export"><span class="secno">6.7.1.2</span> <span class="content">Reflective Module.ResolveExport(exportName, resolveStack, exportStarStack)</span></a>
-          </li><li><a href="#reflective-instantiate"><span class="secno">6.7.1.3</span> <span class="content">Reflective Module.ModuleDeclarationInstantiation()</span></a>
-          </li><li><a href="#reflective-evaluate"><span class="secno">6.7.1.4</span> <span class="content">Reflective Module.ModuleEvaluation()</span></a>
-         </li></ul>
-        </li><li><a href="#parse-exports-descriptors"><span class="secno">6.7.2</span> <span class="content">ParseExportsDescriptors(obj)</span></a>
-        </li><li><a href="#create-module-mutator"><span class="secno">6.7.3</span> <span class="content">CreateModuleMutator(module)</span></a>
-        </li><li><a href="#reflect-module"><span class="secno">6.7.4</span> <span class="content">Reflect.Module(descriptors[, executor, evaluate])</span></a>
+        <li><a href="#link"><span class="secno">6.2.1</span> <span class="content">Link(loader, root)</span></a>
+        </li><li><a href="#dependency-graph"><span class="secno">6.2.2</span> <span class="content">DependencyGraph(root)</span></a>
+        </li><li><a href="#compute-dependency-graph"><span class="secno">6.2.3</span> <span class="content">ComputeDependencyGraph(entry, result)</span></a>
        </li></ul>
      </li></ul>
-    </li><li><a href="#local"><span class="secno">7</span> <span class="content">Local Loading</span></a>
-    </li><li><a href="#browser"><span class="secno">8</span> <span class="content">Browser Loader</span></a>
+    </li><li><a href="#module-objects"><span class="secno">7</span> <span class="content">Module Objects</span></a>
      <ul class="toc">
-      <li><a href="#browser-site-packages"><span class="secno">8.1</span> <span class="content">Site Packages</span></a>
+      <li><a href="#reflective-module-record"><span class="secno">7.1</span> <span class="content">Reflective Module Records</span></a>
+      </li><li><a href="#module-abstract-operations"><span class="secno">7.2</span> <span class="content">Abstract Operations for Module Objects</span></a>
        <ul class="toc">
-        <li><a href="#reflect-loader-site"><span class="secno">8.1.1</span> <span class="content">Reflect.Loader.site( mappings )</span></a>
-        </li><li><a href="#reflect-loader-site-get"><span class="secno">8.1.2</span> <span class="content">Reflect.Loader.site.get( name )</span></a>
-        </li><li><a href="#reflect-loader-site-set"><span class="secno">8.1.3</span> <span class="content">Reflect.Loader.site.set( name, url )</span></a>
-        </li><li><a href="#reflect-loader-site-has"><span class="secno">8.1.4</span> <span class="content">Reflect.Loader.site.has( name )</span></a>
-        </li><li><a href="#reflect-loader-site-delete"><span class="secno">8.1.5</span> <span class="content">Reflect.Loader.site.delete( name )</span></a>
+        <li><a href="#parse-exports-descriptors"><span class="secno">7.2.1</span> <span class="content">ParseExportsDescriptors(obj)</span></a>
+        </li><li><a href="#create-module-mutator"><span class="secno">7.2.2</span> <span class="content">CreateModuleMutator(module)</span></a>
+        </li><li><a href="#get-export-names"><span class="secno">7.2.3</span> <span class="content">GetExportNames(exportStarStack)</span></a>
+        </li><li><a href="#resolve-export"><span class="secno">7.2.4</span> <span class="content">ResolveExport(exportName, resolveStack, exportStarStack)</span></a>
+        </li><li><a href="#module-declaration-instantiation"><span class="secno">7.2.5</span> <span class="content">ModuleDeclarationInstantiation()</span></a>
+        </li><li><a href="#module-evaluation"><span class="secno">7.2.6</span> <span class="content">ModuleEvaluation()</span></a>
        </li></ul>
-      </li><li><a href="#browser-resolve"><span class="secno">8.2</span> <span class="content">Resolve</span></a>
-      </li><li><a href="#browser-fetch"><span class="secno">8.3</span> <span class="content">Fetch</span></a>
-      </li><li><a href="#browser-translate"><span class="secno">8.4</span> <span class="content">Translate</span></a>
-      </li><li><a href="#browser-instantiate"><span class="secno">8.5</span> <span class="content">Instantiate</span></a>
+      </li><li><a href="#module-constructor"><span class="secno">7.3</span> <span class="content">The Reflect.Module Constructor</span></a>
+       <ul class="toc">
+        <li><a href="#new-reflect-module"><span class="secno">7.3.1</span> <span class="content">Reflect.Module(descriptors[, executor[, evaluate]])</span></a>
+       </li></ul>
+      </li><li><a href="#properties-of-the-module-constructor"><span class="secno">7.4</span> <span class="content">Properties of the Reflect.Module Constructor</span></a>
+       <ul class="toc">
+        <li><a href="#Reflect.Module.evaluate"><span class="secno">7.4.1</span> <span class="content">Reflect.Module.evaluate(m)</span></a>
+        </li><li><a href="#Reflect.Module.prototype"><span class="secno">7.4.2</span> <span class="content">Reflect.Module.prototype</span></a>
+       </li></ul>
+      </li><li><a href="#reflect-module-internal-slots"><span class="secno">7.5</span> <span class="content">Properties of Module Instances</span></a>
+     </li></ul>
+    </li><li><a href="#local"><span class="secno">8</span> <span class="content">Local Loading</span></a>
+    </li><li><a href="#browser"><span class="secno">9</span> <span class="content">Browser Loader</span></a>
+     <ul class="toc">
+      <li><a href="#system-loader-instance"><span class="secno">9.1</span> <span class="content">System.loader Object</span></a>
+     </li></ul>
+    </li><li><a href="#browser-loader"><span class="secno">10</span> <span class="content">BrowserLoader Objects</span></a>
+     <ul class="toc">
+      <li><a href="#browser-loader-constructor"><span class="secno">10.1</span> <span class="content">The BrowserLoader Constructor</span></a>
+      </li><li><a href="#properties-of-the-browser-loader-constructor"><span class="secno">10.2</span> <span class="content">Properties of the BrowserLoader Constructor</span></a>
+       <ul class="toc">
+        <li><a href="#browser-loader-prototype"><span class="secno">10.2.1</span> <span class="content">BrowserLoader.prototype</span></a>
+       </li></ul>
+      </li><li><a href="#properties-of-the-browser-loader-prototype"><span class="secno">10.3</span> <span class="content">Properties of the BrowserLoader Prototype</span></a>
+       <ul class="toc">
+        <li><a href="#browser-loader-prototype-@@resolve"><span class="secno">10.3.1</span> <span class="content">BrowserLoader.prototype[ @@resolve ](name, referrer)</span></a>
+        </li><li><a href="#browser-loader-prototype-@@fetch"><span class="secno">10.3.2</span> <span class="content">BrowserLoader.prototype[ @@fetch ](key)</span></a>
+        </li><li><a href="#browser-loader-prototype-@@translate"><span class="secno">10.3.3</span> <span class="content">BrowserLoader.prototype[ @@translate ](key, payload)</span></a>
+        </li><li><a href="#browser-loader-prototype-@@instantiate"><span class="secno">10.3.4</span> <span class="content">BrowserLoader.prototype[ @@instantiate ](key, source)</span></a>
+       </li></ul>
+     </li></ul>
+    </li><li><a href="#annexes"><span class="secno"></span> <span class="content">Annexes</span></a>
+     <ul class="toc">
+      <li><a href="#list-of-well-known-intrinsic-objects"><span class="secno"></span> <span class="content">List of Well-Known Intrinsic Objects</span></a>
      </li></ul>
     </li><li><a href="#conformance"><span class="secno"></span> <span class="content">Conformance</span></a>
     </li><li><a href="#index"><span class="secno"></span> <span class="content">Index</span></a>
@@ -274,16 +307,107 @@ loading process and customizing loading behavior.</p>
    <h2 class="heading settled" data-level="2" id="conventions"><span class="secno">2. </span><span class="content">Conventions</span><a class="self-link" href="#conventions"></a></h2>
 
 
-   <h3 class="heading settled" data-level="2.1" id="promises"><span class="secno">2.1. </span><span class="content">Promises</span><a class="self-link" href="#promises"></a></h3>
+   <h3 class="heading settled" data-level="2.1" id="well-known-symbols"><span class="secno">2.1. </span><span class="content">Well-Known Symbols</span><a class="self-link" href="#well-known-symbols"></a></h3>
+
+
+   <p>Well-known symbols are built-in Symbol values that are explicitly referenced by algorithms of this specification. They are typically used as the keys of properties whose values serve as extension points of a specification algorithm.</p>
+
+
+   <p>Within this specification a well-known symbol is referred to by using a notation of the form @@<i>name</i>, where "<i>name</i>" is one of the values listed in table below:</p>
+
+
+   <table>
+  
+    <thead>
+    
+     <tr>
+      
+      <th>Specification Name
+      
+      
+      </th><th>[[Description]]
+      
+      
+      </th><th>Value and Purpose
+      
+    
+     
+  
+  
+    </th></tr></thead><tbody>
+     <tr>
+    
+      <td>@@resolve
+      
+    
+      </td><td>"Reflect.Loader.resolve"
+      
+    
+      </td><td>A function valued property that is the resolve hook function of loader’s instances.
+      
+  
+     
+  
+     </td></tr><tr>
+    
+      <td>@@fetch
+      
+    
+      </td><td>"Reflect.Loader.fetch"
+      
+    
+      </td><td>A function valued property that is the fetch hook function of loader’s instances.
+      
+  
+     
+  
+     </td></tr><tr>
+    
+      <td>@@translate
+      
+    
+      </td><td>"Reflect.Loader.translate"
+      
+    
+      </td><td>A function valued property that is the translate hook function of loader’s instances.
+      
+  
+     
+  
+     </td></tr><tr>
+    
+      <td>@@instantiate
+      
+    
+      </td><td>"Reflect.Loader.instantiate"
+      
+    
+      </td><td>A function valued property that is the instantiate hook function of loader’s instances.
+      
+  
+     
+</td></tr></tbody></table>
+
+
+   <h3 class="heading settled" data-level="2.2" id="well-known-intrinsic-objects"><span class="secno">2.2. </span><span class="content">Well-Known Intrinsic Objects</span><a class="self-link" href="#well-known-intrinsic-objects"></a></h3>
+
+
+   <p>Well-known intrinsics are built-in objects that are explicitly referenced by the algorithms of this specification and which usually have Realm specific identities. Unless otherwise specified each intrinsic object actually corresponds to a set of similar objects, one per Realm.</p>
+
+
+   <p>Within this specification a reference such as %<i>name</i>% means the intrinsic object, associated with the current Realm, corresponding to the <i>name</i>. Determination of the current Realm and its intrinsics is described in ES2015, 8.3.</p>
+
+
+   <h3 class="heading settled" data-level="2.3" id="promises"><span class="secno">2.3. </span><span class="content">Promises</span><a class="self-link" href="#promises"></a></h3>
 
 
    <p>This spec makes heavy use of promises, and adopts the notational conventions established in the promises guide.</p>
 
 
-   <h3 class="heading settled" data-level="2.2" id="shorthand-phrases"><span class="secno">2.2. </span><span class="content">Shorthand Phrases</span><a class="self-link" href="#shorthand-phrases"></a></h3>
+   <h3 class="heading settled" data-level="2.4" id="shorthand-phrases"><span class="secno">2.4. </span><span class="content">Shorthand Phrases</span><a class="self-link" href="#shorthand-phrases"></a></h3>
 
 
-   <h4 aoid="RejectIfAbrupt" class="heading settled" data-level="2.2.1" id="reject-if-abrupt"><span class="secno">2.2.1. </span><span class="content">RejectIfAbrupt(x)</span><a class="self-link" href="#reject-if-abrupt"></a></h4>
+   <h4 aoid="RejectIfAbrupt" class="heading settled" data-level="2.4.1" id="reject-if-abrupt"><span class="secno">2.4.1. </span><span class="content">RejectIfAbrupt(x)</span><a class="self-link" href="#reject-if-abrupt"></a></h4>
 
 
    <p>Algorithm steps that say</p>
@@ -298,37 +422,134 @@ loading process and customizing loading behavior.</p>
    <emu-alg><ol><li>If <var>x</var> is an abrupt completion, then return a promise rejected with <var>x</var>.[[value]].</li><li>Else if <var>x</var> is a Completion Record, then let <var>x</var> be <var>x</var>.[[value]].</li></ol></emu-alg>
 
 
-   <h3 class="heading settled" data-level="2.3" id="common-operations"><span class="secno">2.3. </span><span class="content">Common Operations</span><a class="self-link" href="#common-operations"></a></h3>
+   <h3 class="heading settled" data-level="2.5" id="common-operations"><span class="secno">2.5. </span><span class="content">Common Operations</span><a class="self-link" href="#common-operations"></a></h3>
 
 
-   <h4 aoid="CreateObject" class="heading settled" data-level="2.3.1" id="create-object"><span class="secno">2.3.1. </span><span class="content">CreateObject()</span><a class="self-link" href="#create-object"></a></h4>
+   <h4 aoid="CreateObject" class="heading settled" data-level="2.5.1" id="create-object"><span class="secno">2.5.1. </span><span class="content">CreateObject()</span><a class="self-link" href="#create-object"></a></h4>
 
 
    <emu-alg><ol><li>Let <var>obj</var> be <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-objectcreate">ObjectCreate</a>(%ObjectPrototype%).</li><li>Return <var>obj</var>.</li></ol></emu-alg>
 
 
-   <h4 aoid="SimpleDefine" class="heading settled" data-level="2.3.2" id="simple-define"><span class="secno">2.3.2. </span><span class="content">SimpleDefine(obj, name, value)</span><a class="self-link" href="#simple-define"></a></h4>
+   <h4 aoid="SimpleDefine" class="heading settled" data-level="2.5.2" id="simple-define"><span class="secno">2.5.2. </span><span class="content">SimpleDefine(obj, name, value)</span><a class="self-link" href="#simple-define"></a></h4>
 
 
-   <emu-alg><ol><li>Let <var>desc</var> be a new PropertyDescriptor record {[[Value]]: <var>value</var>, [[Writable]]: <emu-val>true</emu-val>, [[Enumerable]]: <emu-val>true</emu-val>, [[Configurable]]: <emu-val>true</emu-val>}.</li><li>Return the result of calling <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ordinarydefineownproperty">OrdinaryDefineOwnProperty</a>(<var>obj</var>, <var>name</var>, <var>value</var>).</li></ol></emu-alg>
+   <emu-alg><ol><li>Let <var>desc</var> be a new PropertyDescriptor record {[[Value]]: <var>value</var>, [[Writable]]: <emu-val>true</emu-val>, [[Enumerable]]: <emu-val>true</emu-val>, [[Configurable]]: <emu-val>true</emu-val>}.</li><li>Return the result of calling <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ordinarydefineownproperty">OrdinaryDefineOwnProperty</a>(<var>obj</var>, <var>name</var>, <var>desc</var>).</li></ol></emu-alg>
 
 
-   <h4 aoid="GetStateValue" class="heading settled" data-level="2.3.3" id="get-state-value"><span class="secno">2.3.3. </span><span class="content">GetStateValue(state)</span><a class="self-link" href="#get-state-value"></a></h4>
+   <h4 aoid="GetStateValue" class="heading settled" data-level="2.5.3" id="get-state-value"><span class="secno">2.5.3. </span><span class="content">GetStateValue(state)</span><a class="self-link" href="#get-state-value"></a></h4>
 
 
    <emu-alg><ol><li>If <var>state</var> is the string "fetch" return 0.</li><li>If <var>state</var> is the string "translate" return 1.</li><li>If <var>state</var> is the string "instantiate" return 2.</li><li>If <var>state</var> is the string "link" return 3.</li><li>If <var>state</var> is the string "ready" return 4.</li></ol></emu-alg>
 
 
-   <h4 aoid="SetStateToMax" class="heading settled" data-level="2.3.4" id="set-state-to-max"><span class="secno">2.3.4. </span><span class="content">SetStateToMax(entry, newState)</span><a class="self-link" href="#set-state-to-max"></a></h4>
+   <h4 aoid="SetStateToMax" class="heading settled" data-level="2.5.4" id="set-state-to-max"><span class="secno">2.5.4. </span><span class="content">SetStateToMax(entry, newState)</span><a class="self-link" href="#set-state-to-max"></a></h4>
 
 
    <emu-alg><ol><li>Let <var>state</var> be <var>entry</var>.[[State]].</li><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>state</var>).</li><li>Let <var>newStateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>newState</var>).</li><li>If <var>newStateValue</var> is larger than <var>stateValue</var>, set <var>entry</var>.[[State]] to <var>newState</var>.</li></ol></emu-alg>
 
 
-   <h2 class="heading settled" data-level="3" id="loader-object"><span class="secno">3. </span><span class="content">Loader Object</span><a class="self-link" href="#loader-object"></a></h2>
+   <h2 class="heading settled" data-level="3" id="loader-objects"><span class="secno">3. </span><span class="content">Loader Objects</span><a class="self-link" href="#loader-objects"></a></h2>
 
 
-   <p>A <dfn data-dfn-type="dfn" data-noexport="" id="loader-object0">loader object<a class="self-link" href="#loader-object0"></a></dfn> has the following fields:</p>
+   <h3 class="heading settled" data-level="3.1" id="loader-constructor"><span class="secno">3.1. </span><span class="content">The Reflect.Loader Constructor</span><a class="self-link" href="#loader-constructor"></a></h3>
+
+
+   <p>The Loader constructor is the initial value of the Loader property of the the Reflect object. When called as a constructor it creates and initializes a new Loader object. Reflect.Loader is not intended to be called as a function and will throw an exception when called in that manner.</p>
+
+
+   <p>The Reflect.Loader constructor is designed to be subclassable. It may be used as the value in an extends clause of a class definition. Subclass constructors that intend to inherit the specified Loader behaviour must include a super call to the Reflect.Loader constructor to create and initialize the subclass instance with the internal state necessary to support the Reflect.Loader.prototype built-in methods.</p>
+
+
+   <h4 class="heading settled" data-level="3.1.1" id="new-reflect-loader"><span class="secno">3.1.1. </span><span class="content">Reflect.Loader()</span><a class="self-link" href="#new-reflect-loader"></a></h4>
+
+
+   <p>When Reflect.Loader is called with no arguments, the following steps are taken:</p>
+
+
+   <emu-alg><ol><li>If NewTarget is <emu-val>undefined</emu-val>, then throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>O</var> be <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ordinarycreatefromconstructor">OrdinaryCreateFromConstructor</a>(NewTarget, "Reflect.Loader.prototype").</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>O</var>).</li><li>Let <var>registry</var> to a new <a href="#new-registry">Registry</a>(<var>O</var>).</li><li>Set <var>O</var>’s [[Registry]] internal slot to <var>registry</var>.</li><li>Return <var>O</var>.</li></ol></emu-alg>
+
+
+   <h3 class="heading settled" data-level="3.2" id="properties-of-the-loader-constructor"><span class="secno">3.2. </span><span class="content">Properties of the Reflect.Loader Constructor</span><a class="self-link" href="#properties-of-the-loader-constructor"></a></h3>
+
+
+   <p>The value of the [[Prototype]] internal slot of the Reflect.Loader constructor is the intrinsic object %FunctionPrototype%.</p>
+
+
+   <p>Besides the internal slots and the length property (whose value is 0), the Reflect.Loader constructor has the following properties:</p>
+
+
+   <h4 class="heading settled" data-level="3.2.1" id="Reflect.Loader.prototype"><span class="secno">3.2.1. </span><span class="content">Reflect.Loader.prototype</span><a class="self-link" href="#Reflect.Loader.prototype"></a></h4>
+
+
+   <p>The value of Reflect.Loader.prototype is an ordinary object.</p>
+
+
+   <p>This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: false }.</p>
+
+
+   <h3 class="heading settled" data-level="3.3" id="sec-properties-of-the-loader-prototype-object"><span class="secno">3.3. </span><span class="content">Properties of the Reflect.Loader Prototype Object</span><a class="self-link" href="#sec-properties-of-the-loader-prototype-object"></a></h3>
+
+
+   <h4 class="heading settled" data-level="3.3.1" id="Reflect.Loader.prototype.constructor"><span class="secno">3.3.1. </span><span class="content">Reflect.Loader.prototype.constructor</span><a class="self-link" href="#Reflect.Loader.prototype.constructor"></a></h4>
+
+
+   <p>The initial value of Reflect.Loader.prototype.constructor is Reflect.Loader.</p>
+
+
+   <h4 class="heading settled" data-level="3.3.2" id="reflect-loader-import"><span class="secno">3.3.2. </span><span class="content">Reflect.Loader.prototype.import(name[, referrer])</span><a class="self-link" href="#reflect-loader-import"></a></h4>
+
+
+   <p>The following steps are taken:</p>
+
+
+   <emu-alg><ol><li>Let <var>loader</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>loader</var>) is not Object, throw a <emu-val>TypeError</emu-val> exception.</li><li>If <var>loader</var> does not have a [[Registry]] internal slot throw a <emu-val>TypeError</emu-val> exception.</li><li>Return the result of transforming <a href="#resolve">Resolve</a>(<var>loader</var>, <var>name</var>, <var>referrer</var>) with a fulfillment handler that, when called with argument <var>key</var>, runs the following steps:<ol><li>Return <a href="#request-ready">RequestReady</a>(<var>loader</var>, <var>key</var>).</li></ol></li></ol></emu-alg>
+
+
+   <h4 class="heading settled" data-level="3.3.3" id="reflect-load-resolve"><span class="secno">3.3.3. </span><span class="content">Reflect.Loader.prototype.resolve(name[, referrer])</span><a class="self-link" href="#reflect-load-resolve"></a></h4>
+
+
+   <p>The following steps are taken:</p>
+
+
+   <emu-alg><ol><li>Let <var>loader</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>loader</var>) is not Object, throw a <emu-val>TypeError</emu-val> exception.</li><li>Return <a href="#resolve">Resolve</a>(<var>loader</var>, <var>name</var>, <var>referrer</var>).</li></ol></emu-alg>
+
+
+   <h4 class="heading settled" data-level="3.3.4" id="reflect-loader-load"><span class="secno">3.3.4. </span><span class="content">Reflect.Loader.prototype.load(name[, referrer[, stage]])</span><a class="self-link" href="#reflect-loader-load"></a></h4>
+
+
+   <p>The following steps are taken:</p>
+
+
+   <emu-alg><ol><li>Let <var>loader</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>loader</var>) is not Object, throw a <emu-val>TypeError</emu-val> exception.</li><li>If <var>stage</var> is <emu-val>undefined</emu-val> then let <var>stage</var> be "ready".</li><li>Return the result of transforming <a href="#resolve">Resolve</a>(<var>loader</var>, <var>name</var>, <var>referrer</var>) with a fulfillment handler that, when called with argument <var>key</var>, runs the following steps:<ol><li>If <var>stage</var> is "fetch", then:<ol><li>Return the result of transforming <a href="#resolve">Resolve</a>(loader, name, referrer) with a fulfillment handler that, when called with argument key, runs the following steps:
+    Return <a href="#request-ready">RequestReady</a>(loader, key).</li><li>Return <a href="#request-fetch">RequestFetch</a>(<var>loader</var>, <var>key</var>).</li></ol></li><li>If <var>stage</var> is "translate", then:<ol><li>Return <a href="#request-translate">RequestTranslate</a>(<var>loader</var>, <var>key</var>).</li></ol></li><li>If <var>stage</var> is "instantiate", then:<ol><li>Return the result of transforming <a href="#request-instantiate-all">RequestInstantiateAll</a>(<var>loader</var>, <var>key</var>) with a fulfillment handler that, when called with argument <var>entry</var>, runs the following steps:<ol><li>If <var>entry</var>.[[Module]] is a Function object, return <var>entry</var>.[[Module]].</li><li>Return <emu-val>undefined</emu-val>.</li></ol></li></ol></li><li>If <var>stage</var> is "link", then:<ol><li>Return the result of transforming <a href="#request-link">RequestLink</a>(<var>loader</var>, <var>key</var>) with a fulfillment handler that returns <emu-val>undefined</emu-val>.</li></ol></li><li>If <var>stage</var> is "ready", then:<ol><li>Return the result of transforming <a href="#request-ready">RequestReady</a>(<var>loader</var>, <var>key</var>) with a fulfillment handler that, when called with argument <var>entry</var>, runs the following steps:<ol><li>Return GetModuleNamespace(<var>entry</var>.[[Module]]).</li></ol></li></ol></li><li>Throw a new <emu-val>TypeError</emu-val>.</li></ol></li></ol></emu-alg>
+
+
+   <h4 class="heading settled" data-level="3.3.5" id="relect-loader-registry"><span class="secno">3.3.5. </span><span class="content">get Reflect.Loader.prototype.registry</span><a class="self-link" href="#relect-loader-registry"></a></h4>
+
+
+   <p>Reflect.Loader.prototype.registry is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:</p>
+
+
+   <emu-alg><ol><li>Let <var>loader</var> be <emu-val>this</emu-val> value.</li><li>Return <var>loader</var>.[[Registry]].</li></ol></emu-alg>
+
+
+   <h4 class="heading settled" data-level="3.3.6" id="relect-loader-@@tostringtag"><span class="secno">3.3.6. </span><span class="content">Reflect.Loader.prototype [ @@toStringTag ]</span><a class="self-link" href="#relect-loader-%40%40tostringtag"></a></h4>
+
+
+   <p>The initial value of the @@toStringTag property is the String value "Object".</p>
+
+
+   <p>This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: true }.</p>
+
+
+   <h3 class="heading settled" data-level="3.4" id="reflect-loader-internal-slots"><span class="secno">3.4. </span><span class="content">Properties of Reflect.Loader Instances</span><a class="self-link" href="#reflect-loader-internal-slots"></a></h3>
+
+
+   <p>Loader instances are ordinary objects that inherit properties from the *Reflect.Loader.prototype*.</p>
+
+
+   <p>Loader instances are initially created with the internal slots described in the following table:</p>
 
 
    <table>
@@ -368,69 +589,29 @@ loading process and customizing loading behavior.</p>
       <td>[[Registry]]
       
     
-      </td><td>List of pairs of String and <a data-link-type="dfn" href="#registry-entry">registry entry</a>
+      </td><td>An object
       
     
-      </td><td>The registry of installed modules.
-      
-  
-     
-  
-     </td></tr><tr>
-    
-      <td>[[Resolve]]
-      
-    
-      </td><td>A function object
-      
-    
-      </td><td>The <code>"resolve"</code> loading hook.
-      
-  
-     
-  
-     </td></tr><tr>
-    
-      <td>[[Fetch]]
-      
-    
-      </td><td>A function object
-      
-    
-      </td><td>The <code>"fetch"</code> loading hook.
-      
-  
-     
-  
-     </td></tr><tr>
-    
-      <td>[[Translate]]
-      
-    
-      </td><td>A function object
-      
-    
-      </td><td>The <code>"translate"</code> loading hook.
-      
-  
-     
-  
-     </td></tr><tr>
-    
-      <td>[[Instantiate]]
-      
-    
-      </td><td>A function object
-      
-    
-      </td><td>The <code>"instantiate"</code> loading hook.
+      </td><td>An instance of Registry (<a href="#registry">4</a>).
       
   
      
 </td></tr></tbody></table>
 
 
-   <h3 class="heading settled" data-level="3.1" id="registry"><span class="secno">3.1. </span><span class="content">Module Registry</span><a class="self-link" href="#registry"></a></h3>
+   <h2 class="heading settled" data-level="4" id="registry"><span class="secno">4. </span><span class="content">Registry Objects</span><a class="self-link" href="#registry"></a></h2>
+
+
+   <h3 class="heading settled" data-level="4.1" id="registry-abstract-operations"><span class="secno">4.1. </span><span class="content">Abstract Operations for Registry Objects</span><a class="self-link" href="#registry-abstract-operations"></a></h3>
+
+
+   <h4 aoid="GetRegistryEntry" class="heading settled" data-level="4.1.1" id="registry-GetRegistryEntry"><span class="secno">4.1.1. </span><span class="content">GetRegistryEntry(registry, key)</span><a class="self-link" href="#registry-GetRegistryEntry"></a></h4>
+
+
+   <p>The abstract operation GetRegistryEntry with arguments registry and key performs the following steps:</p>
+
+
+   <emu-alg><ol><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>registry</var>) is not Object, throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>entries</var> be <var>registry</var>.[[RegistryData]].</li><li>Let <var>pair</var> be the entry in <var>entries</var> such that <var>pair</var>.[[key]] is equal to <var>key</var>.</li><li>If <var>pair</var> does not exist, then return <emu-val>null</emu-val>.</li><li>Let <var>entry</var> be <var>pair</var>.[[value]].</li><li>Let <var>result</var> be <a href="#create-object">CreateObject</a>().</li><li>Call <a href="#simple-define">SimpleDefine</a>(<var>result</var>, "state", <var>entry</var>.[[State]]).</li><li>Let <var>statePromise</var> be <emu-val>undefined</emu-val>.</li><li>If <var>entry</var>.[[State]] is "fetch" and <var>entry</var>.[[Fetch]] is not <emu-val>undefined</emu-val>, then<ol><li>Set <var>statePromise</var> to the result of transforming <var>entry</var>.[[Fetch]] with a new pass-through promise.</li></ol></li><li>Else If <var>entry</var>.[[State]] is "translate" and <var>entry</var>.[[Translate]] is not <emu-val>undefined</emu-val>, then<ol><li>Set <var>statePromise</var> to the result of transforming <var>entry</var>.[[Translate]] with a new pass-through promise.</li></ol></li><li>Else If <var>entry</var>.[[State]] is "instantiate" and <var>entry</var>.[[Instantiate]] is not <emu-val>undefined</emu-val>, then<ol><li>Set <var>statePromise</var> to the result of transforming <var>entry</var>.[[Instantiate]] with a fulfillment handler that, when called with argument <var>entry</var>, runs the following steps:<ol><li>If <var>entry</var>.[[Module]] is a Function object, then return <var>entry</var>.[[Module]].</li><li>Return <emu-val>undefined</emu-val>.</li></ol></li></ol></li><li>Call <a href="#simple-define">SimpleDefine</a>(<var>result</var>, "statePromise", <var>statePromise</var>).</li><li>If <var>entry</var>.[[State]] is "ready" then let <var>module</var> be <var>entry</var>.[[Module]].</li><li>Else let <var>module</var> be <emu-val>undefined</emu-val>.</li><li>Call <a href="#simple-define">SimpleDefine</a>(<var>result</var>, "module", <var>module</var>).</li><li>If <var>entry</var>.[[Error]] is <emu-val>nothing</emu-val>, then:<ol><li>Call <a href="#simple-define">SimpleDefine</a>(<var>result</var>, "error", <emu-val>null</emu-val>).</li></ol></li><li>Else:<ol><li>Let <var>opt</var> be <a href="#create-object">CreateObject</a>().</li><li>Call <a href="#simple-define">SimpleDefine</a>(<var>opt</var>, "value", <var>entry</var>.[[Error]]).</li><li>Call <a href="#simple-define">SimpleDefine</a>(<var>result</var>, "error", <var>opt</var>).</li></ol></li><li>Return <var>result</var>.</li></ol></emu-alg>
 
 
    <p>A <dfn data-dfn-type="dfn" data-noexport="" id="registry-entry">registry entry<a class="self-link" href="#registry-entry"></a></dfn> is a record with the following fields:</p>
@@ -502,7 +683,7 @@ loading process and customizing loading behavior.</p>
       </td><td>Promise or <code>undefined</code>
       
     
-      </td><td>A promise for the result of <a href="#request-fetch">§4.2.1 RequestFetch(loader, key)</a>.
+      </td><td>A promise for the result of <a href="#request-fetch">§5.2.1 RequestFetch(loader, key)</a>.
       
   
      
@@ -515,7 +696,7 @@ loading process and customizing loading behavior.</p>
       </td><td>Promise or <code>undefined</code>
       
     
-      </td><td>A promise for the result of <a href="#request-translate">§4.2.2 RequestTranslate(loader, key)</a>.
+      </td><td>A promise for the result of <a href="#request-translate">§5.2.2 RequestTranslate(loader, key)</a>.
       
   
      
@@ -528,7 +709,7 @@ loading process and customizing loading behavior.</p>
       </td><td>Promise or <code>undefined</code>
       
     
-      </td><td>A promise for the result of <a href="#request-instantiate">§4.2.3 RequestInstantiate(loader, key)</a>.
+      </td><td>A promise for the result of <a href="#request-instantiate">§5.2.3 RequestInstantiate(loader, key)</a>.
       
   
      
@@ -574,103 +755,265 @@ loading process and customizing loading behavior.</p>
 </td></tr></tbody></table>
 
 
+   <h3 class="heading settled" data-level="4.2" id="registry-constructor"><span class="secno">4.2. </span><span class="content">The Registry Constructor</span><a class="self-link" href="#registry-constructor"></a></h3>
 
 
-   <h2 class="heading settled" data-level="4" id="pipeline-semantics"><span class="secno">4. </span><span class="content">Loading Semantics</span><a class="self-link" href="#pipeline-semantics"></a></h2>
+   <p>The Registry constructor is the %Registry% intrinsic object. When called as a constructor it creates and initializes a new %Registry% object. %Registry% is not intended to be called as a function and will throw an exception when called in that manner.</p>
 
 
-   <h3 class="heading settled" data-level="4.1" id="auxiliary-operations"><span class="secno">4.1. </span><span class="content">Auxiliary Operations</span><a class="self-link" href="#auxiliary-operations"></a></h3>
+   <h4 aoid="Registry" class="heading settled" data-level="4.2.1" id="new-registry"><span class="secno">4.2.1. </span><span class="content">Registry(loader)</span><a class="self-link" href="#new-registry"></a></h4>
 
 
-   <h4 aoid="EnsureRegistered" class="heading settled" data-level="4.1.1" id="ensure-registered"><span class="secno">4.1.1. </span><span class="content">EnsureRegistered(loader, key)</span><a class="self-link" href="#ensure-registered"></a></h4>
+   <p>When Registry is called with argument <i>loader</i>, the following steps are taken:</p>
+
+
+   <emu-alg><ol><li>If NewTarget is <emu-val>undefined</emu-val>, then throw a <emu-val>TypeError</emu-val> exception.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>loader</var>) is not Object, throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>O</var> be <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ordinarycreatefromconstructor">OrdinaryCreateFromConstructor</a>(NewTarget, "%RegistryPrototype%", «[[RegistryData]]» ).</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>O</var>).</li><li>Set <var>O</var>’s [[RegistryData]] internal slot to a new empty List.</li><li>Set <var>O</var>’s [[Loader]] internal slot to <var>loader</var>.</li><li>Return <var>O</var>.</li></ol></emu-alg>
+
+
+   <h3 class="heading settled" data-level="4.3" id="properties-of-the-registry-constructor"><span class="secno">4.3. </span><span class="content">Properties of the Registry Constructor</span><a class="self-link" href="#properties-of-the-registry-constructor"></a></h3>
+
+
+   <p>The value of the [[Prototype]] internal slot of the Registry constructor is the intrinsic object %FunctionPrototype%.</p>
+
+
+   <p>Besides the internal slots and the length property (whose value is 0), the Registry constructor has the following properties:</p>
+
+
+   <h4 class="heading settled" data-level="4.3.1" id="registry-prototype"><span class="secno">4.3.1. </span><span class="content">Registry.prototype</span><a class="self-link" href="#registry-prototype"></a></h4>
+
+
+   <p>The value of Registry.prototype is %RegistryPrototype%.</p>
+
+
+   <p>This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: false }.</p>
+
+
+   <h3 class="heading settled" data-level="4.4" id="registry-prototype-object"><span class="secno">4.4. </span><span class="content">Properties of the Registry Prototype Object</span><a class="self-link" href="#registry-prototype-object"></a></h3>
+
+
+   <h4 class="heading settled" data-level="4.4.1" id="registry-prototype-constructor"><span class="secno">4.4.1. </span><span class="content">Registry.prototype.constructor</span><a class="self-link" href="#registry-prototype-constructor"></a></h4>
+
+
+   <p>The initial value of Registry.prototype.constructor is %Registry%.</p>
+
+
+   <h4 class="heading settled" data-level="4.4.2" id="registry-prototype-@@iterator"><span class="secno">4.4.2. </span><span class="content">Registry.prototype[ @@iterator ]()</span><a class="self-link" href="#registry-prototype-%40%40iterator"></a></h4>
+
+
+   <p>When the @@iterator method is called it returns an Iterator object (ES2015 25.1.1.2) that iterates over the registry entries of the [[RegistryData]] internal slot, returning each entry as a key value pair. The following steps are taken:</p>
+
+
+   <emu-alg><ol><li>Let <var>registry</var> be <emu-val>this</emu-val> value.</li><li>Let <var>entries</var> be a new List.</li><li>For each <var>pair</var> in <var>registry</var>.[[RegistryData]], do:<ol><li>Let <var>key</var> be <var>pair</var>.[[key]].</li><li>Let <var>entry</var> be <a href="#registry-GetRegistryEntry">GetRegistryEntry</a>(<var>registry</var>, <var>key</var>).</li><li>Append { [[key]]: <var>key</var>, [[value]]: <var>entry</var> } to <var>entries</var>.</li></ol></li><li>Return <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-createlistiterator">CreateListIterator</a>(<var>entries</var>).</li></ol></emu-alg>
+
+
+   <p>The value of the name property of this function is "[Symbol.iterator]".</p>
+
+
+   <h4 class="heading settled" data-level="4.4.3" id="registry-prototype-lookup"><span class="secno">4.4.3. </span><span class="content">Registry.prototype.lookup(key)</span><a class="self-link" href="#registry-prototype-lookup"></a></h4>
+
+
+   <p>The following steps are taken:</p>
+
+
+   <emu-alg><ol><li>Let <var>registry</var> be <emu-val>this</emu-val> value.</li><li>Return <a href="#registry-GetRegistryEntry">GetRegistryEntry</a>(<var>registry</var>, <var>key</var>).</li></ol></emu-alg>
+
+
+   <h4 class="heading settled" data-level="4.4.4" id="registry-prototype-install"><span class="secno">4.4.4. </span><span class="content">Registry.prototype.install(key, module)</span><a class="self-link" href="#registry-prototype-install"></a></h4>
+
+
+   <p>The following steps are taken:</p>
+
+
+   <emu-alg><ol><li>Let <var>registry</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>registry</var>) is not Object, throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>entries</var> be <var>registry</var>.[[RegistryData]].</li><li>Let <var>pair</var> be the entry in <var>entries</var> such that <var>pair</var>.[[key]] is equal to <var>key</var>.</li><li>If <var>pair</var> exists, then throw a new <emu-val>TypeError</emu-val>.</li><li>Let <var>entry</var> be a new registry entry record { [[Key]]: <var>key</var>, [[State]]: "ready", [[Metadata]]: <emu-val>undefined</emu-val>, [[Fetch]]: <emu-val>undefined</emu-val>, [[Translate]]: <emu-val>undefined</emu-val>, [[Instantiate]]: <emu-val>undefined</emu-val>, [[Dependencies]]: <emu-val>undefined</emu-val>, [[Module]]: <var>module</var> }.</li><li>Append { [[key]]: <var>key</var>, [[value]]: <var>entry</var> } to <var>entries</var>.</li></ol></emu-alg>
+
+
+   <h4 class="heading settled" data-level="4.4.5" id="registry-prototype-uninstall"><span class="secno">4.4.5. </span><span class="content">Registry.prototype.uninstall(key)</span><a class="self-link" href="#registry-prototype-uninstall"></a></h4>
+
+
+   <p>The following steps are taken:</p>
+
+
+   <emu-alg><ol><li>Let <var>registry</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>registry</var>) is not Object, throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>entries</var> be <var>registry</var>.[[RegistryData]].</li><li>Let <var>pair</var> be the entry in <var>entries</var> such that <var>pair</var>.[[key]] is equal to <var>key</var>.</li><li>If <var>pair</var> does not exist, then throw a new <emu-val>TypeError</emu-val>.</li><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>pair</var>.[[value]].[[State]]).</li><li>Let <var>linkStateValue</var> be <a href="#get-state-value">GetStateValue</a>("link").</li><li>If <var>stateValue</var> is less than <var>linkStateValue</var>, then throw a new <emu-val>TypeError</emu-val>.</li><li>Remove <var>pair</var> from <var>entries</var>.</li></ol></emu-alg>
+
+
+   <h4 class="heading settled" data-level="4.4.6" id="registry-prototype-cancel"><span class="secno">4.4.6. </span><span class="content">Registry.prototype.cancel(key)</span><a class="self-link" href="#registry-prototype-cancel"></a></h4>
+
+
+   <p>The following steps are taken:</p>
+
+
+   <emu-alg><ol><li>Let <var>registry</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>registry</var>) is not Object, throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>entries</var> be <var>registry</var>.[[RegistryData]].</li><li>Let <var>pair</var> be the entry in <var>entries</var> such that <var>pair</var>.[[key]] is equal to <var>key</var>.</li><li>If <var>pair</var> does not exist, then throw a new <emu-val>TypeError</emu-val>.</li><li>Let <var>entry</var> be <var>pair</var>.[[value]].</li><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>entry</var>.[[State]]).</li><li>Let <var>linkStateValue</var> be <a href="#get-state-value">GetStateValue</a>("link").</li><li>If <var>stateValue</var> is greater than or equal to <var>linkStateValue</var>, throw a new <emu-val>TypeError</emu-val>.</li><li>Remove <var>pair</var> from <var>entries</var>.</li></ol></emu-alg>
+
+
+   <h4 class="heading settled" data-level="4.4.7" id="registry-prototype-provide"><span class="secno">4.4.7. </span><span class="content">Registry.prototype.provide(key, stage, value)</span><a class="self-link" href="#registry-prototype-provide"></a></h4>
+
+
+   <p>The following steps are taken:</p>
+
+
+   <emu-alg><ol><li>Let <var>registry</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>registry</var>) is not Object, throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>loader</var> be <var>registry</var>.[[Loader]] value.</li><li>Let <var>entry</var> be <a href="#ensure-registered">EnsureRegistered</a>(<var>loader</var>, <var>key</var>).</li><li>If <var>stage</var> is "fetch", then:<ol><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>entry</var>.[[State]]).</li><li>Let <var>fetchStateValue</var> be <a href="#get-state-value">GetStateValue</a>("fetch").</li><li>If <var>stateValue</var> is greater than <var>fetchStateValue</var>, throw a new <emu-val>TypeError</emu-val>.</li><li>Call <a href="#fulfill-fetch">FulfillFetch</a>(<var>loader</var>, <var>entry</var>, <var>value</var>).</li><li>Return <emu-val>undefined</emu-val>.</li></ol></li><li>If <var>stage</var> is "translate", then:<ol><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>entry</var>.[[State]]).</li><li>Let <var>translateStateValue</var> be <a href="#get-state-value">GetStateValue</a>("translate").</li><li>If <var>stateValue</var> is greater than <var>translateStateValue</var>, throw a new <emu-val>TypeError</emu-val>.</li><li>Call <a href="#fulfill-fetch">FulfillFetch</a>(<var>loader</var>, <var>entry</var>, <emu-val>undefined</emu-val>).</li><li>Call <a href="#fulfill-translate">FulfillTranslate</a>(<var>loader</var>, <var>entry</var>, <var>value</var>).</li><li>Return <emu-val>undefined</emu-val>.</li></ol></li><li>If <var>stage</var> is "instantiate", then:<ol><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>entry</var>.[[State]]).</li><li>Let <var>instantiateStateValue</var> be <a href="#get-state-value">GetStateValue</a>("instantiate").</li><li>If <var>stateValue</var> is greater than <var>instantiateStateValue</var>, throw a new <emu-val>TypeError</emu-val>.</li><li>Call <a href="#fulfill-fetch">FulfillFetch</a>(<var>loader</var>, <var>entry</var>, <emu-val>undefined</emu-val>).</li><li>Call <a href="#fulfill-translate">FulfillTranslate</a>(<var>loader</var>, <var>entry</var>, <emu-val>undefined</emu-val>).</li><li>Assert: <var>entry</var>.[[Translate]] is resolved or rejected.</li><li>TODO: need to propagate rejections</li><li>Let <var>source</var> be the fulfillment value of <var>entry</var>.[[Translate]].</li><li>Call <a href="#fulfill-instantiate">FulfillInstantiate</a>(<var>loader</var>, <var>entry</var>, <var>value</var>, <var>source</var>).</li><li>Return <emu-val>undefined</emu-val>.</li></ol></li><li>Throw a new <emu-val>TypeError</emu-val>.</li></ol></emu-alg>
+
+
+   <h4 class="heading settled" data-level="4.4.8" id="registry-prototype-error"><span class="secno">4.4.8. </span><span class="content">Registry.prototype.error(key, stage, value)</span><a class="self-link" href="#registry-prototype-error"></a></h4>
+
+
+   <p>The following steps are taken:</p>
+
+
+   <emu-alg><ol><li>// TODO</li></ol></emu-alg>
+
+
+   <h3 class="heading settled" data-level="4.5" id="registry-internal-slots"><span class="secno">4.5. </span><span class="content">Properties of Registry Instances</span><a class="self-link" href="#registry-internal-slots"></a></h3>
+
+
+   <p>Registry instances are ordinary objects that inherit properties from the %RegistryPrototype%.</p>
+
+
+   <p>Registry instances are initially created with the internal slots described in the following table:</p>
+
+
+   <table>
+  
+    <thead>
+    
+     <tr>
+      
+      <th>Internal Slot
+      
+      
+      </th><th>Value Type (<em>non-normative</em>)
+      
+      
+      </th><th>Description (<em>non-normative</em>)
+      
+    
+     
+  
+  
+    </th></tr></thead><tbody>
+     <tr>
+    
+      <td>[[RegistryData]]
+      
+    
+      </td><td>List of pairs of String and <a href="#registry-entry">registry entry</a>.
+      
+    
+      </td><td>The registry of installed modules.
+      
+  
+     
+  
+     </td></tr><tr>
+    
+      <td>[[Loader]]
+      
+    
+      </td><td>An object
+      
+    
+      </td><td>The loader this registry belongs to.
+      
+  
+     
+</td></tr></tbody></table>
+
+
+   <h2 class="heading settled" data-level="5" id="pipeline-semantics"><span class="secno">5. </span><span class="content">Loading Semantics</span><a class="self-link" href="#pipeline-semantics"></a></h2>
+
+
+   <h3 class="heading settled" data-level="5.1" id="auxiliary-operations"><span class="secno">5.1. </span><span class="content">Auxiliary Operations</span><a class="self-link" href="#auxiliary-operations"></a></h3>
+
+
+   <h4 aoid="EnsureRegistered" class="heading settled" data-level="5.1.1" id="ensure-registered"><span class="secno">5.1.1. </span><span class="content">EnsureRegistered(loader, key)</span><a class="self-link" href="#ensure-registered"></a></h4>
 
 
    <emu-alg><ol><li>Assert: <var>loader</var> has a [[Registry]] internal slot.</li><li>Let <var>pair</var> be the entry in <var>loader</var>.[[Registry]] such that <var>pair</var>.[[key]] is equal to <var>key</var>.</li><li>If <var>pair</var> exists, then:<ol><li>Let <var>entry</var> be <var>pair</var>.[[value]].</li></ol></li><li>Else:<ol><li>Let <var>entry</var> be a new registry entry record { [[Key]]: <var>key</var>, [[State]]: "fetch", [[Metadata]]: <emu-val>undefined</emu-val>, [[Fetch]]: <emu-val>undefined</emu-val>, [[Translate]]: <emu-val>undefined</emu-val>, [[Instantiate]]: <emu-val>undefined</emu-val>, [[Dependencies]]: <emu-val>undefined</emu-val>, [[Module]]: <emu-val>undefined</emu-val>, [[Error]]: <emu-val>nothing</emu-val> }.</li><li>Append { [[key]]: <var>key</var>, [[value]]: <var>entry</var> } to <var>loader</var>.[[Registry]].</li></ol></li><li>Return <var>entry</var>.</li></ol></emu-alg>
 
 
-   <h4 aoid="Resolve" class="heading settled" data-level="4.1.2" id="resolve"><span class="secno">4.1.2. </span><span class="content">Resolve(loader, name, referrer)</span><a class="self-link" href="#resolve"></a></h4>
+   <h4 aoid="Resolve" class="heading settled" data-level="5.1.2" id="resolve"><span class="secno">5.1.2. </span><span class="content">Resolve(loader, name, referrer)</span><a class="self-link" href="#resolve"></a></h4>
 
 
-   <emu-alg><ol><li>Let <var>hook</var> be <var>loader</var>.[[Resolve]].</li><li>Return the result of promise-calling <var>hook</var>(<var>name</var>, <var>referrer</var>).</li></ol></emu-alg>
+   <emu-alg><ol><li>Let <var>hook</var> be <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-getmethod">GetMethod</a>(<var>loader</var>, @@resolve).</li><li>Return the result of promise-calling <var>hook</var>(<var>name</var>, <var>referrer</var>).</li></ol></emu-alg>
 
 
-   <h4 aoid="FulfillFetch" class="heading settled" data-level="4.1.3" id="fulfill-fetch"><span class="secno">4.1.3. </span><span class="content">FulfillFetch(loader, entry, payload)</span><a class="self-link" href="#fulfill-fetch"></a></h4>
+   <h4 aoid="FulfillFetch" class="heading settled" data-level="5.1.3" id="fulfill-fetch"><span class="secno">5.1.3. </span><span class="content">FulfillFetch(loader, entry, payload)</span><a class="self-link" href="#fulfill-fetch"></a></h4>
 
 
    <emu-alg><ol><li>If <var>entry</var>.[[Fetch]] is <emu-val>undefined</emu-val>, then set <var>entry</var>.[[Fetch]] to a new promise.</li><li>Fulfill <var>entry</var>.[[Fetch]] with <var>payload</var>.</li><li><a href="#set-state-to-max">SetStateToMax</a>(<var>entry</var>, "translate").</li></ol></emu-alg>
 
 
-   <h4 aoid="FulfillTranslate" class="heading settled" data-level="4.1.4" id="fulfill-translate"><span class="secno">4.1.4. </span><span class="content">FulfillTranslate(loader, entry, source)</span><a class="self-link" href="#fulfill-translate"></a></h4>
+   <h4 aoid="FulfillTranslate" class="heading settled" data-level="5.1.4" id="fulfill-translate"><span class="secno">5.1.4. </span><span class="content">FulfillTranslate(loader, entry, source)</span><a class="self-link" href="#fulfill-translate"></a></h4>
 
 
    <emu-alg><ol><li>If <var>entry</var>.[[Translate]] is <emu-val>undefined</emu-val>, then set <var>entry</var>.[[Translate]] to a new promise.</li><li>Fulfill <var>entry</var>.[[Translate]] with <var>source</var>.</li><li><a href="#set-state-to-max">SetStateToMax</a>(<var>entry</var>, "instantiate").</li></ol></emu-alg>
 
 
-   <h4 aoid="FulfillInstantiate" class="heading settled" data-level="4.1.5" id="fulfill-instantiate"><span class="secno">4.1.5. </span><span class="content">FulfillInstantiate(loader, entry, optionalInstance, source)</span><a class="self-link" href="#fulfill-instantiate"></a></h4>
+   <h4 aoid="FulfillInstantiate" class="heading settled" data-level="5.1.5" id="fulfill-instantiate"><span class="secno">5.1.5. </span><span class="content">FulfillInstantiate(loader, entry, optionalInstance, source)</span><a class="self-link" href="#fulfill-instantiate"></a></h4>
 
 
    <emu-alg><ol><li>If <var>entry</var>.[[Instantiate]] is <emu-val>undefined</emu-val>, then set <var>entry</var>.[[Instantiate]] to a new promise.</li><li>Return <a href="#commit-instantiated">CommitInstantiated</a>(<var>loader</var>, <var>entry</var>, <var>optionalInstance</var>, <var>source</var>).</li></ol></emu-alg>
 
 
-   <h4 aoid="CommitInstantiated" class="heading settled" data-level="4.1.6" id="commit-instantiated"><span class="secno">4.1.6. </span><span class="content">CommitInstantiated(loader, entry, optionalInstance, source)</span><a class="self-link" href="#commit-instantiated"></a></h4>
+   <h4 aoid="CommitInstantiated" class="heading settled" data-level="5.1.6" id="commit-instantiated"><span class="secno">5.1.6. </span><span class="content">CommitInstantiated(loader, entry, optionalInstance, source)</span><a class="self-link" href="#commit-instantiated"></a></h4>
 
 
-   <emu-alg><ol><li>Let <var>instance</var> be <a href="#instantiation">Instantiation</a>(<var>loader</var>, <var>optionalInstance</var>, <var>source</var>).</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>instance</var>).</li><li>// TODO: edge case: what if <var>instance</var> is a thenable function?</li><li>Fulfill <var>entry</var>.[[Instantiate]] with <var>instance</var>.</li><li>Let <var>deps</var> be a new empty List.</li><li>If <var>instance</var> is a Module Record, then:<ol><li>Assert: <var>instance</var> is a Source Text Module Record.</li><li>Set <var>instance</var>.[[RegistryEntry]] to <var>entry</var>.</li><li>For each <var>dep</var> in <var>instance</var>.[[RequestedModules]], do:<ol><li>Append the record { [[key]]: <var>dep</var>, [[value]]: <emu-val>undefined</emu-val> } to <var>deps</var>.</li></ol></li></ol></li><li>Set <var>entry</var>.[[Dependencies]] to <var>deps</var>.</li><li>Set <var>entry</var>.[[Module]] to <var>instance</var>.</li><li><a href="#set-state-to-max">SetStateToMax</a>(<var>entry</var>, "link").</li></ol></emu-alg>
+   <emu-alg><ol><li>Let <var>instance</var> be <a href="#instantiation">Instantiation</a>(<var>loader</var>, <var>optionalInstance</var>, <var>source</var>).</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>instance</var>).</li><li>// TODO: edge case: what if <var>instance</var> is a thenable function?</li><li>Let <var>deps</var> be a new empty List.</li><li>If <var>instance</var> is a Module Record, then:<ol><li>Assert: <var>instance</var> is a Source Text Module Record.</li><li>Set <var>instance</var>.[[RegistryEntry]] to <var>entry</var>.</li><li>For each <var>dep</var> in <var>instance</var>.[[RequestedModules]], do:<ol><li>Append the record { [[key]]: <var>dep</var>, [[value]]: <emu-val>undefined</emu-val> } to <var>deps</var>.</li></ol></li></ol></li><li>Set <var>entry</var>.[[Dependencies]] to <var>deps</var>.</li><li>Set <var>entry</var>.[[Module]] to <var>instance</var>.</li><li><a href="#set-state-to-max">SetStateToMax</a>(<var>entry</var>, "link").</li></ol></emu-alg>
 
 
-   <h4 aoid="Instantiation" class="heading settled" data-level="4.1.7" id="instantiation"><span class="secno">4.1.7. </span><span class="content">Instantiation(loader, result, source)</span><a class="self-link" href="#instantiation"></a></h4>
+   <h4 aoid="Instantiation" class="heading settled" data-level="5.1.7" id="instantiation"><span class="secno">5.1.7. </span><span class="content">Instantiation(loader, result, source)</span><a class="self-link" href="#instantiation"></a></h4>
 
 
-   <emu-alg><ol><li>If <var>result</var> is <emu-val>undefined</emu-val>, then return ParseModule(<var>source</var>).</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-iscallable">IsCallable</a>(<var>result</var>) is <emu-val>false</emu-val> then throw a new TypeError.</li><li>Set <var>result</var>.[[Realm]] to <var>loader</var>.[[Realm]].</li><li>Return <var>result</var>.</li></ol></emu-alg>
+   <emu-alg><ol><li>If <var>result</var> is <emu-val>undefined</emu-val>, then return ParseModule(<var>source</var>).</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-iscallable">IsCallable</a>(<var>result</var>) is <emu-val>false</emu-val> then throw a new <emu-val>TypeError</emu-val>.</li><li>Set <var>result</var>.[[Realm]] to <var>loader</var>.[[Realm]].</li><li>Return <var>result</var>.</li></ol></emu-alg>
 
 
-   <h3 class="heading settled" data-level="4.2" id="loading-operations"><span class="secno">4.2. </span><span class="content">Loading Operations</span><a class="self-link" href="#loading-operations"></a></h3>
+   <h3 class="heading settled" data-level="5.2" id="loading-operations"><span class="secno">5.2. </span><span class="content">Loading Operations</span><a class="self-link" href="#loading-operations"></a></h3>
 
 
-   <h4 aoid="RequestFetch" class="heading settled" data-level="4.2.1" id="request-fetch"><span class="secno">4.2.1. </span><span class="content">RequestFetch(loader, key)</span><a class="self-link" href="#request-fetch"></a></h4>
+   <h4 aoid="RequestFetch" class="heading settled" data-level="5.2.1" id="request-fetch"><span class="secno">5.2.1. </span><span class="content">RequestFetch(loader, key)</span><a class="self-link" href="#request-fetch"></a></h4>
 
 
-   <emu-alg><ol><li>Let <var>entry</var> be <a href="#ensure-registered">EnsureRegistered</a>(<var>loader</var>, <var>key</var>).</li><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>entry</var>.[[State]]).</li><li>Let <var>linkStateValue</var> be <a href="#get-state-value">GetStateValue</a>("link").</li><li>If <var>stateValue</var> is greater than <var>linkStateValue</var>, return a new error promise.</li><li>If <var>entry</var>.[[Fetch]] is not <emu-val>undefined</emu-val>, return <var>entry</var>.[[Fetch]].</li><li>Let <var>hook</var> be <var>loader</var>.[[Fetch]].</li><li>// TODO: metadata object</li><li>Let <var>p0</var> be the result of promise-calling <var>hook</var>(<var>key</var>).</li><li>Let <var>p</var> be the result of transforming <var>p0</var> with a fulfillment handler that, when called with argument <var>payload</var>, runs the following steps:<ol><li><a href="#set-state-to-max">SetStateToMax</a>(<var>entry</var>, "translate").</li><li>Return <var>payload</var>.</li></ol></li><li>Set <var>entry</var>.[[Fetch]] to <var>p</var>.</li><li>Return <var>p</var>.</li></ol></emu-alg>
+   <emu-alg><ol><li>Let <var>entry</var> be <a href="#ensure-registered">EnsureRegistered</a>(<var>loader</var>, <var>key</var>).</li><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>entry</var>.[[State]]).</li><li>Let <var>linkStateValue</var> be <a href="#get-state-value">GetStateValue</a>("link").</li><li>If <var>stateValue</var> is greater than <var>linkStateValue</var>, return a new error promise.</li><li>If <var>entry</var>.[[Fetch]] is not <emu-val>undefined</emu-val>, return <var>entry</var>.[[Fetch]].</li><li>Let <var>hook</var> be <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-getmethod">GetMethod</a>(<var>loader</var>, @@fetch).</li><li>// TODO: metadata object</li><li>Let <var>p0</var> be the result of promise-calling <var>hook</var>(<var>key</var>).</li><li>Let <var>p</var> be the result of transforming <var>p0</var> with a fulfillment handler that, when called with argument <var>payload</var>, runs the following steps:<ol><li><a href="#set-state-to-max">SetStateToMax</a>(<var>entry</var>, "translate").</li><li>Return <var>payload</var>.</li></ol></li><li>Set <var>entry</var>.[[Fetch]] to <var>p</var>.</li><li>Return <var>p</var>.</li></ol></emu-alg>
 
 
-   <h4 aoid="RequestTranslate" class="heading settled" data-level="4.2.2" id="request-translate"><span class="secno">4.2.2. </span><span class="content">RequestTranslate(loader, key)</span><a class="self-link" href="#request-translate"></a></h4>
+   <h4 aoid="RequestTranslate" class="heading settled" data-level="5.2.2" id="request-translate"><span class="secno">5.2.2. </span><span class="content">RequestTranslate(loader, key)</span><a class="self-link" href="#request-translate"></a></h4>
 
 
-   <emu-alg><ol><li>Let <var>entry</var> be <a href="#ensure-registered">EnsureRegistered</a>(<var>loader</var>, <var>key</var>).</li><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>entry</var>.[[State]]).</li><li>Let <var>linkStateValue</var> be <a href="#get-state-value">GetStateValue</a>("link").</li><li>If <var>stateValue</var> is greater than <var>linkStateValue</var>, return a new error promise.</li><li>If <var>entry</var>.[[Translate]] is not <emu-val>undefined</emu-val>, return <var>entry</var>.[[Translate]].</li><li>Let <var>hook</var> be <var>loader</var>.[[Translate]].</li><li>Let <var>p</var> be the result of transforming <a href="#request-fetch">RequestFetch</a>(<var>loader</var>, <var>key</var>) with a fulfillment handler that, when called with argument <var>payload</var>, runs the following steps:<ol><li>// TODO: metadata</li><li>Let <var>p1</var> be the result of promise-calling <var>hook</var>(<var>key</var>, <var>payload</var>).</li><li>Return the result of transforming <var>p1</var> with a fulfillment handler that, when called with argument <var>source</var>, runs the following steps:<ol><li><a href="#set-state-to-max">SetStateToMax</a>(<var>entry</var>, "instantiate").</li><li>Return <var>source</var>.</li></ol></li></ol></li><li>Set <var>entry</var>.[[Translate]] to <var>p</var>.</li><li>Return <var>p</var>.</li></ol></emu-alg>
+   <emu-alg><ol><li>Let <var>entry</var> be <a href="#ensure-registered">EnsureRegistered</a>(<var>loader</var>, <var>key</var>).</li><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>entry</var>.[[State]]).</li><li>Let <var>linkStateValue</var> be <a href="#get-state-value">GetStateValue</a>("link").</li><li>If <var>stateValue</var> is greater than <var>linkStateValue</var>, return a new error promise.</li><li>If <var>entry</var>.[[Translate]] is not <emu-val>undefined</emu-val>, return <var>entry</var>.[[Translate]].</li><li>Let <var>hook</var> be <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-getmethod">GetMethod</a>(<var>loader</var>, @@translate).</li><li>Let <var>p</var> be the result of transforming <a href="#request-fetch">RequestFetch</a>(<var>loader</var>, <var>key</var>) with a fulfillment handler that, when called with argument <var>payload</var>, runs the following steps:<ol><li>// TODO: metadata</li><li>Let <var>p1</var> be the result of promise-calling <var>hook</var>(<var>key</var>, <var>payload</var>).</li><li>Return the result of transforming <var>p1</var> with a fulfillment handler that, when called with argument <var>source</var>, runs the following steps:<ol><li><a href="#set-state-to-max">SetStateToMax</a>(<var>entry</var>, "instantiate").</li><li>Return <var>source</var>.</li></ol></li></ol></li><li>Set <var>entry</var>.[[Translate]] to <var>p</var>.</li><li>Return <var>p</var>.</li></ol></emu-alg>
 
 
-   <h4 aoid="RequestInstantiate" class="heading settled" data-level="4.2.3" id="request-instantiate"><span class="secno">4.2.3. </span><span class="content">RequestInstantiate(loader, key)</span><a class="self-link" href="#request-instantiate"></a></h4>
+   <h4 aoid="RequestInstantiate" class="heading settled" data-level="5.2.3" id="request-instantiate"><span class="secno">5.2.3. </span><span class="content">RequestInstantiate(loader, key)</span><a class="self-link" href="#request-instantiate"></a></h4>
 
 
-   <emu-alg><ol><li>Let <var>entry</var> be <a href="#ensure-registered">EnsureRegistered</a>(<var>loader</var>, <var>key</var>).</li><li>If <var>entry</var>.[[State]] is "ready", return a new error promise.</li><li>If <var>entry</var>.[[Instantiate]] is not <emu-val>undefined</emu-val>, return <var>entry</var>.[[Instantiate]].</li><li>Let <var>hook</var> be <var>loader</var>.[[Instantiate]].</li><li>Let <var>p</var> be the result of transforming <a href="#request-translate">RequestTranslate</a>(<var>loader</var>, <var>key</var>) with a fulfillment handler that, when called with argument <var>source</var>, runs the following steps:<ol><li>// TODO: metadata</li><li>Let <var>p1</var> be the result of promise-calling <var>hook</var>(<var>key</var>, <var>source</var>).</li><li>Return the result of transforming <var>p1</var> with a fulfillment handler that, when called with argument <var>optionalInstance</var>, runs the following steps:<ol><li>Let <var>status</var> be <a href="#commit-instantiated">CommitInstantiated</a>(<var>loader</var>, <var>entry</var>, <var>optionalInstance</var>, <var>source</var>).</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>status</var>).</li><li>Return <var>entry</var>.</li></ol></li></ol></li><li>Set <var>entry</var>.[[Instantiate]] to <var>p</var>.</li><li>Return <var>p</var>.</li></ol></emu-alg>
+   <emu-alg><ol><li>Let <var>entry</var> be <a href="#ensure-registered">EnsureRegistered</a>(<var>loader</var>, <var>key</var>).</li><li>If <var>entry</var>.[[State]] is "ready", return a new error promise.</li><li>If <var>entry</var>.[[Instantiate]] is not <emu-val>undefined</emu-val>, return <var>entry</var>.[[Instantiate]].</li><li>Let <var>hook</var> be <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-getmethod">GetMethod</a>(<var>loader</var>, @@instantiate).</li><li>Let <var>p</var> be the result of transforming <a href="#request-translate">RequestTranslate</a>(<var>loader</var>, <var>key</var>) with a fulfillment handler that, when called with argument <var>source</var>, runs the following steps:<ol><li>// TODO: metadata</li><li>Let <var>p1</var> be the result of promise-calling <var>hook</var>(<var>key</var>, <var>source</var>).</li><li>Return the result of transforming <var>p1</var> with a fulfillment handler that, when called with argument <var>optionalInstance</var>, runs the following steps:<ol><li>Let <var>status</var> be <a href="#commit-instantiated">CommitInstantiated</a>(<var>loader</var>, <var>entry</var>, <var>optionalInstance</var>, <var>source</var>).</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>status</var>).</li><li>Return <var>entry</var>.</li></ol></li></ol></li><li>Set <var>entry</var>.[[Instantiate]] to <var>p</var>.</li><li>Return <var>p</var>.</li></ol></emu-alg>
 
 
-   <h4 aoid="RequestInstantiateAll" class="heading settled" data-level="4.2.4" id="request-instantiate-all"><span class="secno">4.2.4. </span><span class="content">RequestInstantiateAll(loader, key)</span><a class="self-link" href="#request-instantiate-all"></a></h4>
+   <h4 aoid="RequestInstantiateAll" class="heading settled" data-level="5.2.4" id="request-instantiate-all"><span class="secno">5.2.4. </span><span class="content">RequestInstantiateAll(loader, key)</span><a class="self-link" href="#request-instantiate-all"></a></h4>
 
 
    <emu-alg><ol><li>Return the result of transforming <a href="#request-instantiate">RequestInstantiate</a>(<var>loader</var>, <var>key</var>) with a fulfillment handler that, when called with argument <var>entry</var>, runs the following steps:<ol><li>Let <var>depLoads</var> be a new empty List.</li><li>For each <var>pair</var> in <var>entry</var>.[[Dependencies]], do:<ol><li>Let <var>p</var> be the result of transforming <a href="#resolve">Resolve</a>(<var>loader</var>, <var>pair</var>.[[key]], <var>key</var>) with a fulfillment handler that, when called with value <var>depKey</var>, runs the following steps:<ol><li>Let <var>depEntry</var> be <a href="#ensure-registered">EnsureRegistered</a>(<var>loader</var>, <var>depKey</var>).</li><li>If <var>depEntry</var>.[[State]] is "ready", then:<ol><li>Let <var>dep</var> be <var>depEntry</var>.[[Module]].</li><li>Set <var>pair</var>.[[value]] to <var>dep</var>.</li><li>Return <var>dep</var>.</li></ol></li><li>Return the result of transforming <a href="#request-instantiate-all">RequestInstantiateAll</a>(<var>loader</var>, <var>depKey</var>) with a fulfillment handler that, when called with value <var>dep</var>, runs the following steps:<ol><li>Set <var>pair</var>.[[value]] to <var>dep</var>.</li><li>Return <var>dep</var>.</li></ol></li></ol></li><li>Append <var>p</var> to <var>depLoads</var>.</li></ol></li><li>Let <var>p</var> be the result of waiting for all <var>depLoads</var>.</li><li>Return the result of transforming <var>p</var> with a fulfillment handler that, when called, runs the following steps:<ol><li>Return <var>entry</var>.</li></ol></li></ol></li></ol></emu-alg>
 
 
-   <h4 aoid="RequestLink" class="heading settled" data-level="4.2.5" id="request-link"><span class="secno">4.2.5. </span><span class="content">RequestLink(loader, key)</span><a class="self-link" href="#request-link"></a></h4>
+   <h4 aoid="RequestLink" class="heading settled" data-level="5.2.5" id="request-link"><span class="secno">5.2.5. </span><span class="content">RequestLink(loader, key)</span><a class="self-link" href="#request-link"></a></h4>
 
 
    <emu-alg><ol><li>Let <var>entry</var> be <a href="#ensure-registered">EnsureRegistered</a>(<var>loader</var>, <var>key</var>).</li><li>If <var>entry</var>.[[State]] is "ready", return a new promise fulfilled with <var>entry</var>.[[Module]].</li><li>Return the result of transforming <a href="#request-instantiate-all">RequestInstantiateAll</a>(<var>loader</var>, <var>key</var>) with a fulfillment handler that, when called with argument <var>entry</var>, runs the following steps:<ol><li>Assert: <var>entry</var>’s whole dependency graph is in "link" state.</li><li>Let <var>status</var> be <a href="#link">Link</a>(<var>loader</var>, <var>entry</var>).</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>status</var>).</li><li>Assert: <var>entry</var>’s whole dependency graph is in "ready" state.</li><li>Return <var>entry</var>.</li></ol></li></ol></emu-alg>
 
 
-   <h4 aoid="RequestReady" class="heading settled" data-level="4.2.6" id="request-ready"><span class="secno">4.2.6. </span><span class="content">RequestReady(loader, key)</span><a class="self-link" href="#request-ready"></a></h4>
+   <h4 aoid="RequestReady" class="heading settled" data-level="5.2.6" id="request-ready"><span class="secno">5.2.6. </span><span class="content">RequestReady(loader, key)</span><a class="self-link" href="#request-ready"></a></h4>
 
 
-   <emu-alg><ol><li>Return the result of transforming <a href="#request-link">RequestLink</a>(<var>loader</var>, <var>key</var>) with a fulfillment handler that, when called with argument <var>entry</var>, runs the following steps:<ol><li>Let <var>module</var> be <var>entry</var>.[[Module]].</li><li>Let <var>status</var> be <var>module</var>.<a href="#reflective-evaluate">ModuleEvaluation</a>().</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>status</var>).</li><li>Return <var>module</var>.</li></ol></li></ol></emu-alg>
+   <emu-alg><ol><li>Return the result of transforming <a href="#request-link">RequestLink</a>(<var>loader</var>, <var>key</var>) with a fulfillment handler that, when called with argument <var>entry</var>, runs the following steps:<ol><li>Let <var>module</var> be <var>entry</var>.[[Module]].</li><li>Let <var>status</var> be the result of calling the ModuleEvaluation abstract operation of <var>module</var> with no arguments.</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>status</var>).</li><li>Return <var>module</var>.</li></ol></li></ol></emu-alg>
 
 
 
-   <h2 class="heading settled" data-level="5" id="linking-semantics"><span class="secno">5. </span><span class="content">Linking Semantics</span><a class="self-link" href="#linking-semantics"></a></h2>
+   <h2 class="heading settled" data-level="6" id="linking-semantics"><span class="secno">6. </span><span class="content">Linking Semantics</span><a class="self-link" href="#linking-semantics"></a></h2>
 
 
-   <h3 class="heading settled" data-level="5.1" id="resolving-dependencies"><span class="secno">5.1. </span><span class="content">Resolving Dependencies</span><a class="self-link" href="#resolving-dependencies"></a></h3>
+   <h3 class="heading settled" data-level="6.1" id="resolving-dependencies"><span class="secno">6.1. </span><span class="content">Resolving Dependencies</span><a class="self-link" href="#resolving-dependencies"></a></h3>
 
 
-   <h4 aoid="HostResolveImportedModule" class="heading settled" data-level="5.1.1" id="host-resolve-imported-module"><span class="secno">5.1.1. </span><span class="content">HostResolveImportedModule(module, requestName)</span><a class="self-link" href="#host-resolve-imported-module"></a></h4>
+   <h4 aoid="HostResolveImportedModule" class="heading settled" data-level="6.1.1" id="host-resolve-imported-module"><span class="secno">6.1.1. </span><span class="content">HostResolveImportedModule(module, requestName)</span><a class="self-link" href="#host-resolve-imported-module"></a></h4>
 
 
    <p>The modules spec should only invoke this operation from methods of Source Text Module Records, and this spec does not invoke the operation at all.</p>
@@ -679,133 +1022,31 @@ loading process and customizing loading behavior.</p>
    <emu-alg><ol><li>Assert: <var>module</var> is a Source Text Module Record.</li><li>Let <var>entry</var> be <var>module</var>.[[RegistryEntry]].</li><li>Assert: <var>entry</var> is in "link" or "ready" state.</li><li>Let <var>pair</var> be the pair in <var>entry</var>.[[Dependencies]] such that <var>pair</var>.[[key]] is equal to <var>requestName</var>.</li><li>Assert: <var>pair</var> is defined.</li><li>Let <var>dep</var> be <var>pair</var>.[[value]].</li><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>dep</var>.[[State]]).</li><li>Let <var>linkStateValue</var> be <a href="#get-state-value">GetStateValue</a>("link").</li><li>Assert: <var>stateValue</var> is greater than or equal to <var>linkStateValue</var>.</li><li>Return <var>dep</var>.[[Module]].</li></ol></emu-alg>
 
 
-
-   <h3 class="heading settled" data-level="5.2" id="linking"><span class="secno">5.2. </span><span class="content">Linking</span><a class="self-link" href="#linking"></a></h3>
-
-
-   <h4 aoid="Link" class="heading settled" data-level="5.2.1" id="link"><span class="secno">5.2.1. </span><span class="content">Link(loader, root)</span><a class="self-link" href="#link"></a></h4>
+   <h3 class="heading settled" data-level="6.2" id="linking"><span class="secno">6.2. </span><span class="content">Linking</span><a class="self-link" href="#linking"></a></h3>
 
 
-   <emu-alg><ol><li>Assert: <var>root</var> is a registry entry record in "link" state.</li><li>Let <var>deps</var> be <a href="#dependency-graph">DependencyGraph</a>(<var>root</var>).</li><li>For each <var>dep</var> in <var>deps</var>, do:<ol><li>If <var>dep</var>.[[State]] is "link" and <var>dep</var>.[[Module]] is a Function object, then:<ol><li>Let <var>f</var> be <var>dep</var>.[[Module]].</li><li>Let <var>m</var> be <var>f</var>().</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>m</var>).</li><li>Set <var>dep</var>.[[Module]] to <var>m</var>.</li><li>Set <var>dep</var>.[[State]] to "ready".</li></ol></li></ol></li><li>Assert: the following sequence is guaranteed not to run any user code.</li><li>For each <var>dep</var> in <var>deps</var>, do:<ol><li>If <var>dep</var>.[[State]] is "link", then:<ol><li>Let <var>module</var> be <var>dep</var>.[[Module]].</li><li>Assert: <var>module</var> is a Module Record.</li><li>Let <var>status</var> be <var>module</var>.<a href="#reflective-instantiate">ModuleDeclarationInstantiation</a>().</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>status</var>).</li><li>Set <var>dep</var>.[[State]] to "ready".</li></ol></li></ol></li><li>Return <emu-val>undefined</emu-val>.</li></ol></emu-alg>
+   <h4 aoid="Link" class="heading settled" data-level="6.2.1" id="link"><span class="secno">6.2.1. </span><span class="content">Link(loader, root)</span><a class="self-link" href="#link"></a></h4>
 
 
-   <h4 aoid="DependencyGraph" class="heading settled" data-level="5.2.2" id="dependency-graph"><span class="secno">5.2.2. </span><span class="content">DependencyGraph(root)</span><a class="self-link" href="#dependency-graph"></a></h4>
+   <emu-alg><ol><li>Assert: <var>root</var> is a registry entry record in "link" state.</li><li>Let <var>deps</var> be <a href="#dependency-graph">DependencyGraph</a>(<var>root</var>).</li><li>For each <var>dep</var> in <var>deps</var>, do:<ol><li>If <var>dep</var>.[[State]] is "link" and <var>dep</var>.[[Module]] is a Function object, then:<ol><li>Let <var>f</var> be <var>dep</var>.[[Module]].</li><li>Let <var>m</var> be <var>f</var>().</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>m</var>).</li><li>Set <var>dep</var>.[[Module]] to <var>m</var>.</li><li>Set <var>dep</var>.[[State]] to "ready".</li></ol></li></ol></li><li>Assert: the following sequence is guaranteed not to run any user code.</li><li>For each <var>dep</var> in <var>deps</var>, do:<ol><li>If <var>dep</var>.[[State]] is "link", then:<ol><li>Let <var>module</var> be <var>dep</var>.[[Module]].</li><li>Assert: <var>module</var> is a Module Record.</li><li>Let <var>status</var> be the result of calling the ModuleDeclarationInstantiation abstract operation of <var>module</var> with no arguments.</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>status</var>).</li><li>Set <var>dep</var>.[[State]] to "ready".</li></ol></li></ol></li><li>Return <emu-val>undefined</emu-val>.</li></ol></emu-alg>
+
+
+   <h4 aoid="DependencyGraph" class="heading settled" data-level="6.2.2" id="dependency-graph"><span class="secno">6.2.2. </span><span class="content">DependencyGraph(root)</span><a class="self-link" href="#dependency-graph"></a></h4>
 
 
    <emu-alg><ol><li>Let <var>result</var> be a new empty List.</li><li>Call <a href="#compute-dependency-graph">ComputeDependencyGraph</a>(<var>root</var>, <var>result</var>).</li><li>Return <var>result</var>.</li></ol></emu-alg>
 
 
-   <h4 aoid="ComputeDependencyGraph" class="heading settled" data-level="5.2.3" id="compute-dependency-graph"><span class="secno">5.2.3. </span><span class="content">ComputeDependencyGraph(entry, result)</span><a class="self-link" href="#compute-dependency-graph"></a></h4>
+   <h4 aoid="ComputeDependencyGraph" class="heading settled" data-level="6.2.3" id="compute-dependency-graph"><span class="secno">6.2.3. </span><span class="content">ComputeDependencyGraph(entry, result)</span><a class="self-link" href="#compute-dependency-graph"></a></h4>
 
 
    <emu-alg><ol><li>If <var>entry</var> is already in <var>result</var>, then return <emu-val>undefined</emu-val>.</li><li>Append <var>entry</var> to <var>result</var>.</li><li>For each <var>pair</var> in <var>entry</var>.[[Dependencies]], do:<ol><li>Assert: <var>pair</var>.[[value]] is defined.</li><li>Call <a href="#compute-dependency-graph">ComputeDependencyGraph</a>(<var>pair</var>.[[value]], <var>result</var>).</li></ol></li><li>Return <emu-val>undefined</emu-val>.</li></ol></emu-alg>
 
 
+   <h2 class="heading settled" data-level="7" id="module-objects"><span class="secno">7. </span><span class="content">Module Objects</span><a class="self-link" href="#module-objects"></a></h2>
 
-   <h2 class="heading settled" data-level="6" id="api"><span class="secno">6. </span><span class="content">API</span><a class="self-link" href="#api"></a></h2>
 
-
-   <h3 class="heading settled" data-level="6.1" id="loading-api"><span class="secno">6.1. </span><span class="content">Importing</span><a class="self-link" href="#loading-api"></a></h3>
-
-
-   <h4 class="heading settled" data-level="6.1.1" id="reflect-loader-import"><span class="secno">6.1.1. </span><span class="content">Reflect.Loader.import(name[, referrer])</span><a class="self-link" href="#reflect-loader-import"></a></h4>
-
-
-   <emu-alg><ol><li>Let <var>loader</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>loader</var>) is not Object, throw a TypeError exception.</li><li>If <var>loader</var> does not have a [[Registry]] internal slot throw a <emu-val>TypeError</emu-val> exception.</li><li>Return the result of transforming <a href="#resolve">Resolve</a>(<var>loader</var>, <var>name</var>, <var>referrer</var>) with a fulfillment handler that, when called with argument <var>key</var>, runs the following steps:<ol><li>Return <a href="#request-ready">RequestReady</a>(<var>loader</var>, <var>key</var>).</li></ol></li></ol></emu-alg>
-
-
-
-   <h3 class="heading settled" data-level="6.2" id="resolution-api"><span class="secno">6.2. </span><span class="content">Resolution</span><a class="self-link" href="#resolution-api"></a></h3>
-
-
-   <h4 class="heading settled" data-level="6.2.1" id="reflect-load-resolve"><span class="secno">6.2.1. </span><span class="content">Reflect.Loader.resolve(name[, referrer])</span><a class="self-link" href="#reflect-load-resolve"></a></h4>
-
-
-   <emu-alg><ol><li>Let <var>loader</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>loader</var>) is not Object, throw a TypeError exception.</li><li>If <var>loader</var> does not have a [[Registry]] internal slot throw a <emu-val>TypeError</emu-val> exception.</li><li>Return <a href="#resolve">Resolve</a>(<var>loader</var>, <var>name</var>, <var>referrer</var>).</li></ol></emu-alg>
-
-
-
-   <h3 class="heading settled" data-level="6.3" id="request-api"><span class="secno">6.3. </span><span class="content">Requests</span><a class="self-link" href="#request-api"></a></h3>
-
-
-   <h4 class="heading settled" data-level="6.3.1" id="reflect-loader-load"><span class="secno">6.3.1. </span><span class="content">Reflect.Loader.load(key[, stage])</span><a class="self-link" href="#reflect-loader-load"></a></h4>
-
-
-   <emu-alg><ol><li>Let <var>loader</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>loader</var>) is not Object, throw a TypeError exception.</li><li>If <var>loader</var> does not have a [[Registry]] internal slot throw a <emu-val>TypeError</emu-val> exception.</li><li>If <var>stage</var> is <emu-val>undefined</emu-val> then let <var>stage</var> be "ready".</li><li>If <var>stage</var> is "fetch", then:<ol><li>Return <a href="#request-fetch">RequestFetch</a>(<var>loader</var>, <var>key</var>).</li></ol></li><li>If <var>stage</var> is "translate", then:<ol><li>Return <a href="#request-translate">RequestTranslate</a>(<var>loader</var>, <var>key</var>).</li></ol></li><li>If <var>stage</var> is "instantiate", then:<ol><li>Return the result of transforming <a href="#request-instantiate-all">RequestInstantiateAll</a>(<var>loader</var>, <var>key</var>) with a fulfillment handler that, when called with argument <var>entry</var>, runs the following steps:<ol><li>If <var>entry</var>.[[Module]] is a Function object, return <var>entry</var>.[[Module]].</li><li>Return <emu-val>undefined</emu-val>.</li></ol></li></ol></li><li>If <var>stage</var> is "link", then:<ol><li>Return the result of transforming <a href="#request-link">RequestLink</a>(<var>loader</var>, <var>key</var>) with a fulfillment handler that returns <emu-val>undefined</emu-val>.</li></ol></li><li>If <var>stage</var> is "ready", then:<ol><li>Return the result of transforming <a href="#request-ready">RequestReady</a>(<var>loader</var>, <var>key</var>) with a fulfillment handler that, when called with argument <var>entry</var>, runs the following steps:<ol><li>Return GetModuleNamespace(<var>entry</var>.[[Module]]).</li></ol></li></ol></li><li>Throw a new TypeError.</li></ol></emu-alg>
-
-
-
-   <h3 class="heading settled" data-level="6.4" id="response-api"><span class="secno">6.4. </span><span class="content">Responses</span><a class="self-link" href="#response-api"></a></h3>
-
-
-   <h4 class="heading settled" data-level="6.4.1" id="reflect-loader-provide"><span class="secno">6.4.1. </span><span class="content">Reflect.Loader.provide(key, stage, value)</span><a class="self-link" href="#reflect-loader-provide"></a></h4>
-
-
-   <emu-alg><ol><li>Let <var>loader</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>loader</var>) is not Object, throw a <emu-val>TypeError</emu-val> exception.</li><li>If <var>loader</var> does not have a [[Registry]] internal slot throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>entry</var> be <a href="#ensure-registered">EnsureRegistered</a>(<var>loader</var>, <var>key</var>).</li><li>If <var>stage</var> is "fetch", then:<ol><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>entry</var>.[[State]]).</li><li>Let <var>fetchStateValue</var> be <a href="#get-state-value">GetStateValue</a>("fetch").</li><li>If <var>stateValue</var> is greater than <var>fetchStateValue</var>, throw a new TypeError.</li><li>Call <a href="#fulfill-fetch">FulfillFetch</a>(<var>loader</var>, <var>entry</var>, <var>value</var>).</li><li>Return <emu-val>undefined</emu-val>.</li></ol></li><li>If <var>stage</var> is "translate", then:<ol><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>entry</var>.[[State]]).</li><li>Let <var>translateStateValue</var> be <a href="#get-state-value">GetStateValue</a>("translate").</li><li>If <var>stateValue</var> is greater than <var>translateStateValue</var>, throw a new TypeError.</li><li>Call <a href="#fulfill-fetch">FulfillFetch</a>(<var>loader</var>, <var>entry</var>, <emu-val>undefined</emu-val>).</li><li>Call <a href="#fulfill-translate">FulfillTranslate</a>(<var>loader</var>, <var>entry</var>, <var>value</var>).</li><li>Return <emu-val>undefined</emu-val>.</li></ol></li><li>If <var>stage</var> is "instantiate", then:<ol><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>entry</var>.[[State]]).</li><li>Let <var>instantiateStateValue</var> be <a href="#get-state-value">GetStateValue</a>("instantiate").</li><li>If <var>stateValue</var> is greater than <var>instantiateStateValue</var>, throw a new TypeError.</li><li>Call <a href="#fulfill-fetch">FulfillFetch</a>(<var>loader</var>, <var>entry</var>, <emu-val>undefined</emu-val>).</li><li>Call <a href="#fulfill-translate">FulfillTranslate</a>(<var>loader</var>, <var>entry</var>, <emu-val>undefined</emu-val>).</li><li>Assert: <var>entry</var>.[[Translate]] is resolved or rejected.</li><li>TODO: need to propagate rejections</li><li>Let <var>source</var> be the fulfillment value of <var>entry</var>.[[Translate]].</li><li>Call <a href="#fulfill-instantiate">FulfillInstantiate</a>(<var>loader</var>, <var>entry</var>, <var>value</var>, <var>source</var>).</li><li>Return <emu-val>undefined</emu-val>.</li></ol></li><li>Throw a new TypeError.</li></ol></emu-alg>
-
-
-   <h4 class="heading settled" data-level="6.4.2" id="reflect-loader-error"><span class="secno">6.4.2. </span><span class="content">Reflect.Loader.error(key, stage, value)</span><a class="self-link" href="#reflect-loader-error"></a></h4>
-
-
-   <emu-alg><ol><li>// TODO</li></ol></emu-alg>
-
-
-
-   <h3 class="heading settled" data-level="6.5" id="registry-api"><span class="secno">6.5. </span><span class="content">Registry</span><a class="self-link" href="#registry-api"></a></h3>
-
-
-   <h4 class="heading settled" data-level="6.5.1" id="reflect-loader-lookup"><span class="secno">6.5.1. </span><span class="content">Reflect.Loader.lookup(key)</span><a class="self-link" href="#reflect-loader-lookup"></a></h4>
-
-
-   <emu-alg><ol><li>Let <var>loader</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>loader</var>) is not Object, throw a <emu-val>TypeError</emu-val> exception.</li><li>If <var>loader</var> does not have a [[Registry]] internal slot throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>pair</var> be the entry in <var>loader</var>.[[Registry]] such that <var>pair</var>.[[key]] is equal to <var>key</var>.</li><li>If <var>pair</var> does not exist, then return <emu-val>null</emu-val>.</li><li>Let <var>entry</var> be <var>pair</var>.[[value]].</li><li>Let <var>result</var> be <a href="#create-object">CreateObject</a>().</li><li>Call <a href="#simple-define">SimpleDefine</a>(<var>result</var>, "state", <var>entry</var>.[[State]]).</li><li>If <var>entry</var>.[[Fetch]] is <emu-val>undefined</emu-val> then let <var>fetch</var> be <emu-val>undefined</emu-val>.</li><li>Else let <var>fetch</var> be the result of transforming <var>entry</var>.[[Fetch]] with a new pass-through promise.</li><li>Call <a href="#simple-define">SimpleDefine</a>(<var>result</var>, "fetch", <var>fetch</var>).</li><li>If <var>entry</var>.[[Translate]] is <emu-val>undefined</emu-val>, then let <var>translate</var> be <emu-val>undefined</emu-val>.</li><li>Else let <var>translate</var> be the result of transforming <var>entry</var>.[[Translate]] with a new pass-through promise.</li><li>Call <a href="#simple-define">SimpleDefine</a>(<var>result</var>, "translate", <var>translate</var>).</li><li>If <var>entry</var>.[[Instantiate]] is <emu-val>undefined</emu-val>, then let <var>instantiate</var> be <emu-val>undefined</emu-val>.</li><li>Else let <var>instantiate</var> be the result of transforming <var>entry</var>.[[Instantiate]] with a fulfillment handler that, when called with argument <var>entry</var>, runs the following steps:<ol><li>If <var>entry</var>.[[Module]] is a Function object, then return <var>entry</var>.[[Module]].</li><li>Return <emu-val>undefined</emu-val>.</li></ol></li><li>Call <a href="#simple-define">SimpleDefine</a>(<var>result</var>, "instantiate", <var>instantiate</var>).</li><li>If <var>entry</var>.[[State]] is "ready" then let <var>module</var> be <var>entry</var>.[[Module]].</li><li>Else let <var>module</var> be <emu-val>undefined</emu-val>.</li><li>Call <a href="#simple-define">SimpleDefine</a>(<var>result</var>, "module", <var>module</var>).</li><li>If <var>entry</var>.[[Error]] is <emu-val>nothing</emu-val>, then:<ol><li>Call <a href="#simple-define">SimpleDefine</a>(<var>result</var>, "error", <emu-val>null</emu-val>).</li></ol></li><li>Else:<ol><li>Let <var>opt</var> be <a href="#create-object">CreateObject</a>().</li><li>Call <a href="#simple-define">SimpleDefine</a>(<var>opt</var>, "value", <var>entry</var>.[[Error]]).</li><li>Call <a href="#simple-define">SimpleDefine</a>(<var>result</var>, "error", <var>opt</var>).</li></ol></li><li>Return <var>result</var>.</li></ol></emu-alg>
-
-
-   <h4 class="heading settled" data-level="6.5.2" id="reflect-loader-install"><span class="secno">6.5.2. </span><span class="content">Reflect.Loader.install(key, module)</span><a class="self-link" href="#reflect-loader-install"></a></h4>
-
-
-   <emu-alg><ol><li>Let <var>loader</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>loader</var>) is not Object, throw a <emu-val>TypeError</emu-val> exception.</li><li>If <var>loader</var> does not have a [[Registry]] internal slot throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>pair</var> be the entry in <var>loader</var>.[[Registry]] such that <var>pair</var>.[[key]] is equal to <var>key</var>.</li><li>If <var>pair</var> exists, then throw a new TypeError.</li><li>Let <var>entry</var> be a new registry entry record { [[Key]]: <var>key</var>, [[State]]: "ready", [[Metadata]]: <emu-val>undefined</emu-val>, [[Fetch]]: <emu-val>undefined</emu-val>, [[Translate]]: <emu-val>undefined</emu-val>, [[Instantiate]]: <emu-val>undefined</emu-val>, [[Dependencies]]: <emu-val>undefined</emu-val>, [[Module]]: <var>module</var> }.</li><li>Append { [[key]]: <var>key</var>, [[value]]: <var>entry</var> } to <var>loader</var>.[[Registry]].</li></ol></emu-alg>
-
-
-   <h4 class="heading settled" data-level="6.5.3" id="reflect-loader-uninstall"><span class="secno">6.5.3. </span><span class="content">Reflect.Loader.uninstall(key)</span><a class="self-link" href="#reflect-loader-uninstall"></a></h4>
-
-
-   <emu-alg><ol><li>Let <var>loader</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>loader</var>) is not Object, throw a <emu-val>TypeError</emu-val> exception.</li><li>If <var>loader</var> does not have a [[Registry]] internal slot throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>pair</var> be the entry in <var>loader</var>.[[Registry]] such that <var>pair</var>.[[key]] is equal to <var>key</var>.</li><li>If <var>pair</var> does not exist, then throw a new TypeError.</li><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>pair</var>.[[value]].[[State]]).</li><li>Let <var>linkStateValue</var> be <a href="#get-state-value">GetStateValue</a>("link").</li><li>If <var>stateValue</var> is less than <var>linkStateValue</var>, then throw a new TypeError.</li><li>Remove <var>pair</var> from <var>loader</var>.[[Registry]].</li></ol></emu-alg>
-
-
-   <h4 class="heading settled" data-level="6.5.4" id="reflect-loader-cancel"><span class="secno">6.5.4. </span><span class="content">Reflect.Loader.cancel(key)</span><a class="self-link" href="#reflect-loader-cancel"></a></h4>
-
-
-   <emu-alg><ol><li>Let <var>loader</var> be <emu-val>this</emu-val> value.</li><li>If <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ecmascript-data-types-and-values">Type</a>(<var>loader</var>) is not Object, throw a <emu-val>TypeError</emu-val> exception.</li><li>If <var>loader</var> does not have a [[Registry]] internal slot throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>pair</var> be the entry in <var>loader</var>.[[Registry]] such that <var>pair</var>.[[key]] is equal to <var>key</var>.</li><li>If <var>pair</var> does not exist, then throw a new TypeError.</li><li>Let <var>entry</var> be <var>pair</var>.[[value]].</li><li>Let <var>stateValue</var> be <a href="#get-state-value">GetStateValue</a>(<var>entry</var>.[[State]]).</li><li>Let <var>linkStateValue</var> be <a href="#get-state-value">GetStateValue</a>("link").</li><li>If <var>stateValue</var> is greater than or equal to <var>linkStateValue</var>, throw a new TypeError.</li><li>Remove <var>pair</var> from <var>loader</var>.[[Registry]].</li></ol></emu-alg>
-
-
-
-   <h3 class="heading settled" data-level="6.6" id="loading-hooks"><span class="secno">6.6. </span><span class="content">Pipeline Intercession</span><a class="self-link" href="#loading-hooks"></a></h3>
-
-
-   <h4 class="heading settled" data-level="6.6.1" id="reflect-load-hook"><span class="secno">6.6.1. </span><span class="content">Reflect.Loader.hook(name[, value])</span><a class="self-link" href="#reflect-load-hook"></a></h4>
-
-
-   <p><b>TODO:</b></p>
-
-   <ul>
-    
-    <li><code>Reflect.Loader.hook("resolve"[, resolve])</code>
-    
-    </li><li><code>Reflect.Loader.hook("fetch"[, fetch])</code>
-    
-    </li><li><code>Reflect.Loader.hook("translate"[, translate])</code>
-    
-    </li><li><code>Reflect.Loader.hook("instantiate"[, instantiate])</code>
-</li></ul>
-
-
-   <h3 class="heading settled" data-level="6.7" id="module-reflection-api"><span class="secno">6.7. </span><span class="content">Module Reflection</span><a class="self-link" href="#module-reflection-api"></a></h3>
-
-
-   <p><b>TODO:</b> way to force evaluation of a module namespace exotic object (<code>Reflect.Module.evaluate(m)</code>? <code>m[Reflect.Module.evaluate]()</code>?)</p>
-
-
-   <h4 class="heading settled" data-level="6.7.1" id="reflective-module-record"><span class="secno">6.7.1. </span><span class="content">Reflective Module Records</span><a class="self-link" href="#reflective-module-record"></a></h4>
+   <h3 class="heading settled" data-level="7.1" id="reflective-module-record"><span class="secno">7.1. </span><span class="content">Reflective Module Records</span><a class="self-link" href="#reflective-module-record"></a></h3>
 
 
    <p>A <dfn data-dfn-type="dfn" data-noexport="" id="reflective-module-record0">reflective module record<a class="self-link" href="#reflective-module-record0"></a></dfn> is a kind of module record. It extends</p>
@@ -871,34 +1112,12 @@ loading process and customizing loading behavior.</p>
 </td></tr></tbody></table>
 
 
-   <h5 aoid="GetExportNames" class="heading settled" data-level="6.7.1.1" id="reflective-get-export-names"><span class="secno">6.7.1.1. </span><span class="content">Reflective Module.GetExportNames(exportStarStack)</span><a class="self-link" href="#reflective-get-export-names"></a></h5>
+   <p>-</p>
+   <h3 class="heading settled" data-level="7.2" id="module-abstract-operations"><span class="secno">7.2. </span><span class="content">Abstract Operations for Module Objects</span><a class="self-link" href="#module-abstract-operations"></a></h3>
+   <p></p>
 
 
-   <emu-alg><ol><li>Let <var>module</var> be this Reflective Module Record.</li><li>Let <var>exports</var> be a new empty List.</li><li>For each <var>name</var> in <var>module</var>.[[LocalExports]], do:<ol><li>Append <var>name</var> to <var>exports</var>.</li></ol></li><li>For each <var>pair</var> in <var>module</var>.[[IndirectExports]], do:<ol><li>Append <var>pair</var>.[[key]] to <var>exports</var>.</li></ol></li><li>Return <var>exports</var>.</li></ol></emu-alg>
-
-
-   <h5 aoid="ResolveExport" class="heading settled" data-level="6.7.1.2" id="reflective-resolve-export"><span class="secno">6.7.1.2. </span><span class="content">Reflective Module.ResolveExport(exportName, resolveStack, exportStarStack)</span><a class="self-link" href="#reflective-resolve-export"></a></h5>
-
-
-   <emu-alg><ol><li>Let <var>module</var> be this Reflective Module Record.</li><li>If <var>resolveStack</var> contains a record <var>r</var> such that <var>r</var>.[[module]] is equal to <var>module</var> and <var>r</var>.[[exportName]] is equal to <var>exportName</var>, then<ol><li>Assert: this is a circular import request.</li><li>Throw a SyntaxError exception.</li></ol></li><li>Append the record {[[module]]: <var>module</var>, [[exportName]]: <var>exportName</var>} to <var>resolveStack</var>.</li><li>Let <var>exports</var> be <var>module</var>.[[LocalExports]].</li><li>Let <var>pair</var> be the pair in <var>exports</var> such that <var>pair</var>.[[key]] is equal to <var>exportName</var>.</li><li>If <var>pair</var> is defined, then:<ol><li>Return the Record { [[module]]: <var>module</var>, [[bindingName]]: <var>exportName</var> }.</li></ol></li><li>Let <var>exports</var> be <var>module</var>.[[IndirectExports]].</li><li>Let <var>pair</var> be the pair in <var>exports</var> such that <var>pair</var>.[[key]] is equal to <var>exportName</var>.</li><li>If <var>pair</var> is defined, then return <var>pair</var>.[[value]].</li><li>Return <emu-val>null</emu-val>.</li></ol></emu-alg>
-
-
-   <h5 aoid="ModuleDeclarationInstantiation" class="heading settled" data-level="6.7.1.3" id="reflective-instantiate"><span class="secno">6.7.1.3. </span><span class="content">Reflective Module.ModuleDeclarationInstantiation()</span><a class="self-link" href="#reflective-instantiate"></a></h5>
-
-
-   <p>Reflective modules are always already instantiated.</p>
-
-
-   <emu-alg><ol><li>Return <emu-val>undefined</emu-val>.</li></ol></emu-alg>
-
-
-   <h5 aoid="ModuleEvaluation" class="heading settled" data-level="6.7.1.4" id="reflective-evaluate"><span class="secno">6.7.1.4. </span><span class="content">Reflective Module.ModuleEvaluation()</span><a class="self-link" href="#reflective-evaluate"></a></h5>
-
-
-   <emu-alg><ol><li>Let <var>module</var> be this Reflective Module Record.</li><li>Let <var>evaluate</var> be <var>module</var>.[[Evaluate]].</li><li>Set <var>module</var>.[[Evaluate]] to <emu-val>undefined</emu-val>.</li><li>Return <var>evaluate</var>().</li></ol></emu-alg>
-
-
-   <h4 aoid="ParseExportsDescriptors" class="heading settled" data-level="6.7.2" id="parse-exports-descriptors"><span class="secno">6.7.2. </span><span class="content">ParseExportsDescriptors(obj)</span><a class="self-link" href="#parse-exports-descriptors"></a></h4>
+   <h4 aoid="ParseExportsDescriptors" class="heading settled" data-level="7.2.1" id="parse-exports-descriptors"><span class="secno">7.2.1. </span><span class="content">ParseExportsDescriptors(obj)</span><a class="self-link" href="#parse-exports-descriptors"></a></h4>
 
 
    <p><b>TODO:</b> parse as in <a href="https://gist.github.com/dherman/fbf3077a2781df74b6d8">these examples</a></p>
@@ -920,19 +1139,92 @@ loading process and customizing loading behavior.</p>
    <emu-alg><ol><li>// TODO: spec me</li></ol></emu-alg>
 
 
-   <h4 aoid="CreateModuleMutator" class="heading settled" data-level="6.7.3" id="create-module-mutator"><span class="secno">6.7.3. </span><span class="content">CreateModuleMutator(module)</span><a class="self-link" href="#create-module-mutator"></a></h4>
+   <h4 aoid="CreateModuleMutator" class="heading settled" data-level="7.2.2" id="create-module-mutator"><span class="secno">7.2.2. </span><span class="content">CreateModuleMutator(module)</span><a class="self-link" href="#create-module-mutator"></a></h4>
 
 
    <emu-alg><ol><li>// TODO: spec me</li></ol></emu-alg>
 
 
-   <h4 class="heading settled" data-level="6.7.4" id="reflect-module"><span class="secno">6.7.4. </span><span class="content">Reflect.Module(descriptors[, executor, evaluate])</span><a class="self-link" href="#reflect-module"></a></h4>
+
+   <h4 aoid="GetExportNames" class="heading settled" data-level="7.2.3" id="get-export-names"><span class="secno">7.2.3. </span><span class="content">GetExportNames(exportStarStack)</span><a class="self-link" href="#get-export-names"></a></h4>
 
 
-   <emu-alg><ol><li>Let <var>realm</var> be the current Realm.</li><li>Let <var>env</var> be <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-newmoduleenvironment">NewModuleEnvironment</a>(<var>realm</var>.[[globalEnv]]).</li><li>Let <var>exportDescriptors</var> be <a href="#parse-exports-descriptors">ParseExportsDescriptors</a>(<var>descriptors</var>). // TODO: interleave the subsequent loop with parsing?</li><li>Let <var>localExports</var> be a new empty List.</li><li>Let <var>indirectExports</var> be a new empty List.</li><li>Let <var>exportNames</var> be a new empty List.</li><li>Let <var>envRec</var> be <var>env</var>’s environment record.</li><li>For each <var>desc</var> in <var>exportDescriptors</var>, do:<ol><li>Let <var>exportName</var> be <var>desc</var>.[[Name]].</li><li>Append <var>exportName</var> to <var>exportNames</var>.</li><li>If <var>desc</var> is an Indirect Export Descriptor, then:<ol><li>Let <var>otherMod</var> be <var>desc</var>.[[Module]].</li><li>Let <var>resolution</var> be <var>otherMod</var>.<a href="#reflective-resolve-export">ResolveExport</a>(<var>desc</var>.[[Import]], « »).</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>resolution</var>).</li><li>If <var>resolution</var> is <emu-val>null</emu-val>, then throw a SyntaxError exception.</li><li>Append the record {[[key]]: <var>exportName</var>, [[value]]: <var>resolution</var>} to <var>indirectExports</var>.</li></ol></li><li>Else:<ol><li>Append <var>exportName</var> to <var>localExports</var>.</li><li>If <var>desc</var> is an Immutable Export Descriptor, then:<ol><li>Let <var>status</var> be <var>envRec</var>.CreateImmutableBinding(<var>exportName</var>, <emu-val>true</emu-val>).</li><li>Assert: <var>status</var> is not an abrupt completion.</li></ol></li><li>Else:<ol><li>Assert: <var>desc</var> is a Mutable Export Descriptor.</li><li>Let <var>status</var> be <var>envRec</var>.CreateMutableBinding(<var>exportName</var>, <emu-val>false</emu-val>).</li><li>Assert: <var>status</var> is not an abrupt completion.</li></ol></li><li>If <var>desc</var>.[[Initialized]] is <emu-val>true</emu-val>, then:<ol><li>Call <var>envRec</var>.InitializeBinding(<var>exportName</var>, <var>desc</var>.[[Value]]).</li></ol></li></ol></li></ol></li><li>If <var>evaluate</var> is <emu-val>undefined</emu-val>, then let <var>evaluated</var> be <emu-val>true</emu-val>. Otherwise let <var>evaluated</var> be <emu-val>false</emu-val>.</li><li>Let <var>mod</var> be a new Reflective Module Record {[[Realm]]: <var>realm</var>, [[Environment]]: <var>env</var>, [[Namespace]]: <emu-val>undefined</emu-val>, [[Evaluated]]: <var>evaluated</var>, [[LocalExports]]: <var>localExports</var>, [[IndirectExports]]: <var>indirectExports</var>, [[Evaluate]]: <var>evaluate</var>}.</li><li>Let <var>ns</var> be <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-modulenamespacecreate">ModuleNamespaceCreate</a>(<var>mod</var>, <var>realm</var>, <var>exportNames</var>).</li><li>Set <var>mod</var>.[[Namespace]] to <var>ns</var>.</li><li>If <var>executor</var> is not <emu-val>undefined</emu-val>, then<ol><li>Let <var>mutator</var> be <a href="#create-module-mutator">CreateModuleMutator</a>(<var>mod</var>).</li><li>Let <var>status</var> be <var>executor</var>(<var>mutator</var>, <var>ns</var>).</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>status</var>).</li></ol></li><li>Return <var>ns</var>.</li></ol></emu-alg>
+   <p>The following steps are taken:</p>
 
 
-   <h2 class="heading settled" data-level="7" id="local"><span class="secno">7. </span><span class="content">Local Loading</span><a class="self-link" href="#local"></a></h2>
+   <emu-alg><ol><li>Let <var>module</var> be this Reflective Module Record.</li><li>Let <var>exports</var> be a new empty List.</li><li>For each <var>name</var> in <var>module</var>.[[LocalExports]], do:<ol><li>Append <var>name</var> to <var>exports</var>.</li></ol></li><li>For each <var>pair</var> in <var>module</var>.[[IndirectExports]], do:<ol><li>Append <var>pair</var>.[[key]] to <var>exports</var>.</li></ol></li><li>Return <var>exports</var>.</li></ol></emu-alg>
+
+
+   <h4 aoid="ResolveExport" class="heading settled" data-level="7.2.4" id="resolve-export"><span class="secno">7.2.4. </span><span class="content">ResolveExport(exportName, resolveStack, exportStarStack)</span><a class="self-link" href="#resolve-export"></a></h4>
+
+
+   <emu-alg><ol><li>Let <var>module</var> be this Reflective Module Record.</li><li>If <var>resolveStack</var> contains a record <var>r</var> such that <var>r</var>.[[module]] is equal to <var>module</var> and <var>r</var>.[[exportName]] is equal to <var>exportName</var>, then<ol><li>Assert: this is a circular import request.</li><li>Throw a SyntaxError exception.</li></ol></li><li>Append the record {[[module]]: <var>module</var>, [[exportName]]: <var>exportName</var>} to <var>resolveStack</var>.</li><li>Let <var>exports</var> be <var>module</var>.[[LocalExports]].</li><li>Let <var>pair</var> be the pair in <var>exports</var> such that <var>pair</var>.[[key]] is equal to <var>exportName</var>.</li><li>If <var>pair</var> is defined, then:<ol><li>Return the Record { [[module]]: <var>module</var>, [[bindingName]]: <var>exportName</var> }.</li></ol></li><li>Let <var>exports</var> be <var>module</var>.[[IndirectExports]].</li><li>Let <var>pair</var> be the pair in <var>exports</var> such that <var>pair</var>.[[key]] is equal to <var>exportName</var>.</li><li>If <var>pair</var> is defined, then return <var>pair</var>.[[value]].</li><li>Return <emu-val>null</emu-val>.</li></ol></emu-alg>
+
+
+   <h4 aoid="ModuleDeclarationInstantiation" class="heading settled" data-level="7.2.5" id="module-declaration-instantiation"><span class="secno">7.2.5. </span><span class="content">ModuleDeclarationInstantiation()</span><a class="self-link" href="#module-declaration-instantiation"></a></h4>
+
+
+   <p>Reflective modules are always already instantiated.</p>
+
+
+   <emu-alg><ol><li>Return <emu-val>undefined</emu-val>.</li></ol></emu-alg>
+
+
+   <h4 aoid="ModuleEvaluation" class="heading settled" data-level="7.2.6" id="module-evaluation"><span class="secno">7.2.6. </span><span class="content">ModuleEvaluation()</span><a class="self-link" href="#module-evaluation"></a></h4>
+
+
+   <emu-alg><ol><li>Let <var>module</var> be this Reflective Module Record.</li><li>Let <var>evaluate</var> be <var>module</var>.[[Evaluate]].</li><li>Set <var>module</var>.[[Evaluate]] to <emu-val>undefined</emu-val>.</li><li>Return <var>evaluate</var>().</li></ol></emu-alg>
+
+
+   <h3 class="heading settled" data-level="7.3" id="module-constructor"><span class="secno">7.3. </span><span class="content">The Reflect.Module Constructor</span><a class="self-link" href="#module-constructor"></a></h3>
+
+
+   <p>The Module constructor is the initial value of the Module property of the the Reflect object. When called as a constructor it creates and initializes a new Module object. Reflect.Module is not intended to be called as a function and will throw an exception when called in that manner.</p>
+
+
+   <p>The Reflect.Module constructor is designed to be subclassable. It may be used as the value in an extends clause of a class definition. Subclass constructors that intend to inherit the specified Module behaviour must include a super call to the Reflect.Module constructor to create and initialize the subclass instance with the internal state necessary to integrated with loaders.</p>
+
+
+   <h4 class="heading settled" data-level="7.3.1" id="new-reflect-module"><span class="secno">7.3.1. </span><span class="content">Reflect.Module(descriptors[, executor[, evaluate]])</span><a class="self-link" href="#new-reflect-module"></a></h4>
+
+
+   <p>When Reflect.Module is called with arguments <i>descriptors</i>, <i>executor</i>, and <i>evaluate</i>, the following steps are taken:</p>
+
+
+   <emu-alg><ol><li>Let <var>realm</var> be the current Realm.</li><li>Let <var>env</var> be <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-newmoduleenvironment">NewModuleEnvironment</a>(<var>realm</var>.[[globalEnv]]).</li><li>Let <var>exportDescriptors</var> be <a href="#parse-exports-descriptors">ParseExportsDescriptors</a>(<var>descriptors</var>). // TODO: interleave the subsequent loop with parsing?</li><li>Let <var>localExports</var> be a new empty List.</li><li>Let <var>indirectExports</var> be a new empty List.</li><li>Let <var>exportNames</var> be a new empty List.</li><li>Let <var>envRec</var> be <var>env</var>’s environment record.</li><li>For each <var>desc</var> in <var>exportDescriptors</var>, do:<ol><li>Let <var>exportName</var> be <var>desc</var>.[[Name]].</li><li>Append <var>exportName</var> to <var>exportNames</var>.</li><li>If <var>desc</var> is an Indirect Export Descriptor, then:<ol><li>Let <var>otherMod</var> be <var>desc</var>.[[Module]].</li><li>Let <var>resolution</var> be <var>otherMod</var>.<a href="#resolve-export">ResolveExport</a>(<var>desc</var>.[[Import]], « »).</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>resolution</var>).</li><li>If <var>resolution</var> is <emu-val>null</emu-val>, then throw a SyntaxError exception.</li><li>Append the record {[[key]]: <var>exportName</var>, [[value]]: <var>resolution</var>} to <var>indirectExports</var>.</li></ol></li><li>Else:<ol><li>Append <var>exportName</var> to <var>localExports</var>.</li><li>If <var>desc</var> is an Immutable Export Descriptor, then:<ol><li>Let <var>status</var> be <var>envRec</var>.CreateImmutableBinding(<var>exportName</var>, <emu-val>true</emu-val>).</li><li>Assert: <var>status</var> is not an abrupt completion.</li></ol></li><li>Else:<ol><li>Assert: <var>desc</var> is a Mutable Export Descriptor.</li><li>Let <var>status</var> be <var>envRec</var>.CreateMutableBinding(<var>exportName</var>, <emu-val>false</emu-val>).</li><li>Assert: <var>status</var> is not an abrupt completion.</li></ol></li><li>If <var>desc</var>.[[Initialized]] is <emu-val>true</emu-val>, then:<ol><li>Call <var>envRec</var>.InitializeBinding(<var>exportName</var>, <var>desc</var>.[[Value]]).</li></ol></li></ol></li></ol></li><li>If <var>evaluate</var> is <emu-val>undefined</emu-val>, then let <var>evaluated</var> be <emu-val>true</emu-val>. Otherwise let <var>evaluated</var> be <emu-val>false</emu-val>.</li><li>Let <var>mod</var> be a new Reflective Module Record {[[Realm]]: <var>realm</var>, [[Environment]]: <var>env</var>, [[Namespace]]: <emu-val>undefined</emu-val>, [[Evaluated]]: <var>evaluated</var>, [[LocalExports]]: <var>localExports</var>, [[IndirectExports]]: <var>indirectExports</var>, [[Evaluate]]: <var>evaluate</var>}.</li><li>Let <var>ns</var> be <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-modulenamespacecreate">ModuleNamespaceCreate</a>(<var>mod</var>, <var>realm</var>, <var>exportNames</var>).</li><li>Set <var>mod</var>.[[Namespace]] to <var>ns</var>.</li><li>If <var>executor</var> is not <emu-val>undefined</emu-val>, then<ol><li>Let <var>mutator</var> be <a href="#create-module-mutator">CreateModuleMutator</a>(<var>mod</var>).</li><li>Let <var>status</var> be <var>executor</var>(<var>mutator</var>, <var>ns</var>).</li><li><a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-returnifabrupt">ReturnIfAbrupt</a>(<var>status</var>).</li></ol></li><li>Return <var>ns</var>.</li></ol></emu-alg>
+
+
+   <h3 class="heading settled" data-level="7.4" id="properties-of-the-module-constructor"><span class="secno">7.4. </span><span class="content">Properties of the Reflect.Module Constructor</span><a class="self-link" href="#properties-of-the-module-constructor"></a></h3>
+
+
+   <p>The value of the [[Prototype]] internal slot of the Reflect.Module constructor is the intrinsic object %FunctionPrototype%.</p>
+
+
+   <p>Besides the internal slots and the length property (whose value is 0), the Reflect.Loader constructor has the following properties:</p>
+
+
+   <h4 class="heading settled" data-level="7.4.1" id="Reflect.Module.evaluate"><span class="secno">7.4.1. </span><span class="content">Reflect.Module.evaluate(m)</span><a class="self-link" href="#Reflect.Module.evaluate"></a></h4>
+
+
+   <p><b>TODO:</b> way to force evaluation of a module namespace exotic object (<code>Reflect.Module.evaluate(m)</code>? <code>m[Reflect.Module.evaluate]()</code>?)</p>
+
+
+   <h4 class="heading settled" data-level="7.4.2" id="Reflect.Module.prototype"><span class="secno">7.4.2. </span><span class="content">Reflect.Module.prototype</span><a class="self-link" href="#Reflect.Module.prototype"></a></h4>
+
+
+   <p>The value of Reflect.Module.prototype is an ordinary object with a null [[Prototype]].</p>
+
+
+   <p>This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: false }.</p>
+
+
+   <h3 class="heading settled" data-level="7.5" id="reflect-module-internal-slots"><span class="secno">7.5. </span><span class="content">Properties of Module Instances</span><a class="self-link" href="#reflect-module-internal-slots"></a></h3>
+
+
+   <p>Reflect.Module instances are module namespace exotic objects.</p>
+
+
+   <h2 class="heading settled" data-level="8" id="local"><span class="secno">8. </span><span class="content">Local Loading</span><a class="self-link" href="#local"></a></h2>
 
 
    <p><b>TODO:</b></p>
@@ -953,116 +1245,52 @@ loading process and customizing loading behavior.</p>
 
 
 
-   <h2 class="heading settled" data-level="8" id="browser"><span class="secno">8. </span><span class="content">Browser Loader</span><a class="self-link" href="#browser"></a></h2>
+   <h2 class="heading settled" data-level="9" id="browser"><span class="secno">9. </span><span class="content">Browser Loader</span><a class="self-link" href="#browser"></a></h2>
 
 
-   <h3 class="heading settled" data-level="8.1" id="browser-site-packages"><span class="secno">8.1. </span><span class="content">Site Packages</span><a class="self-link" href="#browser-site-packages"></a></h3>
+   <p>Every host environment must implement a default loader object as the initial value of the loader property of the System object.</p>
 
 
-   <p>The browser loader contains extra properties for storing <dfn data-dfn-type="dfn" data-noexport="" id="site-packages">site packages<a class="self-link" href="#site-packages"></a></dfn>, an application-global set of globally available packages. These map in an internal table to unique URLs that in turn serve as keys in the module registry.</p>
+   <h3 class="heading settled" data-level="9.1" id="system-loader-instance"><span class="secno">9.1. </span><span class="content">System.loader Object</span><a class="self-link" href="#system-loader-instance"></a></h3>
 
 
-   <div class="note" role="note">
-
-    <p>
-The site package system serves as a simple coordination mechanism for modest-sized applications, but it does not provide all functionality required of a full-fledged package management system. It is expected that development ecosystems will build around package management tools that deal with requirements outside the scope of this specification, such as version management and allowing multiple versions of a library to coexist with the same name.
-</p>
+   <p>The Default Browser Loader Object is an %BrowserLoader% instance, whose internal slots are set as if it had been constructed by the expression Construct(%BrowserLoader%).</p>
 
 
-    <p>
-Tools that preprocess JavaScript source code may choose to use or ignore the site package table. For example, a package manager may choose to preprocess two separate import statements requiring <code>"jquery"</code> to <code>"jquery/1.9"</code> and <code>"jquery/2.1.1"</code> respectively, based on configuration files informing the tool of version requirements. The tool would then store both versions of jQuery in the site package table using the longer names. Alternatively, the tool may choose to preprocess the imports directly as URLs and bypass the site package system altogether.
-</p>
-</div>
+   <h2 class="heading settled" data-level="10" id="browser-loader"><span class="secno">10. </span><span class="content">BrowserLoader Objects</span><a class="self-link" href="#browser-loader"></a></h2>
 
 
-   <p>The browser loader has an extra internal slot:</p>
+   <h3 class="heading settled" data-level="10.1" id="browser-loader-constructor"><span class="secno">10.1. </span><span class="content">The BrowserLoader Constructor</span><a class="self-link" href="#browser-loader-constructor"></a></h3>
 
 
-   <table>
-  
-    <thead>
-    
-     <tr>
-      
-      <th>Internal Slot
-      
-      
-      </th><th>Description (<em>non-normative</em>)
-      
-    
-     
-  
-  
-    </th></tr></thead><tbody>
-     <tr>
-    
-      <td>[[Site]]
-      
-    
-      </td><td>A table that maps package names to URLs.
-      
-  
-     
-</td></tr></tbody></table>
+   <p>The BrowserLoader constructor is the %BrowserLoader% intrinsic object. When called as a constructor it creates and initializes a new %BrowserLoader% object. %BrowserLoader% is not intended to be called as a function and will throw an exception when called in that manner.</p>
 
 
-   <h4 class="heading settled" data-level="8.1.1" id="reflect-loader-site"><span class="secno">8.1.1. </span><span class="content">Reflect.Loader.site( mappings )</span><a class="self-link" href="#reflect-loader-site"></a></h4>
+   <h3 class="heading settled" data-level="10.2" id="properties-of-the-browser-loader-constructor"><span class="secno">10.2. </span><span class="content">Properties of the BrowserLoader Constructor</span><a class="self-link" href="#properties-of-the-browser-loader-constructor"></a></h3>
 
 
-   <div class="example" id="example-a8daae9c"><a class="self-link" href="#example-a8daae9c"></a>
-  
-    <pre>Reflect.Loader.site({
-  "jquery":     "https://cdn.example.com/jquery/v/2.1.1",
-  "underscore": "https://cdn.example.com/underscore/v/1.7.0",
-  "moment":     "https://cdn.example.com/moment/v/2.8.3"
-});
-</pre>
-</div>
+   <p>The value of the [[Prototype]] internal slot of the BrowserLoader constructor is the intrinsic object %FunctionPrototype%.</p>
 
 
-   <h4 class="heading settled" data-level="8.1.2" id="reflect-loader-site-get"><span class="secno">8.1.2. </span><span class="content">Reflect.Loader.site.get( name )</span><a class="self-link" href="#reflect-loader-site-get"></a></h4>
+   <p>Besides the internal slots and the length property (whose value is 0), the BrowserLoader constructor has the following properties:</p>
 
 
-   <div class="example" id="example-3f2a779f"><a class="self-link" href="#example-3f2a779f"></a>
-  
-    <pre>var url = Reflect.Loader.site.get("jquery");
-</pre>
-</div>
+   <h4 class="heading settled" data-level="10.2.1" id="browser-loader-prototype"><span class="secno">10.2.1. </span><span class="content">BrowserLoader.prototype</span><a class="self-link" href="#browser-loader-prototype"></a></h4>
 
 
-   <h4 class="heading settled" data-level="8.1.3" id="reflect-loader-site-set"><span class="secno">8.1.3. </span><span class="content">Reflect.Loader.site.set( name, url )</span><a class="self-link" href="#reflect-loader-site-set"></a></h4>
+   <p>The value of BrowserLoader.prototype is %BrowserLoaderPrototype%.</p>
 
 
-   <div class="example" id="example-0023e8f8"><a class="self-link" href="#example-0023e8f8"></a>
-  
-    <pre>Reflect.Loader.site.set("jquery", "https://cdn.example.com/jquery/v/2.1.1");
-</pre>
-</div>
+   <p>This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: false }.</p>
 
 
-   <h4 class="heading settled" data-level="8.1.4" id="reflect-loader-site-has"><span class="secno">8.1.4. </span><span class="content">Reflect.Loader.site.has( name )</span><a class="self-link" href="#reflect-loader-site-has"></a></h4>
+   <h3 class="heading settled" data-level="10.3" id="properties-of-the-browser-loader-prototype"><span class="secno">10.3. </span><span class="content">Properties of the BrowserLoader Prototype</span><a class="self-link" href="#properties-of-the-browser-loader-prototype"></a></h3>
 
 
-   <div class="example" id="example-8bf124d6"><a class="self-link" href="#example-8bf124d6"></a>
-  
-    <pre>if (!Reflect.Loader.site.has("jquery")) {
-  Reflect.Loader.site.set("jquery", "https://cdn.example.com/jquery/v/2.1.1");
-}
-</pre>
-</div>
+   <h4 class="heading settled" data-level="10.3.1" id="browser-loader-prototype-@@resolve"><span class="secno">10.3.1. </span><span class="content">BrowserLoader.prototype[ @@resolve ](name, referrer)</span><a class="self-link" href="#browser-loader-prototype-%40%40resolve"></a></h4>
 
 
-   <h4 class="heading settled" data-level="8.1.5" id="reflect-loader-site-delete"><span class="secno">8.1.5. </span><span class="content">Reflect.Loader.site.delete( name )</span><a class="self-link" href="#reflect-loader-site-delete"></a></h4>
-
-
-   <div class="example" id="example-8951bfc2"><a class="self-link" href="#example-8951bfc2"></a>
-  
-    <pre>Reflect.Loader.site.delete("jquery");
-</pre>
-</div>
-
-
-   <h3 class="heading settled" data-level="8.2" id="browser-resolve"><span class="secno">8.2. </span><span class="content">Resolve</span><a class="self-link" href="#browser-resolve"></a></h3>
+   <p>When the @@resolve method is called, the following steps are taken:</p>
 
 
    <p><b>TODO:</b> name resolution policy</p>
@@ -1076,15 +1304,16 @@ Tools that preprocess JavaScript source code may choose to use or ignore the sit
     </li><li>Web standard modules: <code>"web/worker"</code>, <code>"web/audio"</code>
   
     </li><li>absolute URLs: <code>"https://cdn.example.com/jquery/v/2.0"</code>
-  
-    </li><li>top-level packages consult [[Site]]: <code>"jquery"</code>, <code>"ember/data"</code>
 </li></ul>
 
 
-   <p></p>
+   <p>The value of the name property of this function is "[Reflect.Loader.resolve]".</p>
 
 
-   <h3 class="heading settled" data-level="8.3" id="browser-fetch"><span class="secno">8.3. </span><span class="content">Fetch</span><a class="self-link" href="#browser-fetch"></a></h3>
+   <h4 class="heading settled" data-level="10.3.2" id="browser-loader-prototype-@@fetch"><span class="secno">10.3.2. </span><span class="content">BrowserLoader.prototype[ @@fetch ](key)</span><a class="self-link" href="#browser-loader-prototype-%40%40fetch"></a></h4>
+
+
+   <p>When the @@fetch method is called, the following steps are taken:</p>
 
 
    <p><b>TODO:</b></p>
@@ -1101,13 +1330,25 @@ Tools that preprocess JavaScript source code may choose to use or ignore the sit
 </li></ul>
 
 
-   <h3 class="heading settled" data-level="8.4" id="browser-translate"><span class="secno">8.4. </span><span class="content">Translate</span><a class="self-link" href="#browser-translate"></a></h3>
+   <p>The value of the name property of this function is "[Reflect.Loader.fetch]".</p>
+
+
+   <h4 class="heading settled" data-level="10.3.3" id="browser-loader-prototype-@@translate"><span class="secno">10.3.3. </span><span class="content">BrowserLoader.prototype[ @@translate ](key, payload)</span><a class="self-link" href="#browser-loader-prototype-%40%40translate"></a></h4>
+
+
+   <p>When the @@translate method is called, the following steps are taken:</p>
 
 
    <p><b>TODO:</b> no-op.</p>
 
 
-   <h3 class="heading settled" data-level="8.5" id="browser-instantiate"><span class="secno">8.5. </span><span class="content">Instantiate</span><a class="self-link" href="#browser-instantiate"></a></h3>
+   <p>The value of the name property of this function is "[Reflect.Loader.translate]".</p>
+
+
+   <h4 class="heading settled" data-level="10.3.4" id="browser-loader-prototype-@@instantiate"><span class="secno">10.3.4. </span><span class="content">BrowserLoader.prototype[ @@instantiate ](key, source)</span><a class="self-link" href="#browser-loader-prototype-%40%40instantiate"></a></h4>
+
+
+   <p>When the @@instantiate method is called, the following steps are taken:</p>
 
 
    <p><b>TODO:</b></p>
@@ -1118,6 +1359,76 @@ Tools that preprocess JavaScript source code may choose to use or ignore the sit
   
     </li><li>but also needs to re-absorb opaque responses.
 </li></ul>
+
+
+   <p>The value of the name property of this function is "[Reflect.Loader.instantiate]".</p>
+
+
+   <h2 class="no-num heading settled" id="annexes"><span class="content">Annexes</span><a class="self-link" href="#annexes"></a></h2>
+
+
+   <h3 class="heading settled" id="list-of-well-known-intrinsic-objects"><span class="content">List of Well-Known Intrinsic Objects</span><a class="self-link" href="#list-of-well-known-intrinsic-objects"></a></h3>
+
+
+   <p>The intrinsics are listed in table below:</p>
+
+
+   <table>
+  
+    <thead>
+    
+     <tr>
+      
+      <th>Intrinsic Name
+      
+      
+      </th><th>Description (<em>non-normative</em>)
+      
+    
+     
+  
+  
+    </th></tr></thead><tbody>
+     <tr>
+    
+      <td>%BrowserLoader%
+      
+    
+      </td><td>The browser loader constructor (<a href="#browser-loader-constructor">10.1</a>)
+      
+  
+     
+  
+     </td></tr><tr>
+    
+      <td>%BrowserLoaderPrototype%
+      
+    
+      </td><td>The initial value of the *prototype* data property of %BrowserLoader% (<a href="#browser-loader-prototype">10.2.1</a>)
+      
+  
+     
+  
+     </td></tr><tr>
+    
+      <td>%Registry%
+      
+    
+      </td><td>The registry constructor (<a href="#registry-constructor">4.1</a>)
+      
+  
+     
+  
+     </td></tr><tr>
+    
+      <td>%RegistryPrototype%
+      
+    
+      </td><td>The initial value of the *prototype* data property of %Registry% (<a href="#registry-prototype">4.3.1</a>)
+      
+  
+     
+</td></tr></tbody></table>
 
 </main>
   
@@ -1140,10 +1451,8 @@ Tools that preprocess JavaScript source code may choose to use or ignore the sit
   <h2 class="no-num heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="indexlist">
-   <li><a href="#loader-object0">loader object</a><span>, in §3</span>
-   </li><li><a href="#reflective-module-record0">reflective module record</a><span>, in §6.7.1</span>
-   </li><li><a href="#registry-entry">registry entry</a><span>, in §3.1</span>
-   </li><li><a href="#site-packages">site packages</a><span>, in §8.1</span></li></ul>
+   <li><a href="#reflective-module-record0">reflective module record</a><span>, in §7.1</span>
+   </li><li><a href="#registry-entry">registry entry</a><span>, in §4.1.1</span></li></ul>
   <h2 class="no-num heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
   <h3 class="no-num heading settled" id="normative"><span class="content">Normative References</span><a class="self-link" href="#normative"></a></h3>
   <dl>
