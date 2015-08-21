@@ -66,6 +66,48 @@ The primary goal is to make as much of this process as possible consistent betwe
 
 <h2 id="conventions">Conventions</h2>
 
+<h3 id="well-known-symbols">Well-Known Symbols</h3>
+
+Well-known symbols are built-in Symbol values that are explicitly referenced by algorithms of this specification. They are typically used as the keys of properties whose values serve as extension points of a specification algorithm.
+
+Within this specification a well-known symbol is referred to by using a notation of the form @@<i>name</i>, where "<i>name</i>" is one of the values listed in table below:
+
+<table>
+  <thead>
+    <tr>
+      <th>Specification Name</th>
+      <th>\[[Description]]</th>
+      <th>Value and Purpose</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>@@resolve</td>
+    <td>"Reflect.Loader.resolve"</td>
+    <td>A function valued property that is the resolve hook function of loader’s instances.</td>
+  </tr>
+  <tr>
+    <td>@@fetch</td>
+    <td>"Reflect.Loader.fetch"</td>
+    <td>A function valued property that is the fetch hook function of loader’s instances.</td>
+  </tr>
+  <tr>
+    <td>@@translate</td>
+    <td>"Reflect.Loader.translate"</td>
+    <td>A function valued property that is the translate hook function of loader’s instances.</td>
+  </tr>
+  <tr>
+    <td>@@instantiate</td>
+    <td>"Reflect.Loader.instantiate"</td>
+    <td>A function valued property that is the instantiate hook function of loader’s instances.</td>
+  </tr>
+</table>
+
+<h3 id="well-known-intrinsic-objects">Well-Known Intrinsic Objects</h3>
+
+Well-known intrinsics are built-in objects that are explicitly referenced by the algorithms of this specification and which usually have Realm specific identities. Unless otherwise specified each intrinsic object actually corresponds to a set of similar objects, one per Realm.
+
+Within this specification a reference such as %<i>name</i>% means the intrinsic object, associated with the current Realm, corresponding to the <i>name</i>. Determination of the current Realm and its intrinsics is described in ES2015, 8.3.
+
 <h3 id="promises">Promises</h3>
 
 This spec makes heavy use of promises, and adopts the notational conventions established in the promises guide.
@@ -122,9 +164,114 @@ mean the same thing as:
 1. If _newStateValue_ is larger than _stateValue_, set _entry_.[[State]] to _newState_.
 </emu-alg>
 
-<h2 id="loader-object">Loader Object</h2>
+<h2 id="loader-objects">Loader Objects</h2>
 
-A <dfn>loader object</dfn> has the following fields:
+<h3 id="loader-constructor">The Reflect.Loader Constructor</h3>
+
+The Loader constructor is the initial value of the Loader property of the the Reflect object. When called as a constructor it creates and initializes a new Loader object. Reflect.Loader is not intended to be called as a function and will throw an exception when called in that manner.
+
+The Reflect.Loader constructor is designed to be subclassable. It may be used as the value in an extends clause of a class definition. Subclass constructors that intend to inherit the specified Loader behaviour must include a super call to the Reflect.Loader constructor to create and initialize the subclass instance with the internal state necessary to support the Reflect.Loader.prototype built-in methods.
+
+<h4 id="new-reflect-loader">Reflect.Loader()</h4>
+
+When Reflect.Loader is called with no arguments, the following steps are taken:
+
+<emu-alg>
+1. If NewTarget is *undefined*, then throw a *TypeError* exception.
+1. Let _O_ be OrdinaryCreateFromConstructor(NewTarget, "Reflect.Loader.prototype").
+1. ReturnIfAbrupt(_O_).
+1. Let _registry_ to a new Registry(_O_).
+1. Set _O_’s [[Registry]] internal slot to _registry_.
+1. Return _O_.
+</emu-alg>
+
+<h3 id="properties-of-the-loader-constructor">Properties of the Reflect.Loader Constructor</h3>
+
+The value of the \[[Prototype]] internal slot of the Reflect.Loader constructor is the intrinsic object %FunctionPrototype%.
+
+Besides the internal slots and the length property (whose value is 0), the Reflect.Loader constructor has the following properties:
+
+<h4 id="Reflect.Loader.prototype">Reflect.Loader.prototype</h4>
+
+The value of Reflect.Loader.prototype is an ordinary object.
+
+This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
+
+<h3 id="sec-properties-of-the-loader-prototype-object">Properties of the Reflect.Loader Prototype Object</h3>
+
+<h4 id="Reflect.Loader.prototype.constructor">Reflect.Loader.prototype.constructor</h4>
+
+The initial value of Reflect.Loader.prototype.constructor is Reflect.Loader.
+
+<h4 id="reflect-loader-import">Reflect.Loader.prototype.import(name[, referrer])</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
+1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
+  1. Return RequestReady(_loader_, _key_).
+</emu-alg>
+
+<h4 id="reflect-load-resolve">Reflect.Loader.prototype.resolve(name[, referrer])</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. Return Resolve(_loader_, _name_, _referrer_).
+</emu-alg>
+
+<h4 id="reflect-loader-load">Reflect.Loader.prototype.load(name[, referrer[, stage]])</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _stage_ is *undefined* then let _stage_ be "ready".
+1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
+  1. If _stage_ is "fetch", then:
+    1. Return the result of transforming Resolve(loader, name, referrer) with a fulfillment handler that, when called with argument key, runs the following steps:
+    Return RequestReady(loader, key).
+    1. Return RequestFetch(_loader_, _key_).
+  1. If _stage_ is "translate", then:
+    1. Return RequestTranslate(_loader_, _key_).
+  1. If _stage_ is "instantiate", then:
+    1. Return the result of transforming RequestInstantiateAll(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+      1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
+      1. Return *undefined*.
+  1. If _stage_ is "link", then:
+    1. Return the result of transforming RequestLink(_loader_, _key_) with a fulfillment handler that returns *undefined*.
+  1. If _stage_ is "ready", then:
+    1. Return the result of transforming RequestReady(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+      1. Return GetModuleNamespace(_entry_.[[Module]]).
+  1. Throw a new *TypeError*.
+</emu-alg>
+
+<h4 id="relect-loader-registry">get Reflect.Loader.prototype.registry</h4>
+
+Reflect.Loader.prototype.registry is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
+
+<emu-alg>
+1. Let _loader_ be *this* value.
+1. Return _loader_.[[Registry]].
+</emu-alg>
+
+<h4 id="relect-loader-@@tostringtag">Reflect.Loader.prototype [ @@toStringTag ]</h4>
+
+The initial value of the @@toStringTag property is the String value "Object".
+
+This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: true }.
+
+<h3 id="reflect-loader-internal-slots">Properties of Reflect.Loader Instances</h3>
+
+Loader instances are ordinary objects that inherit properties from the *Reflect.Loader.prototype*.
+
+Loader instances are initially created with the internal slots described in the following table:
 
 <table>
   <thead>
@@ -141,34 +288,50 @@ A <dfn>loader object</dfn> has the following fields:
   </tr>
   <tr>
     <td>\[[Registry]]</td>
-    <td>List of pairs of String and <a>registry entry</a></td>
-    <td>The registry of installed modules.</td>
-  </tr>
-  <tr>
-    <td>\[[Resolve]]</td>
-    <td>A function object</td>
-    <td>The <code>"resolve"</code> loading hook.</td>
-  </tr>
-  <tr>
-    <td>\[[Fetch]]</td>
-    <td>A function object</td>
-    <td>The <code>"fetch"</code> loading hook.</td>
-  </tr>
-  <tr>
-    <td>\[[Translate]]</td>
-    <td>A function object</td>
-    <td>The <code>"translate"</code> loading hook.</td>
-  </tr>
-  <tr>
-    <td>\[[Instantiate]]</td>
-    <td>A function object</td>
-    <td>The <code>"instantiate"</code> loading hook.</td>
+    <td>An object</td>
+    <td>An instance of Registry (<a href="#registry">4</a>).</td>
   </tr>
 </table>
 
-<h3 id="registry">Module Registry</h3>
+<h2 id="registry">Registry Objects</h2>
 
-A <dfn>registry entry</dfn> is a record with the following fields:
+<h3 id="registry-abstract-operations">Abstract Operations for Registry Objects</h3>
+
+<h4 id="registry-GetRegistryEntry" aoid="GetRegistryEntry">GetRegistryEntry(registry, key)</h4>
+
+The abstract operation GetRegistryEntry with arguments registry and key performs the following steps:
+
+<emu-alg>
+1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. Let _entries_ be _registry_.[[RegistryData]].
+1. Let _pair_ be the entry in _entries_ such that _pair_.[[key]] is equal to _key_.
+1. If _pair_ does not exist, then return *null*.
+1. Let _entry_ be _pair_.[[value]].
+1. Let _result_ be CreateObject().
+1. Call SimpleDefine(_result_, "state", _entry_.[[State]]).
+1. Let _statePromise_ be *undefined*.
+1. If _entry_.[[State]] is "fetch" and _entry_.[[Fetch]] is not *undefined*, then
+  1. Set _statePromise_ to the result of transforming _entry_.[[Fetch]] with a new pass-through promise.
+1. Else If _entry_.[[State]] is "translate" and _entry_.[[Translate]] is not *undefined*, then
+  1. Set _statePromise_ to the result of transforming _entry_.[[Translate]] with a new pass-through promise.
+1. Else If _entry_.[[State]] is "instantiate" and _entry_.[[Instantiate]] is not *undefined*, then
+  1. Set _statePromise_ to the result of transforming _entry_.[[Instantiate]] with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+    1. If _entry_.[[Module]] is a Function object, then return _entry_.[[Module]].
+    1. Return *undefined*.
+1. Call SimpleDefine(_result_, "statePromise", _statePromise_).
+1. If _entry_.[[State]] is "ready" then let _module_ be _entry_.[[Module]].
+1. Else let _module_ be *undefined*.
+1. Call SimpleDefine(_result_, "module", _module_).
+1. If _entry_.[[Error]] is *nothing*, then:
+  1. Call SimpleDefine(_result_, "error", *null*).
+1. Else:
+  1. Let _opt_ be CreateObject().
+  1. Call SimpleDefine(_opt_, "value", _entry_.[[Error]]).
+  1. Call SimpleDefine(_result_, "error", _opt_).
+1. Return _result_.
+</emu-alg>
+
+A <dfn id="registry-entry">registry entry</dfn> is a record with the following fields:
 
 <table>
   <thead>
@@ -225,7 +388,183 @@ A <dfn>registry entry</dfn> is a record with the following fields:
   </tr>
 </table>
 
+<h3 id="registry-constructor">The Registry Constructor</h3>
 
+The Registry constructor is the %Registry% intrinsic object. When called as a constructor it creates and initializes a new %Registry% object. %Registry% is not intended to be called as a function and will throw an exception when called in that manner.
+
+<h4 id="new-registry" aoid="Registry">Registry(loader)</h4>
+
+When Registry is called with argument <i>loader</i>, the following steps are taken:
+
+<emu-alg>
+1. If NewTarget is *undefined*, then throw a *TypeError* exception.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. Let _O_ be OrdinaryCreateFromConstructor(NewTarget, "%RegistryPrototype%", «[[RegistryData]]» ).
+1. ReturnIfAbrupt(_O_).
+1. Set _O_’s [[RegistryData]] internal slot to a new empty List.
+1. Set _O_’s [[Loader]] internal slot to _loader_.
+1. Return _O_.
+</emu-alg>
+
+<h3 id="properties-of-the-registry-constructor">Properties of the Registry Constructor</h3>
+
+The value of the \[[Prototype]] internal slot of the Registry constructor is the intrinsic object %FunctionPrototype%.
+
+Besides the internal slots and the length property (whose value is 0), the Registry constructor has the following properties:
+
+<h4 id="registry-prototype">Registry.prototype</h4>
+
+The value of Registry.prototype is %RegistryPrototype%.
+
+This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
+
+<h3 id="registry-prototype-object">Properties of the Registry Prototype Object</h3>
+
+<h4 id="registry-prototype-constructor">Registry.prototype.constructor</h4>
+
+The initial value of Registry.prototype.constructor is %Registry%.
+
+<h4 id="registry-prototype-@@iterator">Registry.prototype[ @@iterator ]()</h4>
+
+When the @@iterator method is called it returns an Iterator object (ES2015 25.1.1.2) that iterates over the registry entries of the \[[RegistryData]] internal slot, returning each entry as a key value pair. The following steps are taken:
+
+<emu-alg>
+1. Let _registry_ be *this* value.
+1. Let _entries_ be a new List.
+1. For each _pair_ in _registry_.[[RegistryData]], do:
+  1. Let _key_ be _pair_.[[key]].
+  1. Let _entry_ be GetRegistryEntry(_registry_, _key_).
+  1. Append { [[key]]: _key_, [[value]]: _entry_ } to _entries_.
+1. Return CreateListIterator(_entries_).
+</emu-alg>
+
+The value of the name property of this function is "[Symbol.iterator]".
+
+<h4 id="registry-prototype-lookup">Registry.prototype.lookup(key)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _registry_ be *this* value.
+1. Return GetRegistryEntry(_registry_, _key_).
+</emu-alg>
+
+<h4 id="registry-prototype-install">Registry.prototype.install(key, module)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _registry_ be *this* value.
+1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. Let _entries_ be _registry_.[[RegistryData]].
+1. Let _pair_ be the entry in _entries_ such that _pair_.[[key]] is equal to _key_.
+1. If _pair_ exists, then throw a new *TypeError*.
+1. Let _entry_ be a new registry entry record { [[Key]]: _key_, [[State]]: "ready", [[Metadata]]: *undefined*, [[Fetch]]: *undefined*, [[Translate]]: *undefined*, [[Instantiate]]: *undefined*, [[Dependencies]]: *undefined*, [[Module]]: _module_ }.
+1. Append { [[key]]: _key_, [[value]]: _entry_ } to _entries_.
+</emu-alg>
+
+<h4 id="registry-prototype-uninstall">Registry.prototype.uninstall(key)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _registry_ be *this* value.
+1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. Let _entries_ be _registry_.[[RegistryData]].
+1. Let _pair_ be the entry in _entries_ such that _pair_.[[key]] is equal to _key_.
+1. If _pair_ does not exist, then throw a new *TypeError*.
+1. Let _stateValue_ be GetStateValue(_pair_.[[value]].[[State]]).
+1. Let _linkStateValue_ be GetStateValue("link").
+1. If _stateValue_ is less than _linkStateValue_, then throw a new *TypeError*.
+1. Remove _pair_ from _entries_.
+</emu-alg>
+
+<h4 id="registry-prototype-cancel">Registry.prototype.cancel(key)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _registry_ be *this* value.
+1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. Let _entries_ be _registry_.[[RegistryData]].
+1. Let _pair_ be the entry in _entries_ such that _pair_.[[key]] is equal to _key_.
+1. If _pair_ does not exist, then throw a new *TypeError*.
+1. Let _entry_ be _pair_.[[value]].
+1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
+1. Let _linkStateValue_ be GetStateValue("link").
+1. If _stateValue_ is greater than or equal to _linkStateValue_, throw a new *TypeError*.
+1. Remove _pair_ from _entries_.
+</emu-alg>
+
+<h4 id="registry-prototype-provide">Registry.prototype.provide(key, stage, value)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _registry_ be *this* value.
+1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. Let _loader_ be _registry_.[[Loader]] value.
+1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. If _stage_ is "fetch", then:
+  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
+  1. Let _fetchStateValue_ be GetStateValue("fetch").
+  1. If _stateValue_ is greater than _fetchStateValue_, throw a new *TypeError*.
+  1. Call FulfillFetch(_loader_, _entry_, _value_).
+  1. Return *undefined*.
+1. If _stage_ is "translate", then:
+  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
+  1. Let _translateStateValue_ be GetStateValue("translate").
+  1. If _stateValue_ is greater than _translateStateValue_, throw a new *TypeError*.
+  1. Call FulfillFetch(_loader_, _entry_, *undefined*).
+  1. Call FulfillTranslate(_loader_, _entry_, _value_).
+  1. Return *undefined*.
+1. If _stage_ is "instantiate", then:
+  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
+  1. Let _instantiateStateValue_ be GetStateValue("instantiate").
+  1. If _stateValue_ is greater than _instantiateStateValue_, throw a new *TypeError*.
+  1. Call FulfillFetch(_loader_, _entry_, *undefined*).
+  1. Call FulfillTranslate(_loader_, _entry_, *undefined*).
+  1. Assert: _entry_.[[Translate]] is resolved or rejected.
+  1. TODO: need to propagate rejections
+  1. Let _source_ be the fulfillment value of _entry_.[[Translate]].
+  1. Call FulfillInstantiate(_loader_, _entry_, _value_, _source_).
+  1. Return *undefined*.
+1. Throw a new *TypeError*.
+</emu-alg>
+
+<h4 id="registry-prototype-error">Registry.prototype.error(key, stage, value)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. // TODO
+</emu-alg>
+
+<h3 id="registry-internal-slots">Properties of Registry Instances</h3>
+
+Registry instances are ordinary objects that inherit properties from the %RegistryPrototype%.
+
+Registry instances are initially created with the internal slots described in the following table:
+
+<table>
+  <thead>
+    <tr>
+      <th>Internal Slot</th>
+      <th>Value Type (<em>non-normative</em>)</th>
+      <th>Description (<em>non-normative</em>)</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>\[[RegistryData]]</td>
+    <td>List of pairs of String and <a href="#registry-entry">registry entry</a>.</td>
+    <td>The registry of installed modules.</td>
+  </tr>
+  <tr>
+    <td>\[[Loader]]</td>
+    <td>An object</td>
+    <td>The loader this registry belongs to.</td>
+  </tr>
+</table>
 
 <h2 id="pipeline-semantics">Loading Semantics</h2>
 
@@ -247,7 +586,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 <h4 id="resolve" aoid="Resolve">Resolve(loader, name, referrer)</h4>
 
 <emu-alg>
-1. Let _hook_ be _loader_.[[Resolve]].
+1. Let _hook_ be GetMethod(_loader_, @@resolve).
 1. Return the result of promise-calling _hook_(_name_, _referrer_).
 </emu-alg>
 
@@ -280,7 +619,6 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Let _instance_ be Instantiation(_loader_, _optionalInstance_, _source_).
 1. ReturnIfAbrupt(_instance_).
 1. // TODO: edge case: what if _instance_ is a thenable function?
-1. Fulfill _entry_.[[Instantiate]] with _instance_.
 1. Let _deps_ be a new empty List.
 1. If _instance_ is a Module Record, then:
   1. Assert: _instance_ is a Source Text Module Record.
@@ -296,7 +634,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 
 <emu-alg>
 1. If _result_ is *undefined*, then return ParseModule(_source_).
-1. If IsCallable(_result_) is *false* then throw a new TypeError.
+1. If IsCallable(_result_) is *false* then throw a new *TypeError*.
 1. Set _result_.[[Realm]] to _loader_.[[Realm]].
 1. Return _result_.
 </emu-alg>
@@ -311,7 +649,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Let _linkStateValue_ be GetStateValue("link").
 1. If _stateValue_ is greater than _linkStateValue_, return a new error promise.
 1. If _entry_.[[Fetch]] is not *undefined*, return _entry_.[[Fetch]].
-1. Let _hook_ be _loader_.[[Fetch]].
+1. Let _hook_ be GetMethod(_loader_, @@fetch).
 1. // TODO: metadata object
 1. Let _p0_ be the result of promise-calling _hook_(_key_).
 1. Let _p_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _payload_, runs the following steps:
@@ -329,7 +667,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Let _linkStateValue_ be GetStateValue("link").
 1. If _stateValue_ is greater than _linkStateValue_, return a new error promise.
 1. If _entry_.[[Translate]] is not *undefined*, return _entry_.[[Translate]].
-1. Let _hook_ be _loader_.[[Translate]].
+1. Let _hook_ be GetMethod(_loader_, @@translate).
 1. Let _p_ be the result of transforming RequestFetch(_loader_, _key_) with a fulfillment handler that, when called with argument _payload_, runs the following steps:
   1. // TODO: metadata
   1. Let _p1_ be the result of promise-calling _hook_(_key_, _payload_).
@@ -346,7 +684,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
 1. If _entry_.[[State]] is "ready", return a new error promise.
 1. If _entry_.[[Instantiate]] is not *undefined*, return _entry_.[[Instantiate]].
-1. Let _hook_ be _loader_.[[Instantiate]].
+1. Let _hook_ be GetMethod(_loader_, @@instantiate).
 1. Let _p_ be the result of transforming RequestTranslate(_loader_, _key_) with a fulfillment handler that, when called with argument _source_, runs the following steps:
   1. // TODO: metadata
   1. Let _p1_ be the result of promise-calling _hook_(_key_, _source_).
@@ -397,7 +735,7 @@ A <dfn>registry entry</dfn> is a record with the following fields:
 <emu-alg>
 1. Return the result of transforming RequestLink(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _module_ be _entry_.[[Module]].
-  1. Let _status_ be _module_.ModuleEvaluation().
+  1. Let _status_ be the result of calling the ModuleEvaluation abstract operation of _module_ with no arguments.
   1. ReturnIfAbrupt(_status_).
   1. Return _module_.
 </emu-alg>
@@ -424,7 +762,6 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. Return _dep_.[[Module]].
 </emu-alg>
 
-
 <h3 id="linking">Linking</h3>
 
 <h4 id="link" aoid="Link">Link(loader, root)</h4>
@@ -444,7 +781,7 @@ The modules spec should only invoke this operation from methods of Source Text M
   1. If _dep_.[[State]] is "link", then:
     1. Let _module_ be _dep_.[[Module]].
     1. Assert: _module_ is a Module Record.
-    1. Let _status_ be _module_.ModuleDeclarationInstantiation().
+    1. Let _status_ be the result of calling the ModuleDeclarationInstantiation abstract operation of _module_ with no arguments.
     1. ReturnIfAbrupt(_status_).
     1. Set _dep_.[[State]] to "ready".
 1. Return *undefined*.
@@ -469,198 +806,9 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. Return *undefined*.
 </emu-alg>
 
+<h2 id="module-objects">Module Objects</h2>
 
-<h2 id="api">API</h2>
-
-<h3 id="loading-api">Importing</h3>
-
-<h4 id="reflect-loader-import">Reflect.Loader.import(name[, referrer])</h4>
-
-<emu-alg>
-1. Let _loader_ be *this* value.
-1. If Type(_loader_) is not Object, throw a TypeError exception.
-1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
-1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
-  1. Return RequestReady(_loader_, _key_).
-</emu-alg>
-
-
-<h3 id="resolution-api">Resolution</h3>
-
-<h4 id="reflect-load-resolve">Reflect.Loader.resolve(name[, referrer])</h4>
-
-<emu-alg>
-1. Let _loader_ be *this* value.
-1. If Type(_loader_) is not Object, throw a TypeError exception.
-1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
-1. Return Resolve(_loader_, _name_, _referrer_).
-</emu-alg>
-
-
-<h3 id="request-api">Requests</h3>
-
-<h4 id="reflect-loader-load">Reflect.Loader.load(key[, stage])</h4>
-
-<emu-alg>
-1. Let _loader_ be *this* value.
-1. If Type(_loader_) is not Object, throw a TypeError exception.
-1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
-1. If _stage_ is *undefined* then let _stage_ be "ready".
-1. If _stage_ is "fetch", then:
-  1. Return RequestFetch(_loader_, _key_).
-1. If _stage_ is "translate", then:
-  1. Return RequestTranslate(_loader_, _key_).
-1. If _stage_ is "instantiate", then:
-  1. Return the result of transforming RequestInstantiateAll(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
-    1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
-    1. Return *undefined*.
-1. If _stage_ is "link", then:
-  1. Return the result of transforming RequestLink(_loader_, _key_) with a fulfillment handler that returns *undefined*.
-1. If _stage_ is "ready", then:
-  1. Return the result of transforming RequestReady(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
-    1. Return GetModuleNamespace(_entry_.[[Module]]).
-1. Throw a new TypeError.
-</emu-alg>
-
-
-<h3 id="response-api">Responses</h3>
-
-<h4 id="reflect-loader-provide">Reflect.Loader.provide(key, stage, value)</h4>
-
-<emu-alg>
-1. Let _loader_ be *this* value.
-1. If Type(_loader_) is not Object, throw a *TypeError* exception.
-1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
-1. Let _entry_ be EnsureRegistered(_loader_, _key_).
-1. If _stage_ is "fetch", then:
-  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
-  1. Let _fetchStateValue_ be GetStateValue("fetch").
-  1. If _stateValue_ is greater than _fetchStateValue_, throw a new TypeError.
-  1. Call FulfillFetch(_loader_, _entry_, _value_).
-  1. Return *undefined*.
-1. If _stage_ is "translate", then:
-  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
-  1. Let _translateStateValue_ be GetStateValue("translate").
-  1. If _stateValue_ is greater than _translateStateValue_, throw a new TypeError.
-  1. Call FulfillFetch(_loader_, _entry_, *undefined*).
-  1. Call FulfillTranslate(_loader_, _entry_, _value_).
-  1. Return *undefined*.
-1. If _stage_ is "instantiate", then:
-  1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
-  1. Let _instantiateStateValue_ be GetStateValue("instantiate").
-  1. If _stateValue_ is greater than _instantiateStateValue_, throw a new TypeError.
-  1. Call FulfillFetch(_loader_, _entry_, *undefined*).
-  1. Call FulfillTranslate(_loader_, _entry_, *undefined*).
-  1. Assert: _entry_.[[Translate]] is resolved or rejected.
-  1. TODO: need to propagate rejections
-  1. Let _source_ be the fulfillment value of _entry_.[[Translate]].
-  1. Call FulfillInstantiate(_loader_, _entry_, _value_, _source_).
-  1. Return *undefined*.
-1. Throw a new TypeError.
-</emu-alg>
-
-<h4 id="reflect-loader-error">Reflect.Loader.error(key, stage, value)</h4>
-
-<emu-alg>
-1. // TODO
-</emu-alg>
-
-
-<h3 id="registry-api">Registry</h3>
-
-<h4 id="reflect-loader-lookup">Reflect.Loader.lookup(key)</h4>
-
-<emu-alg>
-1. Let _loader_ be *this* value.
-1. If Type(_loader_) is not Object, throw a *TypeError* exception.
-1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
-1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
-1. If _pair_ does not exist, then return *null*.
-1. Let _entry_ be _pair_.[[value]].
-1. Let _result_ be CreateObject().
-1. Call SimpleDefine(_result_, "state", _entry_.[[State]]).
-1. If _entry_.[[Fetch]] is *undefined* then let _fetch_ be *undefined*.
-1. Else let _fetch_ be the result of transforming _entry_.[[Fetch]] with a new pass-through promise.
-1. Call SimpleDefine(_result_, "fetch", _fetch_).
-1. If _entry_.[[Translate]] is *undefined*, then let _translate_ be *undefined*.
-1. Else let _translate_ be the result of transforming _entry_.[[Translate]] with a new pass-through promise.
-1. Call SimpleDefine(_result_, "translate", _translate_).
-1. If _entry_.[[Instantiate]] is *undefined*, then let _instantiate_ be *undefined*.
-1. Else let _instantiate_ be the result of transforming _entry_.[[Instantiate]] with a fulfillment handler that, when called with argument _entry_, runs the following steps:
-  1. If _entry_.[[Module]] is a Function object, then return _entry_.[[Module]].
-  1. Return *undefined*.
-1. Call SimpleDefine(_result_, "instantiate", _instantiate_).
-1. If _entry_.[[State]] is "ready" then let _module_ be _entry_.[[Module]].
-1. Else let _module_ be *undefined*.
-1. Call SimpleDefine(_result_, "module", _module_).
-1. If _entry_.[[Error]] is *nothing*, then:
-  1. Call SimpleDefine(_result_, "error", *null*).
-1. Else:
-  1. Let _opt_ be CreateObject().
-  1. Call SimpleDefine(_opt_, "value", _entry_.[[Error]]).
-  1. Call SimpleDefine(_result_, "error", _opt_).
-1. Return _result_.
-</emu-alg>
-
-<h4 id="reflect-loader-install">Reflect.Loader.install(key, module)</h4>
-
-<emu-alg>
-1. Let _loader_ be *this* value.
-1. If Type(_loader_) is not Object, throw a *TypeError* exception.
-1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
-1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
-1. If _pair_ exists, then throw a new TypeError.
-1. Let _entry_ be a new registry entry record { [[Key]]: _key_, [[State]]: "ready", [[Metadata]]: *undefined*, [[Fetch]]: *undefined*, [[Translate]]: *undefined*, [[Instantiate]]: *undefined*, [[Dependencies]]: *undefined*, [[Module]]: _module_ }.
-1. Append { [[key]]: _key_, [[value]]: _entry_ } to _loader_.[[Registry]].
-</emu-alg>
-
-<h4 id="reflect-loader-uninstall">Reflect.Loader.uninstall(key)</h4>
-
-<emu-alg>
-1. Let _loader_ be *this* value.
-1. If Type(_loader_) is not Object, throw a *TypeError* exception.
-1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
-1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
-1. If _pair_ does not exist, then throw a new TypeError.
-1. Let _stateValue_ be GetStateValue(_pair_.[[value]].[[State]]).
-1. Let _linkStateValue_ be GetStateValue("link").
-1. If _stateValue_ is less than _linkStateValue_, then throw a new TypeError.
-1. Remove _pair_ from _loader_.[[Registry]].
-</emu-alg>
-
-<h4 id="reflect-loader-cancel">Reflect.Loader.cancel(key)</h4>
-
-<emu-alg>
-1. Let _loader_ be *this* value.
-1. If Type(_loader_) is not Object, throw a *TypeError* exception.
-1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
-1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
-1. If _pair_ does not exist, then throw a new TypeError.
-1. Let _entry_ be _pair_.[[value]].
-1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
-1. Let _linkStateValue_ be GetStateValue("link").
-1. If _stateValue_ is greater than or equal to _linkStateValue_, throw a new TypeError.
-1. Remove _pair_ from _loader_.[[Registry]].
-</emu-alg>
-
-
-<h3 id="loading-hooks">Pipeline Intercession</h3>
-
-<h4 id="reflect-load-hook">Reflect.Loader.hook(name[, value])</h4>
-
-<b>TODO:</b>
-<ul>
-    <li><code>Reflect.Loader.hook("resolve"[, resolve])</code>
-    <li><code>Reflect.Loader.hook("fetch"[, fetch])</code>
-    <li><code>Reflect.Loader.hook("translate"[, translate])</code>
-    <li><code>Reflect.Loader.hook("instantiate"[, instantiate])</code>
-</ul>
-
-<h3 id="module-reflection-api">Module Reflection</h3>
-
-<b>TODO:</b> way to force evaluation of a module namespace exotic object (<code>Reflect.Module.evaluate(m)</code>? <code>m[Reflect.Module.evaluate]()</code>?)
-
-<h4 id="reflective-module-record">Reflective Module Records</h4>
+<h3 id="reflective-module-record">Reflective Module Records</h3>
 
 A <dfn>reflective module record</dfn> is a kind of module record. It extends
 
@@ -689,52 +837,7 @@ A <dfn>reflective module record</dfn> is a kind of module record. It extends
   </tr>
 </table>
 
-<h5 id="reflective-get-export-names" aoid="GetExportNames">Reflective Module.GetExportNames(exportStarStack)</h5>
-
-<emu-alg>
-1. Let _module_ be this Reflective Module Record.
-1. Let _exports_ be a new empty List.
-1. For each _name_ in _module_.[[LocalExports]], do:
-  1. Append _name_ to _exports_.
-1. For each _pair_ in _module_.[[IndirectExports]], do:
-  1. Append _pair_.[[key]] to _exports_.
-1. Return _exports_.
-</emu-alg>
-
-<h5 id="reflective-resolve-export" aoid="ResolveExport">Reflective Module.ResolveExport(exportName, resolveStack, exportStarStack)</h5>
-
-<emu-alg>
-1. Let _module_ be this Reflective Module Record.
-1. If _resolveStack_ contains a record _r_ such that _r_.[[module]] is equal to _module_ and _r_.[[exportName]] is equal to _exportName_, then
-  1. Assert: this is a circular import request.
-  1. Throw a SyntaxError exception.
-1. Append the record {[[module]]: _module_, [[exportName]]: _exportName_} to _resolveStack_.
-1. Let _exports_ be _module_.[[LocalExports]].
-1. Let _pair_ be the pair in _exports_ such that _pair_.[[key]] is equal to _exportName_.
-1. If _pair_ is defined, then:
-  1. Return the Record { [[module]]: _module_, [[bindingName]]: _exportName_ }.
-1. Let _exports_ be _module_.[[IndirectExports]].
-1. Let _pair_ be the pair in _exports_ such that _pair_.[[key]] is equal to _exportName_.
-1. If _pair_ is defined, then return _pair_.[[value]].
-1. Return *null*.
-</emu-alg>
-
-<h5 id="reflective-instantiate" aoid="ModuleDeclarationInstantiation">Reflective Module.ModuleDeclarationInstantiation()</h5>
-
-Reflective modules are always already instantiated.
-
-<emu-alg>
-1. Return *undefined*.
-</emu-alg>
-
-<h5 id="reflective-evaluate" aoid="ModuleEvaluation">Reflective Module.ModuleEvaluation()</h5>
-
-<emu-alg>
-1. Let _module_ be this Reflective Module Record.
-1. Let _evaluate_ be _module_.[[Evaluate]].
-1. Set _module_.[[Evaluate]] to *undefined*.
-1. Return _evaluate_().
-</emu-alg>
+-<h3 id="module-abstract-operations">Abstract Operations for Module Objects</h3>
 
 <h4 id="parse-exports-descriptors" aoid="ParseExportsDescriptors">ParseExportsDescriptors(obj)</h4>
 
@@ -757,7 +860,65 @@ Reflective modules are always already instantiated.
 1. // TODO: spec me
 </emu-alg>
 
-<h4 id="reflect-module">Reflect.Module(descriptors[, executor, evaluate])</h4>
+
+<h4 id="get-export-names" aoid="GetExportNames">GetExportNames(exportStarStack)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _module_ be this Reflective Module Record.
+1. Let _exports_ be a new empty List.
+1. For each _name_ in _module_.[[LocalExports]], do:
+  1. Append _name_ to _exports_.
+1. For each _pair_ in _module_.[[IndirectExports]], do:
+  1. Append _pair_.[[key]] to _exports_.
+1. Return _exports_.
+</emu-alg>
+
+<h4 id="resolve-export" aoid="ResolveExport">ResolveExport(exportName, resolveStack, exportStarStack)</h4>
+
+<emu-alg>
+1. Let _module_ be this Reflective Module Record.
+1. If _resolveStack_ contains a record _r_ such that _r_.[[module]] is equal to _module_ and _r_.[[exportName]] is equal to _exportName_, then
+  1. Assert: this is a circular import request.
+  1. Throw a SyntaxError exception.
+1. Append the record {[[module]]: _module_, [[exportName]]: _exportName_} to _resolveStack_.
+1. Let _exports_ be _module_.[[LocalExports]].
+1. Let _pair_ be the pair in _exports_ such that _pair_.[[key]] is equal to _exportName_.
+1. If _pair_ is defined, then:
+  1. Return the Record { [[module]]: _module_, [[bindingName]]: _exportName_ }.
+1. Let _exports_ be _module_.[[IndirectExports]].
+1. Let _pair_ be the pair in _exports_ such that _pair_.[[key]] is equal to _exportName_.
+1. If _pair_ is defined, then return _pair_.[[value]].
+1. Return *null*.
+</emu-alg>
+
+<h4 id="module-declaration-instantiation" aoid="ModuleDeclarationInstantiation">ModuleDeclarationInstantiation()</h4>
+
+Reflective modules are always already instantiated.
+
+<emu-alg>
+1. Return *undefined*.
+</emu-alg>
+
+<h4 id="module-evaluation" aoid="ModuleEvaluation">ModuleEvaluation()</h4>
+
+<emu-alg>
+1. Let _module_ be this Reflective Module Record.
+1. Let _evaluate_ be _module_.[[Evaluate]].
+1. Set _module_.[[Evaluate]] to *undefined*.
+1. Return _evaluate_().
+</emu-alg>
+
+<h3 id="module-constructor">The Reflect.Module Constructor</h3>
+
+The Module constructor is the initial value of the Module property of the the Reflect object. When called as a constructor it creates and initializes a new Module object. Reflect.Module is not intended to be called as a function and will throw an exception when called in that manner.
+
+The Reflect.Module constructor is designed to be subclassable. It may be used as the value in an extends clause of a class definition. Subclass constructors that intend to inherit the specified Module behaviour must include a super call to the Reflect.Module constructor to create and initialize the subclass instance with the internal state necessary to integrated with loaders.
+
+<h4 id="new-reflect-module">Reflect.Module(descriptors[, executor[, evaluate]])</h4>
+
+When Reflect.Module is called with arguments <i>descriptors</i>, <i>executor</i>, and <i>evaluate</i>, the following steps are taken:
 
 <emu-alg>
 1. Let _realm_ be the current Realm.
@@ -798,6 +959,26 @@ Reflective modules are always already instantiated.
 1. Return _ns_.
 </emu-alg>
 
+<h3 id="properties-of-the-module-constructor">Properties of the Reflect.Module Constructor</h3>
+
+The value of the \[[Prototype]] internal slot of the Reflect.Module constructor is the intrinsic object %FunctionPrototype%.
+
+Besides the internal slots and the length property (whose value is 0), the Reflect.Loader constructor has the following properties:
+
+<h4 id="Reflect.Module.evaluate">Reflect.Module.evaluate(m)</h4>
+
+<b>TODO:</b> way to force evaluation of a module namespace exotic object (<code>Reflect.Module.evaluate(m)</code>? <code>m[Reflect.Module.evaluate]()</code>?)
+
+<h4 id="Reflect.Module.prototype">Reflect.Module.prototype</h4>
+
+The value of Reflect.Module.prototype is an ordinary object with a null \[[Prototype]].
+
+This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
+
+<h3 id="reflect-module-internal-slots">Properties of Module Instances</h3>
+
+Reflect.Module instances are module namespace exotic objects.
+
 <h2 id="local">Local Loading</h2>
 
 <b>TODO:</b>
@@ -813,82 +994,35 @@ Reflective modules are always already instantiated.
 
 <h2 id="browser">Browser Loader</h2>
 
-<h3 id="browser-site-packages">Site Packages</h3>
+Every host environment must implement a default loader object as the initial value of the loader property of the System object.
 
-The browser loader contains extra properties for storing <dfn>site packages</dfn>, an application-global set of globally available packages. These map in an internal table to unique URLs that in turn serve as keys in the module registry.
+<h3 id="system-loader-instance">System.loader Object</h3>
 
-<div class="note">
-<p>
-The site package system serves as a simple coordination mechanism for modest-sized applications, but it does not provide all functionality required of a full-fledged package management system. It is expected that development ecosystems will build around package management tools that deal with requirements outside the scope of this specification, such as version management and allowing multiple versions of a library to coexist with the same name.
-</p>
+The Default Browser Loader Object is an %BrowserLoader% instance, whose internal slots are set as if it had been constructed by the expression Construct(%BrowserLoader%).
 
-<p>
-Tools that preprocess JavaScript source code may choose to use or ignore the site package table. For example, a package manager may choose to preprocess two separate import statements requiring <code>"jquery"</code> to <code>"jquery/1.9"</code> and <code>"jquery/2.1.1"</code> respectively, based on configuration files informing the tool of version requirements. The tool would then store both versions of jQuery in the site package table using the longer names. Alternatively, the tool may choose to preprocess the imports directly as URLs and bypass the site package system altogether.
-</p>
-</div>
+<h2 id="browser-loader">BrowserLoader Objects</h2>
 
-The browser loader has an extra internal slot:
+<h3 id="browser-loader-constructor">The BrowserLoader Constructor</h3>
 
-<table>
-  <thead>
-    <tr>
-      <th>Internal Slot</th>
-      <th>Description (<em>non-normative</em>)</th>
-    </tr>
-  </thead>
-  <tr>
-    <td>\[[Site]]</td>
-    <td>A table that maps package names to URLs.</td>
-  </tr>
-</table>
+The BrowserLoader constructor is the %BrowserLoader% intrinsic object. When called as a constructor it creates and initializes a new %BrowserLoader% object. %BrowserLoader% is not intended to be called as a function and will throw an exception when called in that manner.
 
-<h4 id="reflect-loader-site">Reflect.Loader.site( mappings )</h4>
+<h3 id="properties-of-the-browser-loader-constructor">Properties of the BrowserLoader Constructor</h3>
 
-<div class="example">
-  <pre>
-    Reflect.Loader.site({
-      "jquery":     "https://cdn.example.com/jquery/v/2.1.1",
-      "underscore": "https://cdn.example.com/underscore/v/1.7.0",
-      "moment":     "https://cdn.example.com/moment/v/2.8.3"
-    });
-  </pre>
-</div>
+The value of the \[[Prototype]] internal slot of the BrowserLoader constructor is the intrinsic object %FunctionPrototype%.
 
-<h4 id="reflect-loader-site-get">Reflect.Loader.site.get( name )</h4>
+Besides the internal slots and the length property (whose value is 0), the BrowserLoader constructor has the following properties:
 
-<div class="example">
-  <pre>
-    var url = Reflect.Loader.site.get("jquery");
-  </pre>
-</div>
+<h4 id="browser-loader-prototype">BrowserLoader.prototype</h4>
 
-<h4 id="reflect-loader-site-set">Reflect.Loader.site.set( name, url )</h4>
+The value of BrowserLoader.prototype is %BrowserLoaderPrototype%.
 
-<div class="example">
-  <pre>
-    Reflect.Loader.site.set("jquery", "https://cdn.example.com/jquery/v/2.1.1");
-  </pre>
-</div>
+This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
 
-<h4 id="reflect-loader-site-has">Reflect.Loader.site.has( name )</h4>
+<h3 id="properties-of-the-browser-loader-prototype">Properties of the BrowserLoader Prototype</h3>
 
-<div class="example">
-  <pre>
-    if (!Reflect.Loader.site.has("jquery")) {
-      Reflect.Loader.site.set("jquery", "https://cdn.example.com/jquery/v/2.1.1");
-    }
-  </pre>
-</div>
+<h4 id="browser-loader-prototype-@@resolve">BrowserLoader.prototype[ @@resolve ](name, referrer)</h4>
 
-<h4 id="reflect-loader-site-delete">Reflect.Loader.site.delete( name )</h4>
-
-<div class="example">
-  <pre>
-    Reflect.Loader.site.delete("jquery");
-  </pre>
-</div>
-
-<h3 id="browser-resolve">Resolve</h3>
+When the @@resolve method is called, the following steps are taken:
 
 <b>TODO:</b> name resolution policy
 <ul>
@@ -896,16 +1030,13 @@ The browser loader has an extra internal slot:
   <li>JS standard modules: <code>"std/math"</code>, <code>"std/json"</code>, <code>"std/reflect"</code>
   <li>Web standard modules: <code>"web/worker"</code>, <code>"web/audio"</code>
   <li>absolute URLs: <code>"https://cdn.example.com/jquery/v/2.0"</code>
-  <li>top-level packages consult \[[Site]]: <code>"jquery"</code>, <code>"ember/data"</code>
 </ul>
 
-<!--
-<h3 id="browser-locate">Locate</h3>
+The value of the name property of this function is "[Reflect.Loader.resolve]".
 
-<b>TODO:</b> no-op.
--->
+<h4 id="browser-loader-prototype-@@fetch">BrowserLoader.prototype[ @@fetch ](key)</h4>
 
-<h3 id="browser-fetch">Fetch</h3>
+When the @@fetch method is called, the following steps are taken:
 
 <b>TODO:</b>
 <ul>
@@ -915,14 +1046,55 @@ The browser loader has an extra internal slot:
   <li>other kinds of web assets
 </ul>
 
-<h3 id="browser-translate">Translate</h3>
+The value of the name property of this function is "[Reflect.Loader.fetch]".
+
+<h4 id="browser-loader-prototype-@@translate">BrowserLoader.prototype[ @@translate ](key, payload)</h4>
+
+When the @@translate method is called, the following steps are taken:
 
 <b>TODO:</b> no-op.
 
-<h3 id="browser-instantiate">Instantiate</h3>
+The value of the name property of this function is "[Reflect.Loader.translate]".
+
+<h4 id="browser-loader-prototype-@@instantiate">BrowserLoader.prototype[ @@instantiate ](key, source)</h4>
+
+When the @@instantiate method is called, the following steps are taken:
 
 <b>TODO:</b>
 <ul>
   <li>basically a no-op.
   <li>but also needs to re-absorb opaque responses.
 </ul>
+
+The value of the name property of this function is "[Reflect.Loader.instantiate]".
+
+<h2 id="annexes" class="no-num">Annexes</h2>
+
+<h3 id="list-of-well-known-intrinsic-objects">List of Well-Known Intrinsic Objects</h3>
+
+The intrinsics are listed in table below:
+
+<table>
+  <thead>
+    <tr>
+      <th>Intrinsic Name</th>
+      <th>Description (<em>non-normative</em>)</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>%BrowserLoader%</td>
+    <td>The browser loader constructor (<a href="#browser-loader-constructor">10.1</a>)</td>
+  </tr>
+  <tr>
+    <td>%BrowserLoaderPrototype%</td>
+    <td>The initial value of the *prototype* data property of %BrowserLoader% (<a href="#browser-loader-prototype">10.2.1</a>)</td>
+  </tr>
+  <tr>
+    <td>%Registry%</td>
+    <td>The registry constructor (<a href="#registry-constructor">4.1</a>)</td>
+  </tr>
+  <tr>
+    <td>%RegistryPrototype%</td>
+    <td>The initial value of the *prototype* data property of %Registry% (<a href="#registry-prototype">4.3.1</a>)</td>
+  </tr>
+</table>
