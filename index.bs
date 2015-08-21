@@ -808,7 +808,36 @@ The modules spec should only invoke this operation from methods of Source Text M
 
 <h2 id="module-objects">Module Objects</h2>
 
-<h3 id="registry-abstract-operations">Abstract Operations for Module Objects</h3>
+<h3 id="reflective-module-record">Reflective Module Records</h3>
+
+A <dfn>reflective module record</dfn> is a kind of module record. It extends
+
+<table>
+  <thead>
+    <tr>
+      <th>Internal Slot</th>
+      <th>Value Type (<em>non-normative</em>)</th>
+      <th>Description (<em>non-normative</em>)</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>\[[LocalExports]]</td>
+    <td>A List of Strings</td>
+    <td>The set of exported names stored in this module's environment.</td>
+  </tr>
+  <tr>
+    <td>\[[IndirectExports]]</td>
+    <td>A List of pairs of String and {\[[module]]: Module Record, \[[bindingName]]: String}.</td>
+    <td>The set of re-exported bindings. This ensures that ResolveExport can fully resolve re-exports.</td>
+  </tr>
+  <tr>
+    <td>\[[Evaluate]]</td>
+    <td>A function object or <code>undefined</code></td>
+    <td>A thunk to call when the the module is evaluated, or <code>undefined</code> if the module is already evaluated.</td>
+  </tr>
+</table>
+
+-<h3 id="module-abstract-operations">Abstract Operations for Module Objects</h3>
 
 <h4 id="parse-exports-descriptors" aoid="ParseExportsDescriptors">ParseExportsDescriptors(obj)</h4>
 
@@ -885,7 +914,7 @@ Reflective modules are always already instantiated.
 
 The Module constructor is the initial value of the Module property of the the Reflect object. When called as a constructor it creates and initializes a new Module object. Reflect.Module is not intended to be called as a function and will throw an exception when called in that manner.
 
-The Reflect.Module constructor is designed to be subclassable. It may be used as the value in an extends clause of a class definition. Subclass constructors that intend to inherit the specified Module behaviour must include a super call to the Reflect.Module constructor to create and initialize the subclass instance with the internal state necessary to support the Reflect.Module.prototype built-in methods.
+The Reflect.Module constructor is designed to be subclassable. It may be used as the value in an extends clause of a class definition. Subclass constructors that intend to inherit the specified Module behaviour must include a super call to the Reflect.Module constructor to create and initialize the subclass instance with the internal state necessary to integrated with loaders.
 
 <h4 id="new-reflect-module">Reflect.Module(descriptors[, executor[, evaluate]])</h4>
 
@@ -942,46 +971,13 @@ Besides the internal slots and the length property (whose value is 0), the Refle
 
 <h4 id="Reflect.Module.prototype">Reflect.Module.prototype</h4>
 
-The value of Reflect.Module.prototype is an ordinary object with a null [[Prototype]].
+The value of Reflect.Module.prototype is an ordinary object with a null \[[Prototype]].
 
 This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
 
-<h3 id="module-prototype-object">Properties of the Reflect.Module Prototype Object</h3>
-
-<h4 id="Reflect.Module.prototype.constructor">Reflect.Module.prototype.constructor</h4>
-
-The initial value of Reflect.Module.prototype.constructor is Reflect.Module.
-
 <h3 id="reflect-module-internal-slots">Properties of Module Instances</h3>
 
-Reflect.Module instances are ordinary objects that inherit properties from the Reflect.Module.prototype.
-
-Reflect.Module instances are initially created with the internal slots described in the following table:
-
-<table>
-  <thead>
-    <tr>
-      <th>Internal Slot</th>
-      <th>Value Type (<em>non-normative</em>)</th>
-      <th>Description (<em>non-normative</em>)</th>
-    </tr>
-  </thead>
-  <tr>
-    <td>\[[LocalExports]]</td>
-    <td>A List of Strings</td>
-    <td>The set of exported names stored in this module's environment.</td>
-  </tr>
-  <tr>
-    <td>\[[IndirectExports]]</td>
-    <td>A List of pairs of String and {\[[module]]: Module Record, \[[bindingName]]: String}.</td>
-    <td>The set of re-exported bindings. This ensures that ResolveExport can fully resolve re-exports.</td>
-  </tr>
-  <tr>
-    <td>\[[Evaluate]]</td>
-    <td>A function object or <code>undefined</code></td>
-    <td>A thunk to call when the the module is evaluated, or <code>undefined</code> if the module is already evaluated.</td>
-  </tr>
-</table>
+Reflect.Module instances are module namespace exotic objects.
 
 <h2 id="local">Local Loading</h2>
 
