@@ -102,6 +102,12 @@ Within this specification a well-known symbol is referred to by using a notation
   </tr>
 </table>
 
+<h3 id="well-known-intrinsic-objects">Well-Known Intrinsic Objects</h3>
+
+Well-known intrinsics are built-in objects that are explicitly referenced by the algorithms of this specification and which usually have Realm specific identities. Unless otherwise specified each intrinsic object actually corresponds to a set of similar objects, one per Realm.
+
+Within this specification a reference such as %<i>name</i>% means the intrinsic object, associated with the current Realm, corresponding to the <i>name</i>. Determination of the current Realm and its intrinsics is described in ES2015, 8.3.
+
 <h3 id="promises">Promises</h3>
 
 This spec makes heavy use of promises, and adopts the notational conventions established in the promises guide.
@@ -1027,7 +1033,6 @@ When the @@resolve method is called, the following steps are taken:
   <li>JS standard modules: <code>"std/math"</code>, <code>"std/json"</code>, <code>"std/reflect"</code>
   <li>Web standard modules: <code>"web/worker"</code>, <code>"web/audio"</code>
   <li>absolute URLs: <code>"https://cdn.example.com/jquery/v/2.0"</code>
-  <li>top-level packages consult \[[Site]]: <code>"jquery"</code>, <code>"ember/data"</code>
 </ul>
 
 The value of the name property of this function is "[Reflect.Loader.resolve]".
@@ -1068,11 +1073,9 @@ The value of the name property of this function is "[Reflect.Loader.instantiate]
 
 <h2 id="annexes" class="no-num">Annexes</h2>
 
-<h3 id="well-known-intrinsic-objects">Well-Known Intrinsic Objects</h3>
+<h3 id="list-of-well-known-intrinsic-objects">List of Well-Known Intrinsic Objects</h3>
 
-Well-known intrinsics are built-in objects that are explicitly referenced by the algorithms of this specification and which usually have Realm specific identities. Unless otherwise specified each intrinsic object actually corresponds to a set of similar objects, one per Realm.
-
-Within this specification a reference such as %<i>name</i>% means the intrinsic object, associated with the current Realm, corresponding to the <i>name</i>. Determination of the current Realm and its intrinsics is described in ES2015, 8.3. The intrinsics are listed in table below:
+The intrinsics are listed in table below:
 
 <table>
   <thead>
@@ -1095,6 +1098,6 @@ Within this specification a reference such as %<i>name</i>% means the intrinsic 
   </tr>
   <tr>
     <td>%RegistryPrototype%</td>
-    <td>The initial value of the *prototype* data property of %Registry% (<a href="#registry-prototype">4.3.1</a>)</td>module
+    <td>The initial value of the *prototype* data property of %Registry% (<a href="#registry-prototype">4.3.1</a>)</td>
   </tr>
 </table>
