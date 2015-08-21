@@ -735,7 +735,7 @@ Registry instances are initially created with the internal slots described in th
 <emu-alg>
 1. Return the result of transforming RequestLink(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _module_ be _entry_.[[Module]].
-  1. Let _status_ be _module_.ModuleEvaluation().
+  1. Let _status_ be the result of calling the ModuleEvaluation abstract operation of _module_ with no arguments.
   1. ReturnIfAbrupt(_status_).
   1. Return _module_.
 </emu-alg>
@@ -781,7 +781,7 @@ The modules spec should only invoke this operation from methods of Source Text M
   1. If _dep_.[[State]] is "link", then:
     1. Let _module_ be _dep_.[[Module]].
     1. Assert: _module_ is a Module Record.
-    1. Let _status_ be _module_.ModuleDeclarationInstantiation().
+    1. Let _status_ be the result of calling the ModuleDeclarationInstantiation abstract operation of _module_ with no arguments.
     1. ReturnIfAbrupt(_status_).
     1. Set _dep_.[[State]] to "ready".
 1. Return *undefined*.
@@ -829,6 +829,56 @@ The modules spec should only invoke this operation from methods of Source Text M
 
 <emu-alg>
 1. // TODO: spec me
+</emu-alg>
+
+
+<h4 id="get-export-names" aoid="GetExportNames">GetExportNames(exportStarStack)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _module_ be this Reflective Module Record.
+1. Let _exports_ be a new empty List.
+1. For each _name_ in _module_.[[LocalExports]], do:
+  1. Append _name_ to _exports_.
+1. For each _pair_ in _module_.[[IndirectExports]], do:
+  1. Append _pair_.[[key]] to _exports_.
+1. Return _exports_.
+</emu-alg>
+
+<h4 id="resolve-export" aoid="ResolveExport">ResolveExport(exportName, resolveStack, exportStarStack)</h4>
+
+<emu-alg>
+1. Let _module_ be this Reflective Module Record.
+1. If _resolveStack_ contains a record _r_ such that _r_.[[module]] is equal to _module_ and _r_.[[exportName]] is equal to _exportName_, then
+  1. Assert: this is a circular import request.
+  1. Throw a SyntaxError exception.
+1. Append the record {[[module]]: _module_, [[exportName]]: _exportName_} to _resolveStack_.
+1. Let _exports_ be _module_.[[LocalExports]].
+1. Let _pair_ be the pair in _exports_ such that _pair_.[[key]] is equal to _exportName_.
+1. If _pair_ is defined, then:
+  1. Return the Record { [[module]]: _module_, [[bindingName]]: _exportName_ }.
+1. Let _exports_ be _module_.[[IndirectExports]].
+1. Let _pair_ be the pair in _exports_ such that _pair_.[[key]] is equal to _exportName_.
+1. If _pair_ is defined, then return _pair_.[[value]].
+1. Return *null*.
+</emu-alg>
+
+<h4 id="module-declaration-instantiation" aoid="ModuleDeclarationInstantiation">ModuleDeclarationInstantiation()</h4>
+
+Reflective modules are always already instantiated.
+
+<emu-alg>
+1. Return *undefined*.
+</emu-alg>
+
+<h4 id="module-evaluation" aoid="ModuleEvaluation">ModuleEvaluation()</h4>
+
+<emu-alg>
+1. Let _module_ be this Reflective Module Record.
+1. Let _evaluate_ be _module_.[[Evaluate]].
+1. Set _module_.[[Evaluate]] to *undefined*.
+1. Return _evaluate_().
 </emu-alg>
 
 <h3 id="module-constructor">The Reflect.Module Constructor</h3>
@@ -892,7 +942,7 @@ Besides the internal slots and the length property (whose value is 0), the Refle
 
 <h4 id="Reflect.Module.prototype">Reflect.Module.prototype</h4>
 
-The value of Reflect.Module.prototype is an ordinary object.
+The value of Reflect.Module.prototype is an ordinary object with a null [[Prototype]].
 
 This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
 
@@ -901,55 +951,6 @@ This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false,
 <h4 id="Reflect.Module.prototype.constructor">Reflect.Module.prototype.constructor</h4>
 
 The initial value of Reflect.Module.prototype.constructor is Reflect.Module.
-
-<h4 id="reflect-module-get-export-names" aoid="GetExportNames">Reflect.Module.prototype.GetExportNames(exportStarStack)</h4>
-
-The following steps are taken:
-
-<emu-alg>
-1. Let _module_ be this Reflective Module Record.
-1. Let _exports_ be a new empty List.
-1. For each _name_ in _module_.[[LocalExports]], do:
-  1. Append _name_ to _exports_.
-1. For each _pair_ in _module_.[[IndirectExports]], do:
-  1. Append _pair_.[[key]] to _exports_.
-1. Return _exports_.
-</emu-alg>
-
-<h4 id="reflect-module-resolve-export" aoid="ResolveExport">Reflect.Module.prototype.ResolveExport(exportName, resolveStack, exportStarStack)</h4>
-
-<emu-alg>
-1. Let _module_ be this Reflective Module Record.
-1. If _resolveStack_ contains a record _r_ such that _r_.[[module]] is equal to _module_ and _r_.[[exportName]] is equal to _exportName_, then
-  1. Assert: this is a circular import request.
-  1. Throw a SyntaxError exception.
-1. Append the record {[[module]]: _module_, [[exportName]]: _exportName_} to _resolveStack_.
-1. Let _exports_ be _module_.[[LocalExports]].
-1. Let _pair_ be the pair in _exports_ such that _pair_.[[key]] is equal to _exportName_.
-1. If _pair_ is defined, then:
-  1. Return the Record { [[module]]: _module_, [[bindingName]]: _exportName_ }.
-1. Let _exports_ be _module_.[[IndirectExports]].
-1. Let _pair_ be the pair in _exports_ such that _pair_.[[key]] is equal to _exportName_.
-1. If _pair_ is defined, then return _pair_.[[value]].
-1. Return *null*.
-</emu-alg>
-
-<h4 id="reflect-module-instantiate" aoid="ModuleDeclarationInstantiation">Reflect.Module.prototype.ModuleDeclarationInstantiation()</h4>
-
-Reflective modules are always already instantiated.
-
-<emu-alg>
-1. Return *undefined*.
-</emu-alg>
-
-<h4 id="reflect-module-evaluate" aoid="ModuleEvaluation">Reflect.Module.prototype.ModuleEvaluation()</h4>
-
-<emu-alg>
-1. Let _module_ be this Reflective Module Record.
-1. Let _evaluate_ be _module_.[[Evaluate]].
-1. Set _module_.[[Evaluate]] to *undefined*.
-1. Return _evaluate_().
-</emu-alg>
 
 <h3 id="reflect-module-internal-slots">Properties of Module Instances</h3>
 
