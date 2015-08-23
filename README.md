@@ -40,7 +40,7 @@ to start a watcher on `index.bs` that will update `index.html` as you edit.
 
 ### Implementation status
 
-It is to early to know about the Loader, first we need ES2015 modules implemented by the various engines. Current status:
+It is too early to know about the Loader, first we need ES2015 modules implemented by the various engines. Current status:
 
  * IE/Edge: [Under Consideration](https://status.modern.ie/moduleses6?term=modules)
  * Firefox: [In progress](https://bugzilla.mozilla.org/show_bug.cgi?id=568953)
