@@ -235,8 +235,6 @@ The following steps are taken:
 1. If _stage_ is *undefined* then let _stage_ be "ready".
 1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
   1. If _stage_ is "fetch", then:
-    1. Return the result of transforming Resolve(loader, name, referrer) with a fulfillment handler that, when called with argument key, runs the following steps:
-    Return RequestReady(loader, key).
     1. Return RequestFetch(_loader_, _key_).
   1. If _stage_ is "translate", then:
     1. Return RequestTranslate(_loader_, _key_).
