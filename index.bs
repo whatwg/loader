@@ -112,6 +112,14 @@ Within this specification a reference such as %<i>name</i>% means the intrinsic 
 
 This spec makes heavy use of promises, and adopts the notational conventions established in the promises guide.
 
+<h4 id="reacting-to-promises">Reacting to Promises</h4>
+
+<b><i>Transforming</i> p <i>with a new pass-through promise</i></b> is a shorthand for wrapping the promise to avoid exposing the original promise. It represents the following step:
+
+<emu-alg>
+1. Transforming _p_ with a fulfillment handler that, when called with argument _value_, returns _value_.
+</emu-alg>
+
 <h3 id="shorthand-phrases">Shorthand Phrases</h3>
 
 <h4 id="reject-if-abrupt" aoid="RejectIfAbrupt">RejectIfAbrupt(x)</h4>
@@ -235,9 +243,9 @@ The following steps are taken:
 1. If _stage_ is *undefined* then let _stage_ be "ready".
 1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
   1. If _stage_ is "fetch", then:
-    1. Return RequestFetch(_loader_, _key_).
+    1. Return the result of transforming RequestFetch(_loader_, _key_) with a new pass-through promise.
   1. If _stage_ is "translate", then:
-    1. Return RequestTranslate(_loader_, _key_).
+    1. Return the result of transforming RequestTranslate(_loader_, _key_) with a new pass-through promise.
   1. If _stage_ is "instantiate", then:
     1. Return the result of transforming RequestInstantiateAll(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
       1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
@@ -591,16 +599,16 @@ Registry instances are initially created with the internal slots described in th
 <h4 id="fulfill-fetch" aoid="FulfillFetch">FulfillFetch(loader, entry, payload)</h4>
 
 <emu-alg>
-1. If _entry_.[[Fetch]] is *undefined*, then set _entry_.[[Fetch]] to a new promise.
-1. Fulfill _entry_.[[Fetch]] with _payload_.
+1. If _entry_.[[Fetch]] is *undefined*, then set _entry_.[[Fetch]] to a promise resolved with _payload_.
+1. Else fulfill _entry_.[[Fetch]] with _payload_.
 1. SetStateToMax(_entry_, "translate").
 </emu-alg>
 
 <h4 id="fulfill-translate" aoid="FulfillTranslate">FulfillTranslate(loader, entry, source)</h4>
 
 <emu-alg>
-1. If _entry_.[[Translate]] is *undefined*, then set _entry_.[[Translate]] to a new promise.
-1. Fulfill _entry_.[[Translate]] with _source_.
+1. If _entry_.[[Translate]] is *undefined*, then set _entry_.[[Translate]] to a promise resolved with _source_.
+1. Else fulfill _entry_.[[Translate]] with _source_.
 1. SetStateToMax(_entry_, "instantiate").
 </emu-alg>
 
@@ -650,11 +658,12 @@ Registry instances are initially created with the internal slots described in th
 1. Let _hook_ be GetMethod(_loader_, @@fetch).
 1. // TODO: metadata object
 1. Let _p0_ be the result of promise-calling _hook_(_key_).
-1. Let _p_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _payload_, runs the following steps:
+1. Let _p1_ be the result of transforming _p0_ with a new pass-through promise.
+1. Let _p2_ be the result of transforming _p1_ with a fulfillment handler that, when called with argument _payload_, runs the following steps:
   1. SetStateToMax(_entry_, "translate").
   1. Return _payload_.
-1. Set _entry_.[[Fetch]] to _p_.
-1. Return _p_.
+1. Set _entry_.[[Fetch]] to _p1_.
+1. Return _p1_.
 </emu-alg>
 
 <h4 id="request-translate" aoid="RequestTranslate">RequestTranslate(loader, key)</h4>
@@ -668,10 +677,12 @@ Registry instances are initially created with the internal slots described in th
 1. Let _hook_ be GetMethod(_loader_, @@translate).
 1. Let _p_ be the result of transforming RequestFetch(_loader_, _key_) with a fulfillment handler that, when called with argument _payload_, runs the following steps:
   1. // TODO: metadata
-  1. Let _p1_ be the result of promise-calling _hook_(_key_, _payload_).
-  1. Return the result of transforming _p1_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
+  1. Let _p0_ be the result of promise-calling _hook_(_key_, _payload_).
+  1. Let _p1_ be the result of transforming _p0_ with a new pass-through promise.
+  1. Let _p2_ be the result of transforming _p1_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
     1. SetStateToMax(_entry_, "instantiate").
     1. Return _source_.
+  1. Return _p1_.
 1. Set _entry_.[[Translate]] to _p_.
 1. Return _p_.
 </emu-alg>
@@ -720,7 +731,7 @@ Registry instances are initially created with the internal slots described in th
 
 <emu-alg>
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
-1. If _entry_.[[State]] is "ready", return a new promise fulfilled with _entry_.[[Module]].
+1. If _entry_.[[State]] is "ready", return a promise resolved with _entry_.[[Module]].
 1. Return the result of transforming RequestInstantiateAll(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Assert: _entry_'s whole dependency graph is in "link" state.
   1. Let _status_ be Link(_loader_, _entry_).
