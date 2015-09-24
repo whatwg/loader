@@ -696,11 +696,13 @@ Registry instances are initially created with the internal slots described in th
 1. Let _hook_ be GetMethod(_loader_, @@instantiate).
 1. Let _p_ be the result of transforming RequestTranslate(_loader_, _key_) with a fulfillment handler that, when called with argument _source_, runs the following steps:
   1. // TODO: metadata
-  1. Let _p1_ be the result of promise-calling _hook_(_key_, _source_).
-  1. Return the result of transforming _p1_ with a fulfillment handler that, when called with argument _optionalInstance_, runs the following steps:
+  1. Let _p0_ be the result of promise-calling _hook_(_key_, _source_).
+  1. Let _p1_ be the result of transforming _p0_ with a new pass-through promise.
+  1. Let _p2_ be the result of transforming _p1_ with a fulfillment handler that, when called with argument _optionalInstance_, runs the following steps:
     1. Let _status_ be CommitInstantiated(_loader_, _entry_, _optionalInstance_, _source_).
     1. ReturnIfAbrupt(_status_).
     1. Return _entry_.
+  1. Return _p1_.
 1. Set _entry_.[[Instantiate]] to _p_.
 1. Return _p_.
 </emu-alg>
