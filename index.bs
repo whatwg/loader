@@ -508,34 +508,37 @@ The following steps are taken:
 
 <emu-alg>
 1. Let _registry_ be *this* value.
-1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. If Type(_registry_) is not Object, return a promise rejected with a new *TypeError*.
 1. Let _loader_ be _registry_.[[Loader]] value.
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
 1. If _stage_ is "fetch", then:
   1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
   1. Let _fetchStateValue_ be GetStateValue("fetch").
-  1. If _stateValue_ is greater than _fetchStateValue_, throw a new *TypeError*.
-  1. Call FulfillFetch(_loader_, _entry_, _value_).
-  1. Return *undefined*.
+  1. If _stateValue_ is greater than _fetchStateValue_, return a promise rejected with a new *TypeError*.
+  1. Let _p0_ be the result of transforming _value_ with a new pass-through promise.
+  1. Let _p1_ be the result of transforming p0 with a fulfillment handler that, when called with argument _payload_, runs the following steps:
+    1. Call FulfillFetch(_loader_, _entry_, _payload_).
+  1. Return _p0_.
 1. If _stage_ is "translate", then:
   1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
   1. Let _translateStateValue_ be GetStateValue("translate").
-  1. If _stateValue_ is greater than _translateStateValue_, throw a new *TypeError*.
-  1. Call FulfillFetch(_loader_, _entry_, *undefined*).
-  1. Call FulfillTranslate(_loader_, _entry_, _value_).
-  1. Return *undefined*.
+  1. If _stateValue_ is greater than _translateStateValue_, return a promise rejected with a new *TypeError*.
+  1. Let _p0_ be the result of transforming _value_ with a new pass-through promise.
+  1. Let _p1_ be the result of transforming p0 with a fulfillment handler that, when called with argument _source_, runs the following steps:
+    1. Call FulfillFetch(_loader_, _entry_, *undefined*).
+    1. Call FulfillTranslate(_loader_, _entry_, _source_).
+  1. Return _p0_.
 1. If _stage_ is "instantiate", then:
   1. Let _stateValue_ be GetStateValue(_entry_.[[State]]).
   1. Let _instantiateStateValue_ be GetStateValue("instantiate").
-  1. If _stateValue_ is greater than _instantiateStateValue_, throw a new *TypeError*.
-  1. Call FulfillFetch(_loader_, _entry_, *undefined*).
-  1. Call FulfillTranslate(_loader_, _entry_, *undefined*).
-  1. Assert: _entry_.[[Translate]] is resolved or rejected.
-  1. TODO: need to propagate rejections
-  1. Let _source_ be the fulfillment value of _entry_.[[Translate]].
-  1. Call FulfillInstantiate(_loader_, _entry_, _value_, _source_).
-  1. Return *undefined*.
-1. Throw a new *TypeError*.
+  1. If _stateValue_ is greater than _instantiateStateValue_, return a promise rejected with a new *TypeError*.
+  1. Let _p0_ be the result of transforming _value_ with a new pass-through promise.
+  1. Let _p1_ be the result of transforming p0 with a fulfillment handler that, when called with argument _instance_, runs the following steps:
+    1. Call FulfillFetch(_loader_, _entry_, *undefined*).
+    1. Call FulfillTranslate(_loader_, _entry_, *undefined*).
+    1. Call FulfillInstantiate(_loader_, _entry_, _instance_, *undefined*).
+  1. Return _p0_.
+1. Return a promise rejected with a new *TypeError*.
 </emu-alg>
 
 <h4 id="registry-prototype-error">Registry.prototype.error(key, stage, value)</h4>
