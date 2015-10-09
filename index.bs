@@ -17,7 +17,7 @@ Abstract: JavaScript host environment. It also provides APIs for intercepting th
 Abstract: loading process and customizing loading behavior.
 Logo: https://resources.whatwg.org/logo-javascript.svg
 !Version History: <a href="https://github.com/whatwg/loader/commits">https://github.com/whatwg/loader/commits</a>
-!Participate: <a href="https://github.com/whatwg/loader/issues/new">File an issue</a> (<a href="https://github.com/whatwg/loader/issues?stage=open">open issues</a>)
+!Participate: <a href="https://github.com/whatwg/loader/issues/new">File an issue</a> (<a href="https://github.com/whatwg/loader/issues?state=open">open issues</a>)
 
 Opaque Elements: emu-alg
 </pre>
