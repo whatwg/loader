@@ -40,7 +40,9 @@ to start a watcher on `index.bs` that will update `index.html` as you edit.
 
 ### Implementation status
 
-It is too early to know about the Loader, first we need ES2015 modules implemented by the various engines. Current status:
+Please, reference to the [roadmap](https://github.com/whatwg/loader/blob/master/roadmap.md) for more details about the implementation of this spec.
+
+Current status (Milestone 0):
 
  * IE/Edge: [Under Consideration](https://status.modern.ie/moduleses6?term=modules)
  * Firefox: [In progress](https://bugzilla.mozilla.org/show_bug.cgi?id=568953)
