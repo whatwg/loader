@@ -19,7 +19,7 @@ Logo: https://resources.whatwg.org/logo-javascript.svg
 !Version History: <a href="https://github.com/whatwg/loader/commits">https://github.com/whatwg/loader/commits</a>
 !Participate: <a href="https://github.com/whatwg/loader/issues/new">File an issue</a> (<a href="https://github.com/whatwg/loader/issues?state=open">open issues</a>)
 
-Opaque Elements: emu-alg
+Opaque Elements: emu-alg, emu-note
 </pre>
 
 <style>
@@ -30,6 +30,8 @@ Opaque Elements: emu-alg
   emu-alg > ol ol, emu-alg > ol ol ol ol ol { list-style-type: lower-alpha; }
   emu-alg > ol ol ol, emu-alg > ol ol ol ol ol ol { list-style-type: lower-roman; }
   emu-alg li { margin: 0; }
+  emu-note { display: block; margin: 1em 0 1em 6em; color: #666; }
+  emu-note::before { content: "Note"; text-transform: uppercase; margin-left: -6em; display: block; float: left; }
 </style>
 <script src="https://resources.whatwg.org/file-issue.js" async></script>
 
@@ -317,6 +319,14 @@ The abstract operation GetStage with arguments entry and stage performs the foll
     1. Remove first element from _pipeline_.
 </emu-alg>
 
+<emu-note>
+  The internal slot [[Pipeline]] of an entry can never be empty.
+</emu-note>
+
+<emu-note>
+  Alternative, this algo can be implemented using functional programming techinques or a reverse cycle to avoid walking the entries twice.
+</emu-note>
+
 An <dfn id="stage-entry">stage</dfn> is a record with the following fields:
 
 <table>
@@ -354,7 +364,7 @@ The abstract operation GetRegistryEntry with arguments registry and key performs
 1. Let _stage_ be _currentStage_.[[Stage]].
 1. Let _result_ be CreateObject().
 1. Call SimpleDefine(_result_, "stage", _stage_).
-1. Call SimpleDefine(_result_, "stagePromise", _result_).
+1. Call SimpleDefine(_result_, "result", _result_).
 1. If _stage_ is "ready" then let _module_ be _entry_.[[Module]].
 1. Else let _module_ be *undefined*.
 1. Call SimpleDefine(_result_, "module", _module_).
@@ -589,7 +599,7 @@ Registry instances are initially created with the internal slots described in th
 1. If _pair_ exists, then:
   1. Let _entry_ be _pair_.[[value]].
 1. Else:
-  1. Let _pipeline_ to be a new List.
+  1. Let _pipeline_ be a new List.
   1. Add new stage entry record { [[Stage]]: "fetch", [[Result]]: undefined } as a new element of the list _pipeline_.
   1. Add new stage entry record { [[Stage]]: "translate", [[Result]]: undefined } as a new element of the list _pipeline_.
   1. Add new stage entry record { [[Stage]]: "instantiate", [[Result]]: undefined } as a new element of the list _pipeline_.
