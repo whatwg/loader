@@ -353,6 +353,40 @@ An <dfn id="stage-entry">stage</dfn> is a record with the following fields:
   </tr>
 </table>
 
+Each \[[Stage]] value indicates the currently pending operation. If the \[[Result]] field is *undefined*, the operation has not been initiated; if the \[[Result]] field is a promise, the operation has been initiated but not completed. Once a stage completes, its Stage Entry is removed from the pipeline. The following table describes the intended purpose of each stage of the pipeline:
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Description (<em>non-normative</em>)</th>
+  </thead>
+  <tr>
+    <td><code>"fetch"</code></td>
+    <td>fetching the requested module (e.g. from a filesystem or network)</td>
+  </tr>
+  <tr>
+    <td><code>"translate"</code></td>
+    <td>translating the fetched source (as via a preprocessor or compiler)</td>
+  </tr>
+  <tr>
+    <td><code>"instantiate"</code></td>
+    <td>instantiating the translated source as a Module Record</td>
+  </tr>
+  <tr>
+    <td><code>"satisfy"</code></td>
+    <td>satisfying the module's dependency graph by instantiating all of its (direct or indirect) dependencies</td>
+  </tr>
+  <tr>
+    <td><code>"link"</code></td>
+    <td>linking all imports and exports of the module's dependency graph</td>
+  </tr>
+  <tr>
+    <td><code>"ready"</code></td>
+    <td>fully loaded and initialized</td>
+  </tr>
+</table>
+
 <h4 id="registry-GetRegistryEntry" aoid="GetRegistryEntry">GetRegistryEntry(registry, key)</h4>
 
 The abstract operation GetRegistryEntry with arguments registry and key performs the following steps:
