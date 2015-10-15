@@ -230,7 +230,11 @@ The following steps are taken:
   1. If _stage_ is "translate", then:
     1. Return the result of transforming RequestTranslate(_loader_, _key_) with a new pass-through promise.
   1. If _stage_ is "instantiate", then:
-    1. Return the result of transforming RequestInstantiateAll(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+    1. Return the result of transforming RequestInstantiate(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+      1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
+      1. Return *undefined*.
+  1. If _stage_ is "satisfy", then:
+    1. Return the result of transforming RequestSatisfy(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
       1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
       1. Return *undefined*.
   1. If _stage_ is "link", then:
@@ -339,7 +343,7 @@ An <dfn id="stage-entry">stage</dfn> is a record with the following fields:
   </thead>
   <tr>
     <td>\[[Stage]]</td>
-    <td><code>"fetch"</code>, <code>"translate"</code>, <code>"instantiate"</code>, <code>"link"</code>, <code>"ready"</code></td>
+    <td><code>"fetch"</code>, <code>"translate"</code>, <code>"instantiate"</code>, <code>"satisfy"</code>, <code>"link"</code>, <code>"ready"</code></td>
     <td>A constant value to indicating which phase the entry is at.</td>
   </tr>
   <tr>
@@ -613,6 +617,7 @@ Registry instances are initially created with the internal slots described in th
   1. Add new stage entry record { [[Stage]]: "fetch", [[Result]]: undefined } as a new element of the list _pipeline_.
   1. Add new stage entry record { [[Stage]]: "translate", [[Result]]: undefined } as a new element of the list _pipeline_.
   1. Add new stage entry record { [[Stage]]: "instantiate", [[Result]]: undefined } as a new element of the list _pipeline_.
+  1. Add new stage entry record { [[Stage]]: "satisfy", [[Result]]: undefined } as a new element of the list _pipeline_.
   1. Add new stage entry record { [[Stage]]: "link", [[Result]]: undefined } as a new element of the list _pipeline_.
   1. Add new stage entry record { [[Stage]]: "ready", [[Result]]: undefined } as a new element of the list _pipeline_.
   1. Let _entry_ be a new registry entry record { [[Key]]: _key_, [[Pipeline]]: _pipeline_, [[Metadata]]: *undefined*, [[Dependencies]]: *undefined*, [[Module]]: *undefined*, [[Error]]: *nothing* }.
@@ -632,8 +637,6 @@ Registry instances are initially created with the internal slots described in th
 <emu-alg>
 1. Let _instance_ be Instantiation(_loader_, _optionalInstance_, _source_).
 1. ReturnIfAbrupt(_instance_).
-1. // TODO: edge case: what if _instance_ is a thenable function?
-1. Fulfill _entry_.[[Instantiate]] with _instance_.
 1. Let _deps_ be a new empty List.
 1. If _instance_ is a Module Record, then:
   1. Assert: _instance_ is a Source Text Module Record.
@@ -642,7 +645,6 @@ Registry instances are initially created with the internal slots described in th
     1. Append the record { [[key]]: _dep_, [[value]]: *undefined* } to _deps_.
 1. Set _entry_.[[Dependencies]] to _deps_.
 1. Set _entry_.[[Module]] to _instance_.
-1. UpgradeToStage(_entry_, "link").
 </emu-alg>
 
 <h4 id="instantiation" aoid="Instantiation">Instantiation(loader, result, source)</h4>
@@ -706,16 +708,21 @@ Registry instances are initially created with the internal slots described in th
   1. Let _p2_ be the result of transforming _p1_ with a fulfillment handler that, when called with argument _optionalInstance_, runs the following steps:
     1. Let _status_ be ExtractDependencies(_loader_, _entry_, _optionalInstance_, _source_).
     1. ReturnIfAbrupt(_status_).
+    1. UpgradeToStage(_entry_, "satisfy").
     1. Return _entry_.
   1. Return _p1_.
 1. Set _instantiateStageEntry_.[[Result]] to _p_.
 1. Return _p_.
 </emu-alg>
 
-<h4 id="request-instantiate-all" aoid="RequestInstantiateAll">RequestInstantiateAll(loader, key)</h4>
+<h4 id="request-satisfy" aoid="RequestSatisfy">RequestSatisfy(loader, key)</h4>
 
 <emu-alg>
-1. Return the result of transforming RequestInstantiate(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. Let _satisfyStageEntry_ be GetStage(_entry_, "satisfy").
+1. If _satisfyStageEntry_ is *undefined*, return a promise resolved with *undefined*.
+1. If _satisfyStageEntry_.[[Result]] is not *undefined*, return _satisfyStageEntry_.[[Result]].
+1. Let _p_ be the result of transforming RequestInstantiate(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _depLoads_ be a new empty List.
   1. For each _pair_ in _entry_.[[Dependencies]], do:
     1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[key]], _key_) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
@@ -725,14 +732,17 @@ Registry instances are initially created with the internal slots described in th
         1. Let _dep_ be _depEntry_.[[Module]].
         1. Set _pair_.[[value]] to _dep_.
         1. Return _dep_.
-      1. Return the result of transforming RequestInstantiateAll(_loader_, _depKey_) with a fulfillment handler that, when called with value _depEntry_, runs the following steps:
+      1. Return the result of transforming RequestSatisfy(_loader_, _depKey_) with a fulfillment handler that, when called with value _depEntry_, runs the following steps:
         1. Let _dep_ be _depEntry_.[[Module]].
         1. Set _pair_.[[value]] to _dep_.
         1. Return _dep_.
     1. Append _p_ to _depLoads_.
   1. Let _p_ be the result of waiting for all _depLoads_.
   1. Return the result of transforming _p_ with a fulfillment handler that, when called, runs the following steps:
+    1. UpgradeToStage(_entry_, "link").
     1. Return _entry_.
+1. Set _satisfyStageEntry_.[[Result]] to _p_.
+1. Return _p_.
 </emu-alg>
 
 <h4 id="request-link" aoid="RequestLink">RequestLink(loader, key)</h4>
@@ -741,8 +751,8 @@ Registry instances are initially created with the internal slots described in th
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
 1. Let _linkStageEntry_ be GetStage(_entry_, "link").
 1. If _linkStageEntry_ is *undefined*, return a promise resolved with *undefined*.
-1. Return the result of transforming RequestInstantiateAll(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
-  1. Assert: _entry_'s whole dependency graph is in "link" stage.
+1. Return the result of transforming RequestSatisfy(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+  1. Assert: _entry_'s whole dependency graph is in "link" or "ready" stage.
   1. Let _status_ be Link(_loader_, _entry_).
   1. ReturnIfAbrupt(_status_).
   1. Assert: _entry_'s whole dependency graph is in "ready" stage.
