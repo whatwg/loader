@@ -535,8 +535,9 @@ The following steps are taken:
 
 <emu-alg>
 1. Let _registry_ be *this* value.
-1. If Type(_registry_) is not Object, throw a *TypeError* exception.
-1. Let _loader_ be _registry_.[[Loader]] value.
+1. If Type(_registry_) is not Object, throw a new *TypeError*.
+1. If _stage_ is not "fetch", "translate" or "instantiate", throw a new *TypeError*.
+1. Let _loader_ be _registry_.[[Loader]].
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
 1. Let _stageEntry_ be GetStage(_entry_, _stage_).
 1. If _stageEntry_ is *undefined*, throw a new *TypeError*.
@@ -545,6 +546,10 @@ The following steps are taken:
 1. UpgradeToStage(_entry_, _stage_).
 </emu-alg>
 
+<emu-note>
+  Any stage other than fetch, translate and instantiate is considered internal.
+</emu-note>
+
 <h4 id="registry-prototype-error">Registry.prototype.error(key, stage, value)</h4>
 
 The following steps are taken:
@@ -552,7 +557,8 @@ The following steps are taken:
 <emu-alg>
 1. Let _registry_ be *this* value.
 1. If Type(_registry_) is not Object, throw a *TypeError* exception.
-1. Let _loader_ be _registry_.[[Loader]] value.
+1. If _stage_ is not "fetch", "translate" or "instantiate", throw a new *TypeError*.
+1. Let _loader_ be _registry_.[[Loader]].
 1. Let _entry_ be EnsureRegistered(_loader_, _key_).
 1. Let _stageEntry_ be GetStage(_entry_, _stage_).
 1. If _stageEntry_ is *undefined*, throw a new *TypeError*.
@@ -560,6 +566,10 @@ The following steps are taken:
 1. Else, reject _entry_.[[Result]] with _value_.
 1. UpgradeToStage(_entry_, _stage_).
 </emu-alg>
+
+<emu-note>
+  Any stage other than fetch, translate and instantiate is considered internal.
+</emu-note>
 
 <h3 id="registry-internal-slots">Properties of Registry Instances</h3>
 
