@@ -832,7 +832,7 @@ RegistryEntry instances are initially created with the internal slots described 
         1. Let _dep_ be _depEntry_.[[Module]].
         1. Set _pair_.[[Value]] to _dep_.
         1. Return _dep_.
-      1. Return the result of transforming RequestSatisfy(_depEntry_.[[Loader]], _depKey_) with a fulfillment handler that, when called with value _depEntry_, runs the following steps:
+      1. Return the result of transforming RequestSatisfy(_depEntry_) with a fulfillment handler that, when called with value _depEntry_, runs the following steps:
         1. Let _dep_ be _depEntry_.[[Module]].
         1. Set _pair_.[[Value]] to _dep_.
         1. Return _dep_.
