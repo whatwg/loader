@@ -242,10 +242,13 @@ The following steps are taken:
 <emu-alg>
 1. Let _loader_ be *this* value.
 1. Assert: _loader_ must be an instance of a concrete subclass of Loader.
-1. If _stage_ is *undefined* then let _stage_ be "ready".
+1. If _stage_ is *undefined* then let _stageValue_ be "ready".
+1. Else let _stageValue_ be ToString(_stage_).
+1. If _stageValue_ is an abrupt completion, return a promise rejected with a new *TypeError* exception.
+1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
 1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
   1. Let _entry_ be EnsureRegistered(_loader_, _key_).
-  1. Return LoadModule(_entry_, _stage_).
+  1. Return LoadModule(_entry_, _stageValue_).
 </emu-alg>
 
 <h4 id="loader-registry">get Loader.prototype.registry</h4>
@@ -476,12 +479,22 @@ The abstract operation GetCurrentStage with argument <i>entry</i> performs the f
 1. Return the first element of _stages_.
 </emu-alg>
 
+<h4 id="module-status-IsValidStageValue" aoid="GetCurrentStage">IsValidStageValue(stage)</h4>
+
+The abstract operation IsValidStageValue with argument <i>stage</i> performs the following steps:
+
+<emu-alg>
+1. If _stage_ is "fetch", "translate", "instantiate", "satisfy", "link" or "ready", return *true*.
+1. Else return *false*.
+</emu-alg>
+
 <h4 id="module-status-GetStage" aoid="GetStage">GetStage(entry, stage)</h4>
 
 The abstract operation GetStage with arguments <i>entry</i> and <i>stage</i> performs the following steps:
 
 <emu-alg>
 1. If _entry_ is not an initialized ModuleStatus instance, throw a new *TypeError* exception.
+1. Assert: Type(_stage_) is String.
 1. Let _stages_ be _entry_.[[Pipeline]].
 1. For each element _entry_ of _stages_, do
   1. If _entry_.[[Stage]] is equal to _stage_, then
@@ -495,6 +508,7 @@ The abstract operation LoadModule with arguments <i>entry</i> and <i>stage</i> p
 
 <emu-alg>
 1. If _entry_ is not an initialized ModuleStatus instance, return a promise rejected with a new *TypeError* exception.
+1. Assert: Type(_stage_) is String.
 1. If _stage_ is "fetch", then:
   1. Return the result of transforming RequestFetch(_entry_) with a new pass-through promise.
 1. If _stage_ is "translate", then:
@@ -520,6 +534,7 @@ The abstract operation LoadModule with arguments <i>entry</i> and <i>stage</i> p
 <emu-alg>
 1. If Type(_entry_) is not Object, throw a *TypeError* exception.
 1. If _entry_ does not have a [[Pipeline]] internal slot, throw a *TypeError* exception.
+1. Assert: Type(_stage_) is String.
 1. Let _pipeline_ be _entry_.[[Pipeline]].
 1. Let _stageEntry_ be GetStage(_entry_, _stage_).
 1. If _stageEntry_ is not *undefined*, then
@@ -686,8 +701,11 @@ The following steps are taken:
 
 <emu-alg>
 1. Let _entry_ be *this* value.
-1. If _stage_ is *undefined* then let _stage_ be "fetch".
-1. Return LoadModule(_entry_, _stage_).
+1. If _stage_ is *undefined* then let _stageValue_ be "fetch".
+1. Else let _stageValue_ be ToString(_stage_).
+1. If _stageValue_ is an abrupt completion, return a promise rejected with a new *TypeError* exception.
+1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
+1. Return LoadModule(_entry_, _stageValue_).
 </emu-alg>
 
 <h4 id="module-status-prototype-result">ModuleStatus.prototype.result(stage)</h4>
@@ -697,8 +715,10 @@ The following steps are taken:
 <emu-alg>
 1. Let _entry_ be *this* value.
 1. If Type(_entry_) is not Object, return a promise rejected with a new *TypeError* exception.
-1. If _stage_ is not "fetch", "translate", "instantiate", "satisfy", "link" or "ready", return a promise rejected with a new *RangeError* exception.
-1. Let _stageEntry_ be GetStage(_entry_, _stage_).
+1. Let _stageValue_ be ToString(_stage_).
+1. If _stageValue_ is an abrupt completion, return a promise rejected with a new *TypeError* exception.
+1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
+1. Let _stageEntry_ be GetStage(_entry_, _stageValue_).
 1. If _stageEntry_ is an abrupt completion, return a promise rejected with a new *TypeError* exception.
 1. If _stageEntry_ is *undefined*, return a promise resolved with *undefined*.
 1. If _stageEntry_.[[Result]] is *undefined*, return a promise resolved with *undefined*.
@@ -712,16 +732,18 @@ The following steps are taken:
 <emu-alg>
 1. Let _entry_ be *this* value.
 1. If Type(_entry_) is not Object, throw a new *TypeError*.
-1. If _stage_ is not "fetch", "translate", "instantiate", "satisfy", "link" or "ready", return a promise rejected with a new *RangeError* exception.
+1. Let _stageValue_ be ToString(_stage_).
+1. If _stageValue_ is an abrupt completion, return a promise rejected with a new *TypeError* exception.
+1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
 1. Let _p0_ be the result of transforming _result_ with a new pass-through promise.
 1. Let _p1_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _value_, runs the following steps:
-  1. Let _stageEntry_ be GetStage(_entry_, _stage_).
+  1. Let _stageEntry_ be GetStage(_entry_, _stageValue_).
   1. If _stageEntry_ is *undefined*, throw a new *TypeError*.
   1. If _stageEntry_.[[Result]] is *undefined*, then
     1. Set _stageEntry_.[[Result]] to a promise resolved with _value_.
   1. Else
     1. Fulfill _stageEntry_.[[Result]] with _value_.
-  1. UpgradeToStage(_entry_, _stage_).
+  1. UpgradeToStage(_entry_, _stageValue_).
   1. Return _value_.
 1. Return _p0_.
 </emu-alg>
@@ -733,16 +755,18 @@ The following steps are taken:
 <emu-alg>
 1. Let _entry_ be *this* value.
 1. If Type(_entry_) is not Object, throw a new *TypeError*.
-1. If _stage_ is not "fetch", "translate", "instantiate", "satisfy", "link" or "ready", return a promise rejected with a new *RangeError* exception.
+1. Let _stageValue_ be ToString(_stage_).
+1. If _stageValue_ is an abrupt completion, return a promise rejected with a new *TypeError* exception.
+1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
 1. Let _p0_ be the result of transforming _error_ with a new pass-through promise.
 1. Let _p1_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _value_, runs the following steps:
-  1. Let _stageEntry_ be GetStage(_entry_, _stage_).
+  1. Let _stageEntry_ be GetStage(_entry_, _stageValue_).
   1. If _stageEntry_ is *undefined*, throw a new *TypeError*.
   1. If _stageEntry_.[[Result]] is *undefined*, then
     1. Set _stageEntry_.[[Result]] to a promise rejected with _value_.
   1. Else
     1. Reject _stageEntry_.[[Result]] with _value_.
-  1. UpgradeToStage(_entry_, _stage_).
+  1. UpgradeToStage(_entry_, _stageValue_).
   1. Return _value_.
 1. Return _p0_.
 </emu-alg>
