@@ -253,7 +253,7 @@ The following steps are taken:
 
 <h4 id="loader-registry">get Loader.prototype.registry</h4>
 
-Loader.prototype.registry is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
+<code>Loader.prototype.registry</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
 
 <emu-alg>
 1. Let _loader_ be *this* value.
@@ -675,7 +675,7 @@ The initial value of ModuleStatus.prototype.constructor is %Registry%.
 
 <h4 id="module-status-stage">get ModuleStatus.prototype.stage</h4>
 
-ModuleStatus.prototype.stage is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
+<code>ModuleStatus.prototype.stage</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
 
 <emu-alg>
 1. Let _entry_ be *this* value.
@@ -686,7 +686,7 @@ ModuleStatus.prototype.stage is an accessor property whose set accessor function
 
 <h4 id="module-status-module">get ModuleStatus.prototype.module</h4>
 
-ModuleStatus.prototype.module is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
+<code>ModuleStatus.prototype.module</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
 
 <emu-alg>
 1. Let _entry_ be *this* value.
@@ -694,6 +694,49 @@ ModuleStatus.prototype.module is an accessor property whose set accessor functio
 1. If _entry_ does not have a [[Module]] internal slot, throw a *TypeError* exception.
 1. Return _entry_.[[Module]].
 </emu-alg>
+
+<h4 id="module-status-error">get ModuleStatus.prototype.error</h4>
+
+<code>ModuleStatus.prototype.error</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
+
+<emu-alg>
+1. Let _entry_ be *this* value.
+1. If Type(_entry_) is not Object, throw a *TypeError* exception.
+1. If _entry_ does not have a [[Error]] internal slot, throw a *TypeError* exception.
+1. Return _entry_.[[Error]].
+</emu-alg>
+
+
+<h4 id="module-status-error">get ModuleStatus.prototype.dependencies</h4>
+
+<code>ModuleStatus.prototype.dependencies</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
+
+<emu-alg>
+1. Let _entry_ be *this* value.
+1. If Type(_entry_) is not Object, throw a *TypeError* exception.
+1. If _entry_ does not have a [[Dependencies]] internal slot, throw a *TypeError* exception.
+1. Let _array_ be ArrayCreate(0).
+1. Let _n_ be 0.
+1. For each _pair_ in _entry_.[[Dependencies]], do:
+  1. Let _O_ be ObjectCreate(%ObjectPrototype%).
+  1. Let _requestNameDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[RequestName]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
+  1. Let _requestNameStatus_ be DefinePropertyOrThrow(_O_, "requestName", _requestNameDesc_).
+  1. ReturnIfAbrupt(_requestNameStatus_).
+  1. Let _keyDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[Key]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
+  1. Let _keyStatus_ be DefinePropertyOrThrow(_O_, "key", _keyDesc_).
+  1. ReturnIfAbrupt(_keyStatus_).
+  1. Let _moduleStatusDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[ModuleStatus]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
+  1. Let _moduleStatus_ be DefinePropertyOrThrow(_O_, "entry", _moduleStatusDesc_).
+  1. ReturnIfAbrupt(_moduleStatus_).
+  1. Let _status_ be CreateDataProperty(_array_, ToString(_n_), _O_).
+  1. ReturnIfAbrupt(_status_).
+  1. Increment _n_ by 1.
+1. Return _array_.
+</emu-alg>
+
+<emu-note>
+  The dependencies accessor provides access to the dependency graph, exposing each dependency's requestName, key and entry reference.
+</emu-note>
 
 <h4 id="module-status-prototype-load">ModuleStatus.prototype.load(stage)</h4>
 
@@ -807,8 +850,8 @@ ModuleStatus instances are initially created with the internal slots described i
   </tr>
   <tr>
     <td>\[[Dependencies]]</td>
-    <td>List of pairs of String and (<a href="#module-status">module status</a> or <code>undefined</code>), or <code>undefined</code>.</td>
-    <td>Table mapping unresolved names to their resolved modules.</td>
+    <td>List of Records of the form {\[[RequestName]]: String, \[[Key]]: String, \[[ModuleStatus]]: Module Status} .</td>
+    <td>Table mapping unresolved names to their resolved key and module status entries.</td>
   </tr>
   <tr>
     <td>\[[Module]]</td>
@@ -856,10 +899,15 @@ ModuleStatus instances are initially created with the internal slots described i
   1. Assert: _instance_ is a Source Text Module Record.
   1. Set _instance_.[[ModuleStatus]] to _entry_.
   1. For each _dep_ in _instance_.[[RequestedModules]], do:
-    1. Append the record { [[Key]]: _dep_, [[Value]]: *undefined* } to _deps_.
+    1. Append the record { [[RequestName]]: _dep_, [[Key]]: *undefined*, [[ModuleStatus]]: *undefined* } to _deps_.
 1. Set _entry_.[[Dependencies]] to _deps_.
 1. Set _entry_.[[Module]] to _instance_.
 </emu-alg>
+
+<emu-note>
+  [[Key]] wil identifies the dependency module status in the entry's corresponding loader.
+</emu-note>
+
 
 <h4 id="instantiation" aoid="Instantiation">Instantiation(loader, result, source)</h4>
 
@@ -937,15 +985,13 @@ ModuleStatus instances are initially created with the internal slots described i
   1. For each _pair_ in _entry_.[[Dependencies]], do:
     1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[Key]], _key_) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
       1. Let _depEntry_ be EnsureRegistered(_entry_.[[Loader]], _depKey_).
+      1. Let _pair_.[[Key]] to _depKey_.
+      1. Let _pair_.[[ModuleStatus]] to _depEntry_.
       1. Let _currentStageEntry_ be GetCurrentStage(_entry_).
       1. If _currentStageEntry_.[[Stage]] is "ready", then:
-        1. Let _dep_ be _depEntry_.[[Module]].
-        1. Set _pair_.[[Value]] to _dep_.
-        1. Return _dep_.
+        1. Return _depEntry_.[[Module]].
       1. Return the result of transforming RequestSatisfy(_depEntry_) with a fulfillment handler that, when called with value _depEntry_, runs the following steps:
-        1. Let _dep_ be _depEntry_.[[Module]].
-        1. Set _pair_.[[Value]] to _dep_.
-        1. Return _dep_.
+        1. Return _depEntry_.[[Module]].
     1. Append _p_ to _depLoads_.
   1. Let _p_ be the result of waiting for all _depLoads_.
   1. Return the result of transforming _p_ with a fulfillment handler that, when called, runs the following steps:
@@ -954,6 +1000,10 @@ ModuleStatus instances are initially created with the internal slots described i
 1. Set _satisfyStageEntry_.[[Result]] to _p_.
 1. Return _p_.
 </emu-alg>
+
+<emu-note>
+  This abstract operation completes the [[Dependencies]] registry per entry keeping backpointers to each dependency entry and the corresponding keys.
+</emu-note>
 
 <h4 id="request-link" aoid="RequestLink">RequestLink(entry)</h4>
 
@@ -995,12 +1045,12 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. Let _entry_ be _module_.[[ModuleStatus]].
 1. Let _currentStageEntry_ be GetCurrentStage(_entry_).
 1. Assert: _currentStageEntry_.[[Stage]] is in "link" or "ready" stage.
-1. Let _pair_ be the pair in _entry_.[[Dependencies]] such that _pair_.[[Key]] is equal to _requestName_.
+1. Let _pair_ be the pair in _entry_.[[Dependencies]] such that _pair_.[[RequestName]] is equal to _requestName_.
 1. Assert: _pair_ is defined.
-1. Let _dep_ be _pair_.[[Value]].
-1. Let _depStageEntry_ be GetCurrentStage(_dep_).
+1. Let _depEntry_ be _pair_.[[ModuleStatus]].
+1. Let _depStageEntry_ be GetCurrentStage(_depEntry_).
 1. Assert: _depStageEntry_.[[Stage]] is equal "link" or "ready" stage.
-1. Return _dep_.[[Module]].
+1. Return _depEntry_.[[Module]].
 </emu-alg>
 
 <h3 id="linking">Linking</h3>
@@ -1044,8 +1094,8 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. If _entry_ is already in _result_, then return *undefined*.
 1. Append _entry_ to _result_.
 1. For each _pair_ in _entry_.[[Dependencies]], do:
-  1. Assert: _pair_.[[Value]] is defined.
-  1. Call ComputeDependencyGraph(_pair_.[[Value]], _result_).
+  1. Assert: _pair_.[[ModuleStatus]] is defined.
+  1. Call ComputeDependencyGraph(_pair_.[[ModuleStatus]], _result_).
 1. Return *undefined*.
 </emu-alg>
 
