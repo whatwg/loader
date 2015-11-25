@@ -152,7 +152,7 @@ mean the same thing as:
 
 <emu-alg>
 1. Let _desc_ be a new PropertyDescriptor record {[[Value]]: _value_, [[Writable]]: *true*, [[Enumerable]]: *true*, [[Configurable]]: *true*}.
-1. Return the result of calling OrdinaryDefineOwnProperty(_obj_, _name_, _desc_).
+1. Return ? OrdinaryDefineOwnProperty(_obj_, _name_, _desc_).
 </emu-alg>
 
 <h3 id="common-operations">Built-in Function Objects</h3>
@@ -168,8 +168,7 @@ We follow the ECMA-262 <a href="http://www.ecma-international.org/ecma-262/6.0/i
 The abstract operation CreateRegistry with no arguments performs the following steps:
 
 <emu-alg>
-1. Let _O_ be OrdinaryCreateFromConstructor(Registry, "%RegistryPrototype%", «[[RegistryMap]]» ).
-1. ReturnIfAbrupt(_O_).
+1. Let _O_ be ? OrdinaryCreateFromConstructor(Registry, "%RegistryPrototype%", «[[RegistryMap]]» ).
 1. Return _O_.
 </emu-alg>
 
@@ -189,8 +188,7 @@ When Loader is called with no arguments, the following steps are taken:
 
 <emu-alg>
 1. If NewTarget is *undefined*, then throw a *TypeError* exception.
-1. Let _O_ be OrdinaryCreateFromConstructor(NewTarget, "Loader.prototype").
-1. ReturnIfAbrupt(_O_).
+1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, "Loader.prototype").
 1. Set _O_’s [[Registry]] internal slot to CreateRegistry().
 1. Return _O_.
 </emu-alg>
@@ -219,7 +217,8 @@ The following steps are taken:
 
 <emu-alg>
 1. Let _loader_ be *this* value.
-1. Assert: _loader_ must be an instance of a concrete subclass of Loader.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
 1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
   1. Let _entry_ be EnsureRegistered(_loader_, _key_).
   1. Return LoadModule(_entry_, "ready").
@@ -231,7 +230,8 @@ The following steps are taken:
 
 <emu-alg>
 1. Let _loader_ be *this* value.
-1. Assert: _loader_ must be an instance of a concrete subclass of Loader.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
 1. Return Resolve(_loader_, _name_, _referrer_).
 </emu-alg>
 
@@ -241,10 +241,11 @@ The following steps are taken:
 
 <emu-alg>
 1. Let _loader_ be *this* value.
-1. Assert: _loader_ must be an instance of a concrete subclass of Loader.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
 1. If _stage_ is *undefined* then let _stageValue_ be "ready".
 1. Else let _stageValue_ be ToString(_stage_).
-1. If _stageValue_ is an abrupt completion, return a promise rejected with a new *TypeError* exception.
+1. RejectIfAbrupt(_stageValue_).
 1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
 1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
   1. Let _entry_ be EnsureRegistered(_loader_, _key_).
@@ -257,6 +258,8 @@ The following steps are taken:
 
 <emu-alg>
 1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
 1. Return _loader_.[[Registry]].
 </emu-alg>
 
@@ -304,8 +307,7 @@ When Registry is called with no arguments, the following steps are taken:
 
 <emu-alg>
 1. If NewTarget is *undefined*, then throw a *TypeError* exception.
-1. Let _O_ be OrdinaryCreateFromConstructor(NewTarget, "%RegistryPrototype%", «[[RegistryMap]]» ).
-1. ReturnIfAbrupt(_O_).
+1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, "%RegistryPrototype%", «[[RegistryMap]]» ).
 1. Let _M_ be ObjectCreate(%MapIteratorPrototype%, «[[Map]], [[MapNextIndex]], [[MapIterationKind]]»).
 1. Set _O_’s [[RegistryMap]] internal slot to _M_.
 1. Return _O_.
@@ -346,6 +348,7 @@ The following steps are taken:
 <emu-alg>
 1. Let _registry_ be *this* value.
 1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
 1. Let _M_ be _registry_.[[RegistryMap]].
 1. Return CreateMapIterator(_M_, "key+value").
 </emu-alg>
@@ -357,6 +360,7 @@ The following steps are taken:
 <emu-alg>
 1. Let _registry_ be *this* value.
 1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
 1. Let _M_ be _registry_.[[RegistryMap]].
 1. Return CreateMapIterator(_M_, "key").
 </emu-alg>
@@ -368,6 +372,7 @@ The following steps are taken:
 <emu-alg>
 1. Let _registry_ be *this* value.
 1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
 1. Let _M_ be _registry_.[[RegistryMap]].
 1. Return CreateMapIterator(_M_, "value").
 </emu-alg>
@@ -379,7 +384,7 @@ The following steps are taken:
 <emu-alg>
 1. Let _registry_ be *this* value.
 1. If Type(_registry_) is not Object, throw a *TypeError* exception.
-1. If _registry_ does not have a [[RegistryMap]] internal slot, throw a *TypeError* exception.
+1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
 1. Let _M_ be _registry_.[[RegistryMap]].
 1. Let _entries_ be the List that is the value of _M_'s [[MapData]] internal slot.
 1. Repeat for each Record {[[key]], [[value]]} _p_ that is an element of _entries_,
@@ -394,8 +399,9 @@ The following steps are taken:
 <emu-alg>
 1. Let _registry_ be *this* value.
 1. If Type(_registry_) is not Object, throw a *TypeError* exception.
-1. If _registry_ does not have a [[RegistryMap]] internal slot, throw a *TypeError* exception.
-1. Assert: _entry_ is an initialized ModuleStatus instance.
+1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
+1. If Type(_entry_) is not Object, throw a *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), throw a *TypeError* exception.
 1. Let _M_ be _registry_.[[RegistryMap]].
 1. Let _entries_ be the List that is the value of _M_'s [[MapData]] internal slot.
 1. Repeat for each Record {[[key]], [[value]]} _p_ that is an element of _entries_,
@@ -414,7 +420,7 @@ The following steps are taken:
 <emu-alg>
 1. Let _registry_ be *this* value.
 1. If Type(_registry_) is not Object, throw a *TypeError* exception.
-1. If _registry_ does not have a [[RegistryMap]] internal slot, throw a *TypeError* exception.
+1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
 1. Let _M_ be _registry_.[[RegistryMap]].
 1. Let _entries_ be the List that is the value of _M_'s [[MapData]] internal slot.
 1. Repeat for each Record {[[key]], [[value]]} _p_ that is an element of _entries_,
@@ -429,7 +435,7 @@ The following steps are taken:
 <emu-alg>
 1. Let _registry_ be *this* value.
 1. If Type(_registry_) is not Object, throw a *TypeError* exception.
-1. If _registry_ does not have a [[RegistryMap]] internal slot, throw a *TypeError* exception.
+1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
 1. Let _M_ be _registry_.[[RegistryMap]].
 1. Let _entries_ be the List that is the value of _M_'s [[MapData]] internal slot.
 1. Repeat for each Record {[[key]], [[value]]} _p_ that is an element of _entries_,
@@ -474,7 +480,7 @@ Registry instances are initially created with the internal slots described in th
 The abstract operation GetCurrentStage with argument <i>entry</i> performs the following steps:
 
 <emu-alg>
-1. If _entry_ is not an initialized ModuleStatus instance, throw a new *TypeError* exception.
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _stages_ be _entry_.[[Pipeline]].
 1. Return the first element of _stages_.
 </emu-alg>
@@ -484,6 +490,7 @@ The abstract operation GetCurrentStage with argument <i>entry</i> performs the f
 The abstract operation IsValidStageValue with argument <i>stage</i> performs the following steps:
 
 <emu-alg>
+1. Assert: Type(_stage_) is String.
 1. If _stage_ is "fetch", "translate", "instantiate", "satisfy", "link" or "ready", return *true*.
 1. Else return *false*.
 </emu-alg>
@@ -493,7 +500,7 @@ The abstract operation IsValidStageValue with argument <i>stage</i> performs the
 The abstract operation GetStage with arguments <i>entry</i> and <i>stage</i> performs the following steps:
 
 <emu-alg>
-1. If _entry_ is not an initialized ModuleStatus instance, throw a new *TypeError* exception.
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Assert: Type(_stage_) is String.
 1. Let _stages_ be _entry_.[[Pipeline]].
 1. For each element _entry_ of _stages_, do
@@ -507,7 +514,7 @@ The abstract operation GetStage with arguments <i>entry</i> and <i>stage</i> per
 The abstract operation LoadModule with arguments <i>entry</i> and <i>stage</i> performs the following steps:
 
 <emu-alg>
-1. If _entry_ is not an initialized ModuleStatus instance, return a promise rejected with a new *TypeError* exception.
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Assert: Type(_stage_) is String.
 1. If _stage_ is "fetch", then:
   1. Return the result of transforming RequestFetch(_entry_) with a new pass-through promise.
@@ -532,8 +539,7 @@ The abstract operation LoadModule with arguments <i>entry</i> and <i>stage</i> p
 <h4 id="module-status-UpgradeToStage" aoid="UpgradeToStage">UpgradeToStage(entry, stage)</h4>
 
 <emu-alg>
-1. If Type(_entry_) is not Object, throw a *TypeError* exception.
-1. If _entry_ does not have a [[Pipeline]] internal slot, throw a *TypeError* exception.
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Assert: Type(_stage_) is String.
 1. Let _pipeline_ be _entry_.[[Pipeline]].
 1. Let _stageEntry_ be GetStage(_entry_, _stage_).
@@ -616,17 +622,17 @@ When ModuleStatus is called with arguments <i>loader</i>, <i>key</i> and <i>modu
 
 <emu-alg>
 1. If NewTarget is *undefined*, then throw a *TypeError* exception.
-1. Assert: _loader_ must be an instance of a concrete subclass of Loader.
-1. Let _keyString_ be ToString(_key_).
-1. ReturnIfAbrupt(_keyString_).
-1. Assert: If _module_ exists it must be a Module Record.
-1. Let _O_ be OrdinaryCreateFromConstructor(NewTarget, "%RegistryPrototype%", «[[Loader]], [[Pipeline]], [[Key]], [[Module]], [[Metadata]], [[Dependencies]], [[Error]]» ).
-1. ReturnIfAbrupt(_O_).
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
+1. Let _keyString_ be ? ToString(_key_).
+1. If Type(_module_) is not Object, throw a *TypeError* exception.
+1. If _module_ does not have all of the internal slots of a Module Instance (<a href="#module-internal-slots">8.5</a>), throw a *TypeError* exception.
+1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, "%ModuleStatusPrototype%", «[[Loader]], [[Pipeline]], [[Key]], [[Module]], [[Metadata]], [[Dependencies]], [[Error]]» ).
 1. Let _pipeline_ be a new List.
 1. If _module_ exists, then
   1. Let _result_ be a promise resolved with _module_.
   1. Add new stage entry record { [[Stage]]: "ready", [[Result]]: _result_ } as a new element of the list _pipeline_.
-1. Else
+1. Else,
   1. Add new stage entry record { [[Stage]]: "fetch", [[Result]]: *undefined* } as a new element of the list _pipeline_.
   1. Add new stage entry record { [[Stage]]: "translate", [[Result]]: *undefined* } as a new element of the list _pipeline_.
   1. Add new stage entry record { [[Stage]]: "instantiate", [[Result]]: *undefined* } as a new element of the list _pipeline_.
@@ -680,6 +686,7 @@ The initial value of ModuleStatus.prototype.constructor is %Registry%.
 <emu-alg>
 1. Let _entry_ be *this* value.
 1. If Type(_entry_) is not Object, throw a *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), throw a *TypeError* exception.
 1. Let _stageEntry_ be GetCurrentStage(_entry_).
 1. Return _stageEntry_.[[Stage]].
 </emu-alg>
@@ -691,7 +698,7 @@ The initial value of ModuleStatus.prototype.constructor is %Registry%.
 <emu-alg>
 1. Let _entry_ be *this* value.
 1. If Type(_entry_) is not Object, throw a *TypeError* exception.
-1. If _entry_ does not have a [[Module]] internal slot, throw a *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), throw a *TypeError* exception.
 1. Return _entry_.[[Module]].
 </emu-alg>
 
@@ -702,7 +709,7 @@ The initial value of ModuleStatus.prototype.constructor is %Registry%.
 <emu-alg>
 1. Let _entry_ be *this* value.
 1. If Type(_entry_) is not Object, throw a *TypeError* exception.
-1. If _entry_ does not have a [[Error]] internal slot, throw a *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), throw a *TypeError* exception.
 1. Return _entry_.[[Error]].
 </emu-alg>
 
@@ -714,22 +721,18 @@ The initial value of ModuleStatus.prototype.constructor is %Registry%.
 <emu-alg>
 1. Let _entry_ be *this* value.
 1. If Type(_entry_) is not Object, throw a *TypeError* exception.
-1. If _entry_ does not have a [[Dependencies]] internal slot, throw a *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), throw a *TypeError* exception.
 1. Let _array_ be ArrayCreate(0).
 1. Let _n_ be 0.
 1. For each _pair_ in _entry_.[[Dependencies]], do:
   1. Let _O_ be ObjectCreate(%ObjectPrototype%).
   1. Let _requestNameDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[RequestName]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
-  1. Let _requestNameStatus_ be DefinePropertyOrThrow(_O_, "requestName", _requestNameDesc_).
-  1. ReturnIfAbrupt(_requestNameStatus_).
+  1. Let _requestNameStatus_ be ? DefinePropertyOrThrow(_O_, "requestName", _requestNameDesc_).
   1. Let _keyDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[Key]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
-  1. Let _keyStatus_ be DefinePropertyOrThrow(_O_, "key", _keyDesc_).
-  1. ReturnIfAbrupt(_keyStatus_).
+  1. Let _keyStatus_ be ? DefinePropertyOrThrow(_O_, "key", _keyDesc_).
   1. Let _moduleStatusDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[ModuleStatus]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
-  1. Let _moduleStatus_ be DefinePropertyOrThrow(_O_, "entry", _moduleStatusDesc_).
-  1. ReturnIfAbrupt(_moduleStatus_).
-  1. Let _status_ be CreateDataProperty(_array_, ToString(_n_), _O_).
-  1. ReturnIfAbrupt(_status_).
+  1. Let _moduleStatus_ be ? DefinePropertyOrThrow(_O_, "entry", _moduleStatusDesc_).
+  1. Let _status_ be ? CreateDataProperty(_array_, ? ToString(_n_), _O_).
   1. Increment _n_ by 1.
 1. Return _array_.
 </emu-alg>
@@ -744,9 +747,11 @@ The following steps are taken:
 
 <emu-alg>
 1. Let _entry_ be *this* value.
+1. If Type(_entry_) is not Object, return a promise rejected with a new *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), return a promise rejected with a new *TypeError* exception.
 1. If _stage_ is *undefined* then let _stageValue_ be "fetch".
 1. Else let _stageValue_ be ToString(_stage_).
-1. If _stageValue_ is an abrupt completion, return a promise rejected with a new *TypeError* exception.
+1. RejectIfAbrupt(_stageValue_).
 1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
 1. Return LoadModule(_entry_, _stageValue_).
 </emu-alg>
@@ -758,25 +763,28 @@ The following steps are taken:
 <emu-alg>
 1. Let _entry_ be *this* value.
 1. If Type(_entry_) is not Object, return a promise rejected with a new *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), return a promise rejected with a new *TypeError* exception.
 1. Let _stageValue_ be ToString(_stage_).
-1. If _stageValue_ is an abrupt completion, return a promise rejected with a new *TypeError* exception.
+1. RejectIfAbrupt(_stageValue_).
 1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
 1. Let _stageEntry_ be GetStage(_entry_, _stageValue_).
-1. If _stageEntry_ is an abrupt completion, return a promise rejected with a new *TypeError* exception.
+1. RejectIfAbrupt(_stageEntry_).
 1. If _stageEntry_ is *undefined*, return a promise resolved with *undefined*.
 1. If _stageEntry_.[[Result]] is *undefined*, return a promise resolved with *undefined*.
 1. Return the result of transforming _stageEntry_.[[Result]] with a new pass-through promise.
 </emu-alg>
 
-<h4 id="module-status-prototype-provide">ModuleStatus.prototype.resolve(stage, result)</h4>
+<h4 id="module-status-prototype-resolve">ModuleStatus.prototype.resolve(stage, result)</h4>
 
 The following steps are taken:
 
 <emu-alg>
 1. Let _entry_ be *this* value.
+1. If Type(_entry_) is not Object, return a promise rejected with a new *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), return a promise rejected with a new *TypeError* exception.
 1. If Type(_entry_) is not Object, throw a new *TypeError*.
 1. Let _stageValue_ be ToString(_stage_).
-1. If _stageValue_ is an abrupt completion, return a promise rejected with a new *TypeError* exception.
+1. RejectIfAbrupt(_stageValue_).
 1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
 1. Let _p0_ be the result of transforming _result_ with a new pass-through promise.
 1. Let _p1_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _value_, runs the following steps:
@@ -784,7 +792,7 @@ The following steps are taken:
   1. If _stageEntry_ is *undefined*, throw a new *TypeError*.
   1. If _stageEntry_.[[Result]] is *undefined*, then
     1. Set _stageEntry_.[[Result]] to a promise resolved with _value_.
-  1. Else
+  1. Else,
     1. Fulfill _stageEntry_.[[Result]] with _value_.
   1. UpgradeToStage(_entry_, _stageValue_).
   1. Return _value_.
@@ -797,9 +805,10 @@ The following steps are taken:
 
 <emu-alg>
 1. Let _entry_ be *this* value.
-1. If Type(_entry_) is not Object, throw a new *TypeError*.
+1. If Type(_entry_) is not Object, return a promise rejected with a new *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), return a promise rejected with a new *TypeError* exception.
 1. Let _stageValue_ be ToString(_stage_).
-1. If _stageValue_ is an abrupt completion, return a promise rejected with a new *TypeError* exception.
+1. RejectIfAbrupt(_stageValue_).
 1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
 1. Let _p0_ be the result of transforming _error_ with a new pass-through promise.
 1. Let _p1_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _value_, runs the following steps:
@@ -807,7 +816,7 @@ The following steps are taken:
   1. If _stageEntry_ is *undefined*, throw a new *TypeError*.
   1. If _stageEntry_.[[Result]] is *undefined*, then
     1. Set _stageEntry_.[[Result]] to a promise rejected with _value_.
-  1. Else
+  1. Else,
     1. Reject _stageEntry_.[[Result]] with _value_.
   1. UpgradeToStage(_entry_, _stageValue_).
   1. Return _value_.
@@ -872,12 +881,13 @@ ModuleStatus instances are initially created with the internal slots described i
 <h4 id="ensure-registered" aoid="EnsureRegistered">EnsureRegistered(loader, key)</h4>
 
 <emu-alg>
-1. Assert: _loader_ has a [[Registry]] internal slot.
+1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
+1. Assert: Type(_key_) is String.
 1. Let _registry_ be _loader_.[[Registry]].
 1. Let _pair_ be the entry in _registry_.[[RegistryMap]] such that _pair_.[[Key]] is equal to _key_.
 1. If _pair_ exists, then:
   1. Let _entry_ be _pair_.[[Value]].
-1. Else:
+1. Else,
   1. Let _entry_ be a new ModuleStatus(_loader_, _key_).
 1. Return _entry_.
 </emu-alg>
@@ -885,6 +895,9 @@ ModuleStatus instances are initially created with the internal slots described i
 <h4 id="resolve" aoid="Resolve">Resolve(loader, name, referrer)</h4>
 
 <emu-alg>
+1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
+1. Assert: Type(_name_) is String.
+1. Assert: Type(_referrer_) is String.
 1. Let _hook_ be GetMethod(_loader_, @@resolve).
 1. Return the result of promise-calling _hook_(_name_, _referrer_).
 </emu-alg>
@@ -892,8 +905,8 @@ ModuleStatus instances are initially created with the internal slots described i
 <h4 id="extract-dependencies" aoid="ExtractDependencies">ExtractDependencies(entry, optionalInstance, source)</h4>
 
 <emu-alg>
-1. Let _instance_ be Instantiation(_entry_.[[Loader]], _optionalInstance_, _source_).
-1. ReturnIfAbrupt(_instance_).
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
+1. Let _instance_ be ? Instantiation(_entry_.[[Loader]], _optionalInstance_, _source_).
 1. Let _deps_ be a new empty List.
 1. If _instance_ is a Module Record, then:
   1. Assert: _instance_ is a Source Text Module Record.
@@ -905,13 +918,14 @@ ModuleStatus instances are initially created with the internal slots described i
 </emu-alg>
 
 <emu-note>
-  [[Key]] wil identifies the dependency module status in the entry's corresponding loader.
+  [[Key]] will identifies the dependency module status in the entry's corresponding loader.
 </emu-note>
 
 
 <h4 id="instantiation" aoid="Instantiation">Instantiation(loader, result, source)</h4>
 
 <emu-alg>
+1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
 1. If _result_ is *undefined*, then return ParseModule(_source_).
 1. If IsCallable(_result_) is *false* then throw a new *TypeError*.
 1. Set _result_.[[Realm]] to _loader_.[[Realm]].
@@ -923,6 +937,7 @@ ModuleStatus instances are initially created with the internal slots described i
 <h4 id="request-fetch" aoid="RequestFetch">RequestFetch(entry)</h4>
 
 <emu-alg>
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _fetchStageEntry_ be GetStage(_entry_, "fetch").
 1. If _fetchStageEntry_ is *undefined*, return a promise resolved with *undefined*.
 1. If _fetchStageEntry_.[[Result]] is not *undefined*, return _fetchStageEntry_.[[Result]].
@@ -931,7 +946,6 @@ ModuleStatus instances are initially created with the internal slots described i
 1. Let _p1_ be the result of transforming _p0_ with a new pass-through promise.
 1. Let _p2_ be the result of transforming _p1_ with a fulfillment handler that, when called with argument _payload_, runs the following steps:
   1. UpgradeToStage(_entry_, "translate").
-  1. Return _payload_.
 1. Set _fetchStageEntry_.[[Result]] to _p1_.
 1. Return _p1_.
 </emu-alg>
@@ -939,6 +953,7 @@ ModuleStatus instances are initially created with the internal slots described i
 <h4 id="request-translate" aoid="RequestTranslate">RequestTranslate(entry)</h4>
 
 <emu-alg>
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _translateStageEntry_ be GetStage(_entry_, "translate").
 1. If _translateStageEntry_ is *undefined*, return a promise resolved with *undefined*.
 1. If _translateStageEntry_.[[Result]] is not *undefined*, return _translateStageEntry_.[[Result]].
@@ -948,7 +963,6 @@ ModuleStatus instances are initially created with the internal slots described i
   1. Let _p1_ be the result of transforming _p0_ with a new pass-through promise.
   1. Let _p2_ be the result of transforming _p1_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
     1. UpgradeToStage(_entry_, "instantiate").
-    1. Return _source_.
   1. Return _p1_.
 1. Set _translateStageEntry_.[[Result]] to _p_.
 1. Return _p_.
@@ -957,6 +971,7 @@ ModuleStatus instances are initially created with the internal slots described i
 <h4 id="request-instantiate" aoid="RequestInstantiate">RequestInstantiate(entry)</h4>
 
 <emu-alg>
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _instantiateStageEntry_ be GetStage(_entry_, "instantiate").
 1. If _instantiateStageEntry_ is *undefined*, return a promise resolved with *undefined*.
 1. If _instantiateStageEntry_.[[Result]] is not *undefined*, return _instantiateStageEntry_.[[Result]].
@@ -965,10 +980,8 @@ ModuleStatus instances are initially created with the internal slots described i
   1. Let _p0_ be the result of promise-calling _hook_(_entry_, _source_).
   1. Let _p1_ be the result of transforming _p0_ with a new pass-through promise.
   1. Let _p2_ be the result of transforming _p1_ with a fulfillment handler that, when called with argument _optionalInstance_, runs the following steps:
-    1. Let _status_ be ExtractDependencies(_entry_, _optionalInstance_, _source_).
-    1. ReturnIfAbrupt(_status_).
+    1. Let _status_ be ? ExtractDependencies(_entry_, _optionalInstance_, _source_).
     1. UpgradeToStage(_entry_, "satisfy").
-    1. Return _entry_.
   1. Return _p1_.
 1. Set _instantiateStageEntry_.[[Result]] to _p_.
 1. Return _p_.
@@ -977,6 +990,7 @@ ModuleStatus instances are initially created with the internal slots described i
 <h4 id="request-satisfy" aoid="RequestSatisfy">RequestSatisfy(entry)</h4>
 
 <emu-alg>
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _satisfyStageEntry_ be GetStage(_entry_.[[Loader]], "satisfy").
 1. If _satisfyStageEntry_ is *undefined*, return a promise resolved with *undefined*.
 1. If _satisfyStageEntry_.[[Result]] is not *undefined*, return _satisfyStageEntry_.[[Result]].
@@ -1008,13 +1022,13 @@ ModuleStatus instances are initially created with the internal slots described i
 <h4 id="request-link" aoid="RequestLink">RequestLink(entry)</h4>
 
 <emu-alg>
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _linkStageEntry_ be GetStage(_entry_, "link").
 1. If _linkStageEntry_ is *undefined*, return a promise resolved with *undefined*.
 1. If _linkStageEntry_.[[Result]] is not *undefined*, return _linkStageEntry_.[[Result]].
 1. Return the result of transforming RequestSatisfy(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Assert: _entry_'s whole dependency graph is in "link" or "ready" stage.
-  1. Let _status_ be Link(_entry_).
-  1. ReturnIfAbrupt(_status_).
+  1. Let _status_ be ? Link(_entry_).
   1. Assert: _entry_'s whole dependency graph is in "ready" stage.
   1. Return _entry_.
 </emu-alg>
@@ -1022,12 +1036,12 @@ ModuleStatus instances are initially created with the internal slots described i
 <h4 id="request-ready" aoid="RequestReady">RequestReady(entry)</h4>
 
 <emu-alg>
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _currentStageEntry_ be GetCurrentStage(_entry_).
 1. If _currentStageEntry_.[[Stage]] is equal "ready", return _currentStageEntry_.[[Result]].
 1. Return the result of transforming RequestLink(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _module_ be _entry_.[[Module]].
-  1. Let _status_ be the result of calling the ModuleEvaluation abstract operation of _module_ with no arguments.
-  1. ReturnIfAbrupt(_status_).
+  1. Let _status_ be ? _module_.ModuleEvaluation().
   1. Return _module_.
 </emu-alg>
 
@@ -1042,6 +1056,7 @@ The modules spec should only invoke this operation from methods of Source Text M
 
 <emu-alg>
 1. Assert: _module_ is a Source Text Module Record.
+1. Assert: Type(_requestName_) is String.
 1. Let _entry_ be _module_.[[ModuleStatus]].
 1. Let _currentStageEntry_ be GetCurrentStage(_entry_).
 1. Assert: _currentStageEntry_.[[Stage]] is in "link" or "ready" stage.
@@ -1058,14 +1073,13 @@ The modules spec should only invoke this operation from methods of Source Text M
 <h4 id="link" aoid="Link">Link(root)</h4>
 
 <emu-alg>
-1. Assert: _root_ is an initialized ModuleStatus instance.
+1. Assert: _root_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _deps_ be DependencyGraph(_root_).
 1. For each _dep_ in _deps_, do:
   1. Let _depStageEntry_ be GetCurrentStage(_dep_).
   1. If _depStageEntry_.[[Stage]] is "link" and _dep_.[[Module]] is a Function object, then:
     1. Let _f_ be _dep_.[[Module]].
-    1. Let _m_ be _f_().
-    1. ReturnIfAbrupt(_m_).
+    1. Let _m_ be ? _f_().
     1. Set _dep_.[[Module]] to _m_.
     1. UpgradeToStage(_dep_, "ready").
 1. Assert: the following sequence is guaranteed not to run any user code.
@@ -1074,8 +1088,7 @@ The modules spec should only invoke this operation from methods of Source Text M
   1. If _depStageEntry_.[[Stage]] is "link", then:
     1. Let _module_ be _dep_.[[Module]].
     1. Assert: _module_ is a Module Record.
-    1. Let _status_ be the result of calling the ModuleDeclarationInstantiation abstract operation of _module_ with no arguments.
-    1. ReturnIfAbrupt(_status_).
+    1. Let _status_ be ? _module_.ModuleDeclarationInstantiation().
     1. UpgradeToStage(_dep_, "ready").
 1. Return *undefined*.
 </emu-alg>
@@ -1083,6 +1096,7 @@ The modules spec should only invoke this operation from methods of Source Text M
 <h4 id="dependency-graph" aoid="DependencyGraph">DependencyGraph(root)</h4>
 
 <emu-alg>
+1. Assert: _root_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _result_ be a new empty List.
 1. Call ComputeDependencyGraph(_root_, _result_).
 1. Return _result_.
@@ -1091,6 +1105,8 @@ The modules spec should only invoke this operation from methods of Source Text M
 <h4 id="compute-dependency-graph" aoid="ComputeDependencyGraph">ComputeDependencyGraph(entry, result)</h4>
 
 <emu-alg>
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
+1. Assert: _result_ must be a List.
 1. If _entry_ is already in _result_, then return *undefined*.
 1. Append _entry_ to _result_.
 1. For each _pair_ in _entry_.[[Dependencies]], do:
@@ -1226,16 +1242,15 @@ When Module is called with arguments <i>descriptors</i>, <i>executor</i>, and <i
   1. Append _exportName_ to _exportNames_.
   1. If _desc_ is an Indirect Export Descriptor, then:
     1. Let _otherMod_ be _desc_.[[Module]].
-    1. Let _resolution_ be _otherMod_.ResolveExport(_desc_.[[Import]], « »).
-    1. ReturnIfAbrupt(_resolution_).
+    1. Let _resolution_ be ? _otherMod_.ResolveExport(_desc_.[[Import]], « »).
     1. If _resolution_ is *null*, then throw a *SyntaxError* exception.
     1. Append the record {[[Key]]: _exportName_, [[Value]]: _resolution_} to _indirectExports_.
-  1. Else:
+  1. Else,
     1. Append _exportName_ to _localExports_.
     1. If _desc_ is an Immutable Export Descriptor, then:
       1. Let _status_ be _envRec_.CreateImmutableBinding(_exportName_, *true*).
       1. Assert: _status_ is not an abrupt completion.
-    1. Else:
+    1. Else,
       1. Assert: _desc_ is a Mutable Export Descriptor.
       1. Let _status_ be _envRec_.CreateMutableBinding(_exportName_, *false*).
       1. Assert: _status_ is not an abrupt completion.
@@ -1247,8 +1262,7 @@ When Module is called with arguments <i>descriptors</i>, <i>executor</i>, and <i
 1. Set _mod_.[[Namespace]] to _ns_.
 1. If _executor_ is not *undefined*, then
   1. Let _mutator_ be CreateModuleMutator(_mod_).
-  1. Let _status_ be _executor_(_mutator_, _ns_).
-  1. ReturnIfAbrupt(_status_).
+  1. Let _status_ be ? _executor_(_mutator_, _ns_).
 1. Return _ns_.
 </emu-alg>
 
