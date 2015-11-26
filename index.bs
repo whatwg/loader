@@ -161,26 +161,11 @@ We follow the ECMA-262 <a href="http://www.ecma-international.org/ecma-262/6.0/i
 
 <h2 id="loader-objects">Loader Objects</h2>
 
-<h3 id="loader-abstract-operations">Abstract Operations for Loader Objects</h3>
-
-<h4 id="loader-CreateRegistry" aoid="CreateRegistry">CreateRegistry()</h4>
-
-The abstract operation CreateRegistry with no arguments performs the following steps:
-
-<emu-alg>
-1. Let _O_ be ? OrdinaryCreateFromConstructor(Registry, "%RegistryPrototype%", «[[RegistryMap]]» ).
-1. Return _O_.
-</emu-alg>
-
-<emu-note>
-  This abstract operation helps to prevent creation of new registry objects in user-land.
-</emu-note>
-
 <h3 id="loader-constructor">The Loader Constructor</h3>
 
-The Loader constructor is the initial value of the Loader property of the the Reflect object. When called as a constructor it creates and initializes a new Loader object. Loader is not intended to be called as a function and will throw an exception when called in that manner.
+The Loader constructor is the %Loader% intrinsic object and the initial value of the <b>Loader</b> property of the the Reflect object. When called as a constructor it creates and initializes a new Loader object. When <b>Loader</b> is called as a function rather than as a constructor, it throws an exception.
 
-The Loader constructor is designed to be subclassable. It may be used as the value in an extends clause of a class definition. Subclass constructors that intend to inherit the specified Loader behaviour must include a super call to the Loader constructor to create and initialize the subclass instance with the internal stage necessary to support the Loader.prototype built-in methods.
+The <b>Loader</b> constructor is designed to be subclassable. It may be used as the value of an <b>extends</b> clause of a class definition. Subclass constructors that intend to inherit the specified <b>Loader</b> behaviour must include a <b>super</b> call to the <b>Loader</b> constructor to create and initialize the subclass instance with the corresponding internal slots.
 
 <h4 id="new-loader">Loader()</h4>
 
@@ -188,7 +173,7 @@ When Loader is called with no arguments, the following steps are taken:
 
 <emu-alg>
 1. If NewTarget is *undefined*, then throw a *TypeError* exception.
-1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, "Loader.prototype").
+1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, "%LoaderPrototype%").
 1. Set _O_’s [[Registry]] internal slot to CreateRegistry().
 1. Return _O_.
 </emu-alg>
@@ -199,9 +184,9 @@ The value of the \[[Prototype]] internal slot of the Loader constructor is the i
 
 Besides the internal slots and the length property (whose value is 0), the Loader constructor has the following properties:
 
-<h4 id="Loader.prototype">Loader.prototype</h4>
+<h4 id="loader-prototype">Loader.prototype</h4>
 
-The value of Loader.prototype is an ordinary object.
+The value of Loader.prototype is %LoaderPrototype%.
 
 This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
 
@@ -209,7 +194,7 @@ This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false,
 
 <h4 id="Loader.prototype.constructor">Loader.prototype.constructor</h4>
 
-The initial value of Loader.prototype.constructor is Loader.
+The initial value of Loader.prototype.constructor is the intrinsic object %Loader%.
 
 <h4 id="loader-import">Loader.prototype.import(name[, referrer])</h4>
 
@@ -297,21 +282,22 @@ Loader instances are initially created with the internal slots described in the 
 
 <h2 id="registry">Registry Objects</h2>
 
-<h3 id="registry-constructor">The Registry Constructor</h3>
+<h3 id="registry-abstract-operations">Abstract Operations for Registry Objects</h3>
 
-The Registry constructor is the %Registry% intrinsic object. When called as a constructor it creates and initializes a new %Registry% object. %Registry% is not intended to be called as a function and will throw an exception when called in that manner.
+<h4 id="registry-CreateRegistry" aoid="CreateRegistry">CreateRegistry()</h4>
 
-<h4 id="new-registry" aoid="Registry">Registry()</h4>
-
-When Registry is called with no arguments, the following steps are taken:
+The abstract operation CreateRegistry with no arguments performs the following steps:
 
 <emu-alg>
-1. If NewTarget is *undefined*, then throw a *TypeError* exception.
-1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, "%RegistryPrototype%", «[[RegistryMap]]» ).
+1. Let _O_ be ? OrdinaryCreateFromConstructor(Registry, "%RegistryPrototype%", «[[RegistryMap]]» ).
 1. Let _M_ be ObjectCreate(%MapIteratorPrototype%, «[[Map]], [[MapNextIndex]], [[MapIterationKind]]»).
 1. Set _O_’s [[RegistryMap]] internal slot to _M_.
 1. Return _O_.
 </emu-alg>
+
+<h3 id="registry-constructor">The Registry Constructor</h3>
+
+The Registry constructor is the %Registry% intrinsic object. When called as a constructor it creates and initializes a new Registry object. When <b>Registry</b> is called as a function rather than as a constructor, it throws an exception.
 
 <h3 id="properties-of-the-registry-constructor">Properties of the Registry Constructor</h3>
 
@@ -614,7 +600,9 @@ Each \[[Stage]] value indicates the currently pending operation. If the \[[Resul
 
 <h3 id="module-status-constructor">The ModuleStatus Constructor</h3>
 
-The ModuleStatus constructor is the initial value of the Status property of the the Reflect.Module object. When called as a constructor it creates and initializes a new ModuleStatus object. ModuleStatus is not intended to be called as a function and will throw an exception when called in that manner.
+The ModuleStatus constructor is the %ModuleStatus% intrinsic object and the initial value of the <b>Status</b> property of the Reflect.Module object. When called as a constructor it creates and initializes a new ModuleStatus object. When <b>ModuleStatus</b> is called as a function rather than as a constructor, it throws an exception.
+
+The <b>ModuleStatus</b> constructor is designed to be subclassable. It may be used as the value of an <b>extends</b> clause of a class definition. Subclass constructors that intend to inherit the specified <b>ModuleStatus</b> behaviour must include a <b>super</b> call to the <b>ModuleStatus</b> constructor to create and initialize the subclass instance with the corresponding internal slots.
 
 <h4 id="new-module-status" aoid="ModuleStatus">ModuleStatus(loader, key[, module])</h4>
 
@@ -677,7 +665,7 @@ This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false,
 
 <h4 id="module-status-prototype-constructor">ModuleStatus.prototype.constructor</h4>
 
-The initial value of ModuleStatus.prototype.constructor is %Registry%.
+The initial value of ModuleStatus.prototype.constructor is the intrinsic object %ModuleStatus%.
 
 <h4 id="module-status-stage">get ModuleStatus.prototype.stage</h4>
 
@@ -1311,7 +1299,7 @@ The Default Browser Loader Object is an %BrowserLoader% instance, whose internal
 
 <h3 id="browser-loader-constructor">The BrowserLoader Constructor</h3>
 
-The BrowserLoader constructor is the %BrowserLoader% intrinsic object. When called as a constructor it creates and initializes a new %BrowserLoader% object. %BrowserLoader% is not intended to be called as a function and will throw an exception when called in that manner.
+The BrowserLoader constructor is the %BrowserLoader% intrinsic object. When called as a constructor it creates and initializes a new BrowserLoader object. When <b>BrowserLoader</b> is called as a function rather than as a constructor, it throws an exception.
 
 <h3 id="properties-of-the-browser-loader-constructor">Properties of the BrowserLoader Constructor</h3>
 
@@ -1389,19 +1377,35 @@ The intrinsics are listed in table below:
     </tr>
   </thead>
   <tr>
+    <td>%Loader%</td>
+    <td>The loader constructor (<a href="#loader-constructor">3.1</a>)</td>
+  </tr>
+  <tr>
+    <td>%LoaderPrototype%</td>
+    <td>The initial value of the *prototype* data property of %Loader% (<a href="#loader-prototype">3.2.1</a>)</td>
+  </tr>
+  <tr>
     <td>%BrowserLoader%</td>
-    <td>The browser loader constructor (<a href="#browser-loader-constructor">10.1</a>)</td>
+    <td>The browser loader constructor (<a href="#browser-loader-constructor">11.1</a>)</td>
   </tr>
   <tr>
     <td>%BrowserLoaderPrototype%</td>
-    <td>The initial value of the *prototype* data property of %BrowserLoader% (<a href="#browser-loader-prototype">10.2.1</a>)</td>
+    <td>The initial value of the *prototype* data property of %BrowserLoader% (<a href="#browser-loader-prototype">11.2.1</a>)</td>
   </tr>
   <tr>
     <td>%Registry%</td>
-    <td>The registry constructor (<a href="#registry-constructor">4.1</a>)</td>
+    <td>The registry constructor (<a href="#registry-constructor">4.2</a>)</td>
   </tr>
   <tr>
     <td>%RegistryPrototype%</td>
     <td>The initial value of the *prototype* data property of %Registry% (<a href="#registry-prototype">4.3.1</a>)</td>
+  </tr>
+  <tr>
+    <td>%ModuleStatus%</td>
+    <td>The module status constructor (<a href="#module-status-constructor">5.2</a>)</td>
+  </tr>
+  <tr>
+    <td>%ModuleStatusPrototype%</td>
+    <td>The initial value of the *prototype* data property of %ModuleStatus% (<a href="#module-status-prototype">5.3.1</a>)</td>
   </tr>
 </table>
