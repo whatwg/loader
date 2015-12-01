@@ -186,7 +186,7 @@ Besides the internal slots and the length property (whose value is 0), the Loade
 
 <h4 id="loader-prototype">Loader.prototype</h4>
 
-The value of Loader.prototype is %LoaderPrototype%.
+The initial value of Loader.prototype is the intrinsic object %LoaderPrototype%.
 
 This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
 
@@ -307,7 +307,7 @@ Besides the internal slots and the length property (whose value is 0), the Regis
 
 <h4 id="registry-prototype">Registry.prototype</h4>
 
-The value of Registry.prototype is %RegistryPrototype%.
+The initial value of Registry.prototype is %RegistryPrototype%.
 
 This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
 
@@ -658,7 +658,7 @@ Besides the internal slots and the length property (whose value is 0), the Modul
 
 <h4 id="module-status-prototype">ModuleStatus.prototype</h4>
 
-The value of ModuleStatus.prototype is %ModuleStatusPrototype%.
+The initial value of ModuleStatus.prototype is the intrinsic object %ModuleStatusPrototype%.
 
 This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
 
@@ -1309,7 +1309,7 @@ Besides the internal slots and the length property (whose value is 0), the Brows
 
 <h4 id="browser-loader-prototype">BrowserLoader.prototype</h4>
 
-The value of BrowserLoader.prototype is %BrowserLoaderPrototype%.
+The initial value of BrowserLoader.prototype is the intrinsic object %BrowserLoaderPrototype%.
 
 This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
 
