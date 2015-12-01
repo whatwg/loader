@@ -173,7 +173,7 @@ When Loader is called with no arguments, the following steps are taken:
 
 <emu-alg>
 1. If NewTarget is *undefined*, then throw a *TypeError* exception.
-1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, "%LoaderPrototype%").
+1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, "%LoaderPrototype%", «[[Realm]], [[Registry]]»).
 1. Set _O_’s [[Registry]] internal slot to CreateRegistry().
 1. Return _O_.
 </emu-alg>
@@ -489,9 +489,8 @@ The abstract operation GetStage with arguments <i>entry</i> and <i>stage</i> per
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Assert: Type(_stage_) is String.
 1. Let _stages_ be _entry_.[[Pipeline]].
-1. For each element _entry_ of _stages_, do
-  1. If _entry_.[[Stage]] is equal to _stage_, then
-    1. Return _entry_.
+1. For each element _stageEntry_ of _stages_, do
+  1. If _stageEntry_.[[Stage]] is equal to _stage_, return _stageEntry_.
 1. Return *undefined*.
 </emu-alg>
 
@@ -523,6 +522,8 @@ The abstract operation LoadModule with arguments <i>entry</i> and <i>stage</i> p
 </emu-alg>
 
 <h4 id="module-status-UpgradeToStage" aoid="UpgradeToStage">UpgradeToStage(entry, stage)</h4>
+
+The abstract operation UpgradeToStage with arguments <i>entry</i> and <i>stage</i> performs the following steps:
 
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
@@ -770,7 +771,6 @@ The following steps are taken:
 1. Let _entry_ be *this* value.
 1. If Type(_entry_) is not Object, return a promise rejected with a new *TypeError* exception.
 1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), return a promise rejected with a new *TypeError* exception.
-1. If Type(_entry_) is not Object, throw a new *TypeError*.
 1. Let _stageValue_ be ToString(_stage_).
 1. RejectIfAbrupt(_stageValue_).
 1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
