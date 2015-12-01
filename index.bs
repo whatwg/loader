@@ -297,7 +297,7 @@ The abstract operation CreateRegistry with no arguments performs the following s
 
 <h3 id="registry-constructor">The Registry Constructor</h3>
 
-The Registry constructor is the %Registry% intrinsic object. When called as a constructor it creates and initializes a new Registry object. When <b>Registry</b> is called as a function rather than as a constructor, it throws an exception.
+The Registry constructor is the %Registry% intrinsic object. It is not intended to be called as a function or as a constructor and will always throw an exception.
 
 <h3 id="properties-of-the-registry-constructor">Properties of the Registry Constructor</h3>
 
@@ -315,7 +315,7 @@ This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false,
 
 <h4 id="registry-prototype-constructor">Registry.prototype.constructor</h4>
 
-Registry.prototype.constructor is not intended to be called as a function or as a constructor and will always throw an exception.
+The initial value of the constructor property of the %RegistryPrototype% object is the %Registry% object.
 
 <emu-note>
 Always throws to prevent the creation of new registry objects in user-land.
