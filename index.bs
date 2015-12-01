@@ -135,8 +135,8 @@ Algorithm steps that say
 mean the same thing as:
 
 <emu-alg>
-1. If _x_ is an abrupt completion, then return a promise rejected with _x_.[[value]].
-1. Else if _x_ is a Completion Record, then let _x_ be _x_.[[value]].
+1. If _x_ is an abrupt completion, then return a promise rejected with _x_.[[Value]].
+1. Else if _x_ is a Completion Record, then let _x_ be _x_.[[Value]].
 </emu-alg>
 
 <h3 id="common-operations">Common Operations</h3>
@@ -152,117 +152,111 @@ mean the same thing as:
 
 <emu-alg>
 1. Let _desc_ be a new PropertyDescriptor record {[[Value]]: _value_, [[Writable]]: *true*, [[Enumerable]]: *true*, [[Configurable]]: *true*}.
-1. Return the result of calling OrdinaryDefineOwnProperty(_obj_, _name_, _desc_).
+1. Return ? OrdinaryDefineOwnProperty(_obj_, _name_, _desc_).
 </emu-alg>
+
+<h3 id="common-operations">Built-in Function Objects</h3>
+
+We follow the ECMA-262 <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-built-in-function-objects">convention for built-in function objects</a> in which the value of NewTarget in each function argument is <b>**undefined**</b> for \[[Call]] and the <i>newTarget</i> parameter for \[[Construct]].
 
 <h2 id="loader-objects">Loader Objects</h2>
 
-<h3 id="loader-constructor">The Reflect.Loader Constructor</h3>
+<h3 id="loader-constructor">The Loader Constructor</h3>
 
-The Loader constructor is the initial value of the Loader property of the the Reflect object. When called as a constructor it creates and initializes a new Loader object. Reflect.Loader is not intended to be called as a function and will throw an exception when called in that manner.
+The Loader constructor is the %Loader% intrinsic object and the initial value of the <b>Loader</b> property of the the Reflect object. When called as a constructor it creates and initializes a new Loader object. When <b>Loader</b> is called as a function rather than as a constructor, it throws an exception.
 
-The Reflect.Loader constructor is designed to be subclassable. It may be used as the value in an extends clause of a class definition. Subclass constructors that intend to inherit the specified Loader behaviour must include a super call to the Reflect.Loader constructor to create and initialize the subclass instance with the internal stage necessary to support the Reflect.Loader.prototype built-in methods.
+The <b>Loader</b> constructor is designed to be subclassable. It may be used as the value of an <b>extends</b> clause of a class definition. Subclass constructors that intend to inherit the specified <b>Loader</b> behaviour must include a <b>super</b> call to the <b>Loader</b> constructor to create and initialize the subclass instance with the corresponding internal slots.
 
-<h4 id="new-reflect-loader">Reflect.Loader()</h4>
+<h4 id="new-loader">Loader()</h4>
 
-When Reflect.Loader is called with no arguments, the following steps are taken:
+When Loader is called with no arguments, the following steps are taken:
 
 <emu-alg>
 1. If NewTarget is *undefined*, then throw a *TypeError* exception.
-1. Let _O_ be OrdinaryCreateFromConstructor(NewTarget, "Reflect.Loader.prototype").
-1. ReturnIfAbrupt(_O_).
-1. Let _registry_ to a new Registry(_O_).
-1. Set _O_’s [[Registry]] internal slot to _registry_.
+1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, "%LoaderPrototype%", «[[Realm]], [[Registry]]»).
+1. Set _O_’s [[Registry]] internal slot to CreateRegistry().
 1. Return _O_.
 </emu-alg>
 
-<h3 id="properties-of-the-loader-constructor">Properties of the Reflect.Loader Constructor</h3>
+<h3 id="properties-of-the-loader-constructor">Properties of the Loader Constructor</h3>
 
-The value of the \[[Prototype]] internal slot of the Reflect.Loader constructor is the intrinsic object %FunctionPrototype%.
+The value of the \[[Prototype]] internal slot of the Loader constructor is the intrinsic object %FunctionPrototype%.
 
-Besides the internal slots and the length property (whose value is 0), the Reflect.Loader constructor has the following properties:
+Besides the internal slots and the length property (whose value is 0), the Loader constructor has the following properties:
 
-<h4 id="Reflect.Loader.prototype">Reflect.Loader.prototype</h4>
+<h4 id="loader-prototype">Loader.prototype</h4>
 
-The value of Reflect.Loader.prototype is an ordinary object.
+The initial value of Loader.prototype is the intrinsic object %LoaderPrototype%.
 
 This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
 
-<h3 id="sec-properties-of-the-loader-prototype-object">Properties of the Reflect.Loader Prototype Object</h3>
+<h3 id="sec-properties-of-the-loader-prototype-object">Properties of the Loader Prototype Object</h3>
 
-<h4 id="Reflect.Loader.prototype.constructor">Reflect.Loader.prototype.constructor</h4>
+<h4 id="Loader.prototype.constructor">Loader.prototype.constructor</h4>
 
-The initial value of Reflect.Loader.prototype.constructor is Reflect.Loader.
+The initial value of Loader.prototype.constructor is the intrinsic object %Loader%.
 
-<h4 id="reflect-loader-import">Reflect.Loader.prototype.import(name[, referrer])</h4>
+<h4 id="loader-import">Loader.prototype.import(name[, referrer])</h4>
 
 The following steps are taken:
 
 <emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
-1. If _loader_ does not have a [[Registry]] internal slot throw a *TypeError* exception.
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
 1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
-  1. Return RequestReady(_loader_, _key_).
+  1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+  1. Return LoadModule(_entry_, "ready").
 </emu-alg>
 
-<h4 id="reflect-load-resolve">Reflect.Loader.prototype.resolve(name[, referrer])</h4>
+<h4 id="loader-load-resolve">Loader.prototype.resolve(name[, referrer])</h4>
 
 The following steps are taken:
 
 <emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
 1. Return Resolve(_loader_, _name_, _referrer_).
 </emu-alg>
 
-<h4 id="reflect-loader-load">Reflect.Loader.prototype.load(name[, referrer[, stage]])</h4>
+<h4 id="loader-load">Loader.prototype.load(name[, referrer[, stage]])</h4>
 
 The following steps are taken:
 
 <emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
-1. If _stage_ is *undefined* then let _stage_ be "ready".
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
+1. If _stage_ is *undefined* then let _stageValue_ be "ready".
+1. Else let _stageValue_ be ToString(_stage_).
+1. RejectIfAbrupt(_stageValue_).
+1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
 1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
-  1. If _stage_ is "fetch", then:
-    1. Return the result of transforming RequestFetch(_loader_, _key_) with a new pass-through promise.
-  1. If _stage_ is "translate", then:
-    1. Return the result of transforming RequestTranslate(_loader_, _key_) with a new pass-through promise.
-  1. If _stage_ is "instantiate", then:
-    1. Return the result of transforming RequestInstantiate(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
-      1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
-      1. Return *undefined*.
-  1. If _stage_ is "satisfy", then:
-    1. Return the result of transforming RequestSatisfy(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
-      1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
-      1. Return *undefined*.
-  1. If _stage_ is "link", then:
-    1. Return the result of transforming RequestLink(_loader_, _key_) with a fulfillment handler that returns *undefined*.
-  1. If _stage_ is "ready", then:
-    1. Return the result of transforming RequestReady(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
-      1. Return GetModuleNamespace(_entry_.[[Module]]).
-  1. Throw a new *TypeError*.
+  1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+  1. Return LoadModule(_entry_, _stageValue_).
 </emu-alg>
 
-<h4 id="relect-loader-registry">get Reflect.Loader.prototype.registry</h4>
+<h4 id="loader-registry">get Loader.prototype.registry</h4>
 
-Reflect.Loader.prototype.registry is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
+<code>Loader.prototype.registry</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
 
 <emu-alg>
 1. Let _loader_ be *this* value.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
 1. Return _loader_.[[Registry]].
 </emu-alg>
 
-<h4 id="relect-loader-@@tostringtag">Reflect.Loader.prototype [ @@toStringTag ]</h4>
+<h4 id="loader-@@tostringtag">Loader.prototype [ @@toStringTag ]</h4>
 
 The initial value of the @@toStringTag property is the String value "Object".
 
 This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: true }.
 
-<h3 id="reflect-loader-internal-slots">Properties of Reflect.Loader Instances</h3>
+<h3 id="loader-internal-slots">Properties of Loader Instances</h3>
 
-Loader instances are ordinary objects that inherit properties from the *Reflect.Loader.prototype*.
+Loader instances are ordinary objects that inherit properties from the *Loader.prototype*.
 
 Loader instances are initially created with the internal slots described in the following table:
 
@@ -282,7 +276,7 @@ Loader instances are initially created with the internal slots described in the 
   <tr>
     <td>\[[Registry]]</td>
     <td>An object</td>
-    <td>An instance of Registry (<a href="#registry">4</a>).</td>
+    <td>An instance of <a href="#registry">Registry</a>.</td>
   </tr>
 </table>
 
@@ -290,32 +284,250 @@ Loader instances are initially created with the internal slots described in the 
 
 <h3 id="registry-abstract-operations">Abstract Operations for Registry Objects</h3>
 
-<h4 id="registry-GetCurrentStage" aoid="GetCurrentStage">GetCurrentStage(entry)</h4>
+<h4 id="registry-CreateRegistry" aoid="CreateRegistry">CreateRegistry()</h4>
 
-The abstract operation GetCurrentStage with argument entry performs the following steps:
+The abstract operation CreateRegistry with no arguments performs the following steps:
 
 <emu-alg>
+1. Let _O_ be ? OrdinaryCreateFromConstructor(Registry, "%RegistryPrototype%", «[[RegistryMap]]» ).
+1. Let _M_ be ObjectCreate(%MapIteratorPrototype%, «[[Map]], [[MapNextIndex]], [[MapIterationKind]]»).
+1. Set _O_’s [[RegistryMap]] internal slot to _M_.
+1. Return _O_.
+</emu-alg>
+
+<h3 id="registry-constructor">The Registry Constructor</h3>
+
+The Registry constructor is the %Registry% intrinsic object. It is not intended to be called as a function or as a constructor and will always throw an exception.
+
+<h3 id="properties-of-the-registry-constructor">Properties of the Registry Constructor</h3>
+
+The value of the \[[Prototype]] internal slot of the Registry constructor is the intrinsic object %FunctionPrototype%.
+
+Besides the internal slots and the length property (whose value is 0), the Registry constructor has the following properties:
+
+<h4 id="registry-prototype">Registry.prototype</h4>
+
+The initial value of Registry.prototype is %RegistryPrototype%.
+
+This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
+
+<h3 id="registry-prototype-object">Properties of the Registry Prototype Object</h3>
+
+<h4 id="registry-prototype-constructor">Registry.prototype.constructor</h4>
+
+The initial value of the constructor property of the %RegistryPrototype% object is the %Registry% object.
+
+<emu-note>
+Always throws to prevent the creation of new registry objects in user-land.
+</emu-note>
+
+<h4 id="registry-prototype-@@iterator">Registry.prototype[ @@iterator ]()</h4>
+
+The initial value of the @@iterator property is the same function object as the initial value of the entries property.
+
+The value of the name property of this function is "[Symbol.iterator]".
+
+<h4 id="registry-prototype-entries">Registry.prototype.entries()</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _registry_ be *this* value.
+1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
+1. Let _M_ be _registry_.[[RegistryMap]].
+1. Return CreateMapIterator(_M_, "key+value").
+</emu-alg>
+
+<h4 id="registry-prototype-keys">Registry.prototype.keys()</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _registry_ be *this* value.
+1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
+1. Let _M_ be _registry_.[[RegistryMap]].
+1. Return CreateMapIterator(_M_, "key").
+</emu-alg>
+
+<h4 id="registry-prototype-values">Registry.prototype.values()</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _registry_ be *this* value.
+1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
+1. Let _M_ be _registry_.[[RegistryMap]].
+1. Return CreateMapIterator(_M_, "value").
+</emu-alg>
+
+<h4 id="registry-prototype-get">Registry.prototype.get(key)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _registry_ be *this* value.
+1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
+1. Let _M_ be _registry_.[[RegistryMap]].
+1. Let _entries_ be the List that is the value of _M_'s [[MapData]] internal slot.
+1. Repeat for each Record {[[key]], [[value]]} _p_ that is an element of _entries_,
+  1. If _p_.[[key]] is not empty and SameValueZero(_p_.[[key]], _key_) is *true*, return _p_.[[value]].
+1. Return *undefined*.
+</emu-alg>
+
+<h4 id="registry-prototype-set">Registry.prototype.set(key, entry)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _registry_ be *this* value.
+1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
 1. If Type(_entry_) is not Object, throw a *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), throw a *TypeError* exception.
+1. Let _M_ be _registry_.[[RegistryMap]].
+1. Let _entries_ be the List that is the value of _M_'s [[MapData]] internal slot.
+1. Repeat for each Record {[[key]], [[value]]} _p_ that is an element of _entries_,
+  1. If _p_.[[key]] is not empty and SameValueZero(_p_.[[key]], _key_) is *true*, then
+    1. Set _p_.[[value]] to _entry_.
+    1. Return _registry_.
+1. Let _p_ be the Record {[[key]]: _key_, [[value]]: _entry_}.
+1. Append _p_ as the last element of _entries_.
+1. Return _registry_.
+</emu-alg>
+
+<h4 id="registry-prototype-has">Registry.prototype.has(key)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _registry_ be *this* value.
+1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
+1. Let _M_ be _registry_.[[RegistryMap]].
+1. Let _entries_ be the List that is the value of _M_'s [[MapData]] internal slot.
+1. Repeat for each Record {[[key]], [[value]]} _p_ that is an element of _entries_,
+  1. If _p_.[[key]] is not empty and SameValueZero(_p_.[[key]], _key_) is *true*, then, return *true*.
+1. Return *false*.
+</emu-alg>
+
+<h4 id="registry-prototype-delete">Registry.prototype.delete(key)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _registry_ be *this* value.
+1. If Type(_registry_) is not Object, throw a *TypeError* exception.
+1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
+1. Let _M_ be _registry_.[[RegistryMap]].
+1. Let _entries_ be the List that is the value of _M_'s [[MapData]] internal slot.
+1. Repeat for each Record {[[key]], [[value]]} _p_ that is an element of _entries_,
+  1. If _p_.[[key]] is not empty and SameValueZero(_p_.[[key]], _key_) is *true*, then
+    1. Set _p_.[[key]] to empty.
+    1. Set _p_.[[value]] to empty.
+    1. Return *true*.
+1. Return *false*.
+</emu-alg>
+
+<emu-note>
+  The value empty is used as a specification device to indicate that an entry has been deleted. Actual implementations may take other actions such as physically removing the entry from internal data structures.
+</emu-note>
+
+<h3 id="registry-internal-slots">Properties of Registry Instances</h3>
+
+Registry instances are ordinary objects that inherit properties from the %RegistryPrototype%.
+
+Registry instances are initially created with the internal slots described in the following table:
+
+<table>
+  <thead>
+    <tr>
+      <th>Internal Slot</th>
+      <th>Value Type (<em>non-normative</em>)</th>
+      <th>Description (<em>non-normative</em>)</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>\[[RegistryMap]]</td>
+    <td>The Map object of pairs of String and <a href="#module-status">module status</a>.</td>
+    <td>The registry of installed modules.</td>
+  </tr>
+</table>
+
+<h2 id="module-status">ModuleStatus Objects</h2>
+
+<h3 id="module-status-abstract-operations">Abstract Operations for ModuleStatus Objects</h3>
+
+<h4 id="module-status-GetCurrentStage" aoid="GetCurrentStage">GetCurrentStage(entry)</h4>
+
+The abstract operation GetCurrentStage with argument <i>entry</i> performs the following steps:
+
+<emu-alg>
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _stages_ be _entry_.[[Pipeline]].
 1. Return the first element of _stages_.
 </emu-alg>
 
-<h4 id="registry-GetStage" aoid="GetStage">GetStage(entry, stage)</h4>
+<h4 id="module-status-IsValidStageValue" aoid="GetCurrentStage">IsValidStageValue(stage)</h4>
 
-The abstract operation GetStage with arguments entry and stage performs the following steps:
+The abstract operation IsValidStageValue with argument <i>stage</i> performs the following steps:
 
 <emu-alg>
-1. If Type(_entry_) is not Object, throw a *TypeError* exception.
+1. Assert: Type(_stage_) is String.
+1. If _stage_ is "fetch", "translate", "instantiate", "satisfy", "link" or "ready", return *true*.
+1. Else return *false*.
+</emu-alg>
+
+<h4 id="module-status-GetStage" aoid="GetStage">GetStage(entry, stage)</h4>
+
+The abstract operation GetStage with arguments <i>entry</i> and <i>stage</i> performs the following steps:
+
+<emu-alg>
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
+1. Assert: Type(_stage_) is String.
 1. Let _stages_ be _entry_.[[Pipeline]].
-1. For each element _entry_ of _stages_, do
-  1. If _entry_.[[Stage]] is equal to _stage_, then
-    1. Return _entry_.
+1. For each element _stageEntry_ of _stages_, do
+  1. If _stageEntry_.[[Stage]] is equal to _stage_, return _stageEntry_.
 1. Return *undefined*.
 </emu-alg>
 
-<h4 id="registry-UpgradeToStage" aoid="UpgradeToStage">UpgradeToStage(entry, stage)</h4>
+<h4 id="module-status-LoadModule" aoid="LoadModule">LoadModule(entry, stage)</h4>
+
+The abstract operation LoadModule with arguments <i>entry</i> and <i>stage</i> performs the following steps:
 
 <emu-alg>
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
+1. Assert: Type(_stage_) is String.
+1. If _stage_ is "fetch", then:
+  1. Return the result of transforming RequestFetch(_entry_) with a new pass-through promise.
+1. If _stage_ is "translate", then:
+  1. Return the result of transforming RequestTranslate(_entry_) with a new pass-through promise.
+1. If _stage_ is "instantiate", then:
+  1. Return the result of transforming RequestInstantiate(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+    1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
+    1. Return *undefined*.
+1. If _stage_ is "satisfy", then:
+  1. Return the result of transforming RequestSatisfy(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+    1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
+    1. Return *undefined*.
+1. If _stage_ is "link", then:
+  1. Return the result of transforming RequestLink(_entry_) with a fulfillment handler that returns *undefined*.
+1. If _stage_ is "ready" or *undefined*, then:
+  1. Return the result of transforming RequestReady(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+    1. Return GetModuleNamespace(_entry_.[[Module]]).
+1. Return a promise rejected with a new *RangeError* exception.
+</emu-alg>
+
+<h4 id="module-status-UpgradeToStage" aoid="UpgradeToStage">UpgradeToStage(entry, stage)</h4>
+
+The abstract operation UpgradeToStage with arguments <i>entry</i> and <i>stage</i> performs the following steps:
+
+<emu-alg>
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
+1. Assert: Type(_stage_) is String.
 1. Let _pipeline_ be _entry_.[[Pipeline]].
 1. Let _stageEntry_ be GetStage(_entry_, _stage_).
 1. If _stageEntry_ is not *undefined*, then
@@ -387,35 +599,223 @@ Each \[[Stage]] value indicates the currently pending operation. If the \[[Resul
   </tr>
 </table>
 
-<h4 id="registry-GetRegistryEntry" aoid="GetRegistryEntry">GetRegistryEntry(registry, key)</h4>
+<h3 id="module-status-constructor">The ModuleStatus Constructor</h3>
 
-The abstract operation GetRegistryEntry with arguments registry and key performs the following steps:
+The ModuleStatus constructor is the %ModuleStatus% intrinsic object and the initial value of the <b>Status</b> property of the Reflect.Module object. When called as a constructor it creates and initializes a new ModuleStatus object. When <b>ModuleStatus</b> is called as a function rather than as a constructor, it throws an exception.
+
+The <b>ModuleStatus</b> constructor is designed to be subclassable. It may be used as the value of an <b>extends</b> clause of a class definition. Subclass constructors that intend to inherit the specified <b>ModuleStatus</b> behaviour must include a <b>super</b> call to the <b>ModuleStatus</b> constructor to create and initialize the subclass instance with the corresponding internal slots.
+
+<h4 id="new-module-status" aoid="ModuleStatus">ModuleStatus(loader, key[, module])</h4>
+
+When ModuleStatus is called with arguments <i>loader</i>, <i>key</i> and <i>module</i>, the following steps are taken:
 
 <emu-alg>
-1. If Type(_registry_) is not Object, throw a *TypeError* exception.
-1. Let _entries_ be _registry_.[[RegistryData]].
-1. Let _pair_ be the entry in _entries_ such that _pair_.[[key]] is equal to _key_.
-1. If _pair_ does not exist, then return *null*.
-1. Let _entry_ be _pair_.[[value]].
-1. Let _currentStage_ be GetCurrentStage(_entry_).
-1. Let _result_ be the result of transforming _currentStage_.[[Result]] with a new pass-through promise.
-1. Let _stage_ be _currentStage_.[[Stage]].
-1. Let _result_ be CreateObject().
-1. Call SimpleDefine(_result_, "stage", _stage_).
-1. Call SimpleDefine(_result_, "result", _result_).
-1. If _stage_ is "ready" then let _module_ be _entry_.[[Module]].
-1. Else let _module_ be *undefined*.
-1. Call SimpleDefine(_result_, "module", _module_).
-1. If _entry_.[[Error]] is *nothing*, then:
-  1. Call SimpleDefine(_result_, "error", *null*).
-1. Else:
-  1. Let _opt_ be CreateObject().
-  1. Call SimpleDefine(_opt_, "value", _entry_.[[Error]]).
-  1. Call SimpleDefine(_result_, "error", _opt_).
-1. Return _result_.
+1. If NewTarget is *undefined*, then throw a *TypeError* exception.
+1. If Type(_loader_) is not Object, throw a *TypeError* exception.
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
+1. Let _keyString_ be ? ToString(_key_).
+1. If Type(_module_) is not Object, throw a *TypeError* exception.
+1. If _module_ does not have all of the internal slots of a Module Instance (<a href="#module-internal-slots">8.5</a>), throw a *TypeError* exception.
+1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, "%ModuleStatusPrototype%", «[[Loader]], [[Pipeline]], [[Key]], [[Module]], [[Metadata]], [[Dependencies]], [[Error]]» ).
+1. Let _pipeline_ be a new List.
+1. If _module_ exists, then
+  1. Let _result_ be a promise resolved with _module_.
+  1. Add new stage entry record { [[Stage]]: "ready", [[Result]]: _result_ } as a new element of the list _pipeline_.
+1. Else,
+  1. Add new stage entry record { [[Stage]]: "fetch", [[Result]]: *undefined* } as a new element of the list _pipeline_.
+  1. Add new stage entry record { [[Stage]]: "translate", [[Result]]: *undefined* } as a new element of the list _pipeline_.
+  1. Add new stage entry record { [[Stage]]: "instantiate", [[Result]]: *undefined* } as a new element of the list _pipeline_.
+  1. Add new stage entry record { [[Stage]]: "satisfy", [[Result]]: *undefined* } as a new element of the list _pipeline_.
+  1. Add new stage entry record { [[Stage]]: "link", [[Result]]: *undefined* } as a new element of the list _pipeline_.
+  1. Add new stage entry record { [[Stage]]: "ready", [[Result]]: *undefined* } as a new element of the list _pipeline_.
+1. Set _O_’s [[Loader]] internal slot to _loader_.
+1. Set _O_’s [[Pipeline]] internal slot to _pipeline_.
+1. Set _O_’s [[Key]] internal slot to _keyString_.
+1. Set _O_’s [[Module]] internal slot to _module_.
+1. Set _O_’s [[Metadata]] internal slot to *undefined*.
+1. Set _O_’s [[Dependencies]] internal slot to *undefined*.
+1. Set _O_’s [[Error]] internal slot to *nothing*.
+1. Return _O_.
 </emu-alg>
 
-A <dfn id="registry-entry">registry entry</dfn> is a record with the following fields:
+<emu-note>
+  A module status is associated to a loader instance at the time of its creation, the [[Loader]] backpointer reflects that.
+</emu-note>
+
+<emu-note>
+  The optional second argument module allows to create a module status in a way that synchronously circumvents the asynchronous loading process.
+</emu-note>
+
+<emu-note>
+  A module status can be set into multiple Registry instances.
+</emu-note>
+
+<h3 id="properties-of-the-module-status-constructor">Properties of the ModuleStatus Constructor</h3>
+
+The value of the \[[Prototype]] internal slot of the Registry constructor is the intrinsic object %FunctionPrototype%.
+
+Besides the internal slots and the length property (whose value is 0), the ModuleStatus constructor has the following properties:
+
+<h4 id="module-status-prototype">ModuleStatus.prototype</h4>
+
+The initial value of ModuleStatus.prototype is the intrinsic object %ModuleStatusPrototype%.
+
+This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
+
+<h3 id="module-status-prototype-object">Properties of the ModuleStatus Prototype Object</h3>
+
+<h4 id="module-status-prototype-constructor">ModuleStatus.prototype.constructor</h4>
+
+The initial value of ModuleStatus.prototype.constructor is the intrinsic object %ModuleStatus%.
+
+<h4 id="module-status-stage">get ModuleStatus.prototype.stage</h4>
+
+<code>ModuleStatus.prototype.stage</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
+
+<emu-alg>
+1. Let _entry_ be *this* value.
+1. If Type(_entry_) is not Object, throw a *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), throw a *TypeError* exception.
+1. Let _stageEntry_ be GetCurrentStage(_entry_).
+1. Return _stageEntry_.[[Stage]].
+</emu-alg>
+
+<h4 id="module-status-module">get ModuleStatus.prototype.module</h4>
+
+<code>ModuleStatus.prototype.module</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
+
+<emu-alg>
+1. Let _entry_ be *this* value.
+1. If Type(_entry_) is not Object, throw a *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), throw a *TypeError* exception.
+1. Return _entry_.[[Module]].
+</emu-alg>
+
+<h4 id="module-status-error">get ModuleStatus.prototype.error</h4>
+
+<code>ModuleStatus.prototype.error</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
+
+<emu-alg>
+1. Let _entry_ be *this* value.
+1. If Type(_entry_) is not Object, throw a *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), throw a *TypeError* exception.
+1. Return _entry_.[[Error]].
+</emu-alg>
+
+
+<h4 id="module-status-error">get ModuleStatus.prototype.dependencies</h4>
+
+<code>ModuleStatus.prototype.dependencies</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
+
+<emu-alg>
+1. Let _entry_ be *this* value.
+1. If Type(_entry_) is not Object, throw a *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), throw a *TypeError* exception.
+1. Let _array_ be ArrayCreate(0).
+1. Let _n_ be 0.
+1. For each _pair_ in _entry_.[[Dependencies]], do:
+  1. Let _O_ be ObjectCreate(%ObjectPrototype%).
+  1. Let _requestNameDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[RequestName]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
+  1. Let _requestNameStatus_ be ? DefinePropertyOrThrow(_O_, "requestName", _requestNameDesc_).
+  1. Let _keyDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[Key]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
+  1. Let _keyStatus_ be ? DefinePropertyOrThrow(_O_, "key", _keyDesc_).
+  1. Let _moduleStatusDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[ModuleStatus]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
+  1. Let _moduleStatus_ be ? DefinePropertyOrThrow(_O_, "entry", _moduleStatusDesc_).
+  1. Let _status_ be ? CreateDataProperty(_array_, ? ToString(_n_), _O_).
+  1. Increment _n_ by 1.
+1. Return _array_.
+</emu-alg>
+
+<emu-note>
+  The dependencies accessor provides access to the dependency graph, exposing each dependency's requestName, key and entry reference.
+</emu-note>
+
+<h4 id="module-status-prototype-load">ModuleStatus.prototype.load(stage)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _entry_ be *this* value.
+1. If Type(_entry_) is not Object, return a promise rejected with a new *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), return a promise rejected with a new *TypeError* exception.
+1. If _stage_ is *undefined* then let _stageValue_ be "fetch".
+1. Else let _stageValue_ be ToString(_stage_).
+1. RejectIfAbrupt(_stageValue_).
+1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
+1. Return LoadModule(_entry_, _stageValue_).
+</emu-alg>
+
+<h4 id="module-status-prototype-result">ModuleStatus.prototype.result(stage)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _entry_ be *this* value.
+1. If Type(_entry_) is not Object, return a promise rejected with a new *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), return a promise rejected with a new *TypeError* exception.
+1. Let _stageValue_ be ToString(_stage_).
+1. RejectIfAbrupt(_stageValue_).
+1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
+1. Let _stageEntry_ be GetStage(_entry_, _stageValue_).
+1. RejectIfAbrupt(_stageEntry_).
+1. If _stageEntry_ is *undefined*, return a promise resolved with *undefined*.
+1. If _stageEntry_.[[Result]] is *undefined*, return a promise resolved with *undefined*.
+1. Return the result of transforming _stageEntry_.[[Result]] with a new pass-through promise.
+</emu-alg>
+
+<h4 id="module-status-prototype-resolve">ModuleStatus.prototype.resolve(stage, result)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _entry_ be *this* value.
+1. If Type(_entry_) is not Object, return a promise rejected with a new *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), return a promise rejected with a new *TypeError* exception.
+1. Let _stageValue_ be ToString(_stage_).
+1. RejectIfAbrupt(_stageValue_).
+1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
+1. Let _p0_ be the result of transforming _result_ with a new pass-through promise.
+1. Let _p1_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _value_, runs the following steps:
+  1. Let _stageEntry_ be GetStage(_entry_, _stageValue_).
+  1. If _stageEntry_ is *undefined*, throw a new *TypeError*.
+  1. If _stageEntry_.[[Result]] is *undefined*, then
+    1. Set _stageEntry_.[[Result]] to a promise resolved with _value_.
+  1. Else,
+    1. Fulfill _stageEntry_.[[Result]] with _value_.
+  1. UpgradeToStage(_entry_, _stageValue_).
+  1. Return _value_.
+1. Return _p0_.
+</emu-alg>
+
+<h4 id="module-status-prototype-reject">ModuleStatus.prototype.reject(stage, error)</h4>
+
+The following steps are taken:
+
+<emu-alg>
+1. Let _entry_ be *this* value.
+1. If Type(_entry_) is not Object, return a promise rejected with a new *TypeError* exception.
+1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), return a promise rejected with a new *TypeError* exception.
+1. Let _stageValue_ be ToString(_stage_).
+1. RejectIfAbrupt(_stageValue_).
+1. If IsValidStageValue(_stageValue_) is *false*, return a promise rejected with a new *RangeError* exception.
+1. Let _p0_ be the result of transforming _error_ with a new pass-through promise.
+1. Let _p1_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _value_, runs the following steps:
+  1. Let _stageEntry_ be GetStage(_entry_, _stageValue_).
+  1. If _stageEntry_ is *undefined*, throw a new *TypeError*.
+  1. If _stageEntry_.[[Result]] is *undefined*, then
+    1. Set _stageEntry_.[[Result]] to a promise rejected with _value_.
+  1. Else,
+    1. Reject _stageEntry_.[[Result]] with _value_.
+  1. UpgradeToStage(_entry_, _stageValue_).
+  1. Return _value_.
+1. Return _p0_.
+</emu-alg>
+
+<h3 id="module-status-internal-slots">Properties of ModuleStatus Instances</h3>
+
+ModuleStatus instances are ordinary objects that inherit properties from the %ModuleStatusPrototype%.
+
+ModuleStatus instances are initially created with the internal slots described in the following table:
 
 <table>
   <thead>
@@ -426,14 +826,19 @@ A <dfn id="registry-entry">registry entry</dfn> is a record with the following f
     </tr>
   </thead>
   <tr>
-    <td>\[[Key]]</td>
-    <td>String</td>
-    <td>The resolved module key.</td>
+    <td>\[[Loader]]</td>
+    <td>An object</td>
+    <td>The loader this module status belongs to.</td>
   </tr>
   <tr>
     <td>\[[Pipeline]]</td>
     <td>A List</td>
     <td>A list whose elements are stage records.</td>
+  </tr>
+  <tr>
+    <td>\[[Key]]</td>
+    <td>A String</td>
+    <td>A value that identifies what key was used to create the module status instance.</td>
   </tr>
   <tr>
     <td>\[[Metadata]]</td>
@@ -442,8 +847,8 @@ A <dfn id="registry-entry">registry entry</dfn> is a record with the following f
   </tr>
   <tr>
     <td>\[[Dependencies]]</td>
-    <td>List of pairs of String and (<a>registry entry</a> or <code>undefined</code>), or <code>undefined</code>.</td>
-    <td>Table mapping unresolved names to their resolved modules.</td>
+    <td>List of Records of the form {\[[RequestName]]: String, \[[Key]]: String, \[[ModuleStatus]]: Module Status} .</td>
+    <td>Table mapping unresolved names to their resolved key and module status entries.</td>
   </tr>
   <tr>
     <td>\[[Module]]</td>
@@ -457,184 +862,6 @@ A <dfn id="registry-entry">registry entry</dfn> is a record with the following f
   </tr>
 </table>
 
-<h3 id="registry-constructor">The Registry Constructor</h3>
-
-The Registry constructor is the %Registry% intrinsic object. When called as a constructor it creates and initializes a new %Registry% object. %Registry% is not intended to be called as a function and will throw an exception when called in that manner.
-
-<h4 id="new-registry" aoid="Registry">Registry(loader)</h4>
-
-When Registry is called with argument <i>loader</i>, the following steps are taken:
-
-<emu-alg>
-1. If NewTarget is *undefined*, then throw a *TypeError* exception.
-1. If Type(_loader_) is not Object, throw a *TypeError* exception.
-1. Let _O_ be OrdinaryCreateFromConstructor(NewTarget, "%RegistryPrototype%", «[[RegistryData]]» ).
-1. ReturnIfAbrupt(_O_).
-1. Set _O_’s [[RegistryData]] internal slot to a new empty List.
-1. Set _O_’s [[Loader]] internal slot to _loader_.
-1. Return _O_.
-</emu-alg>
-
-<h3 id="properties-of-the-registry-constructor">Properties of the Registry Constructor</h3>
-
-The value of the \[[Prototype]] internal slot of the Registry constructor is the intrinsic object %FunctionPrototype%.
-
-Besides the internal slots and the length property (whose value is 0), the Registry constructor has the following properties:
-
-<h4 id="registry-prototype">Registry.prototype</h4>
-
-The value of Registry.prototype is %RegistryPrototype%.
-
-This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
-
-<h3 id="registry-prototype-object">Properties of the Registry Prototype Object</h3>
-
-<h4 id="registry-prototype-constructor">Registry.prototype.constructor</h4>
-
-The initial value of Registry.prototype.constructor is %Registry%.
-
-<h4 id="registry-prototype-@@iterator">Registry.prototype[ @@iterator ]()</h4>
-
-When the @@iterator method is called it returns an Iterator object (ES2015 25.1.1.2) that iterates over the registry entries of the \[[RegistryData]] internal slot, returning each entry as a key value pair. The following steps are taken:
-
-<emu-alg>
-1. Let _registry_ be *this* value.
-1. Let _entries_ be a new List.
-1. For each _pair_ in _registry_.[[RegistryData]], do:
-  1. Let _key_ be _pair_.[[key]].
-  1. Let _entry_ be GetRegistryEntry(_registry_, _key_).
-  1. Append { [[key]]: _key_, [[value]]: _entry_ } to _entries_.
-1. Return CreateListIterator(_entries_).
-</emu-alg>
-
-The value of the name property of this function is "[Symbol.iterator]".
-
-<h4 id="registry-prototype-lookup">Registry.prototype.lookup(key)</h4>
-
-The following steps are taken:
-
-<emu-alg>
-1. Let _registry_ be *this* value.
-1. Return GetRegistryEntry(_registry_, _key_).
-</emu-alg>
-
-<h4 id="registry-prototype-install">Registry.prototype.install(key, module)</h4>
-
-The following steps are taken:
-
-<emu-alg>
-1. Let _registry_ be *this* value.
-1. If Type(_registry_) is not Object, throw a *TypeError* exception.
-1. Let _entries_ be _registry_.[[RegistryData]].
-1. Let _pair_ be the entry in _entries_ such that _pair_.[[key]] is equal to _key_.
-1. If _pair_ exists, then throw a new *TypeError*.
-1. Let _result_ be a new promise resolved with _module_.
-1. Let _stageReadyEntry_ be a new stage entry record { [[Stage]]: "ready", [[Result]]: _result_ }.
-1. Let _pipeline_ be a new List containing _stageReadyEntry_.
-1. Let _entry_ be a new registry entry record { [[Key]]: _key_, [[Pipeline]]: _pipeline_, [[Metadata]]: *undefined*, [[Dependencies]]: *undefined*, [[Module]]: _module_ }.
-1. Append { [[key]]: _key_, [[value]]: _entry_ } to _entries_.
-</emu-alg>
-
-<h4 id="registry-prototype-uninstall">Registry.prototype.uninstall(key)</h4>
-
-The following steps are taken:
-
-<emu-alg>
-1. Let _registry_ be *this* value.
-1. If Type(_registry_) is not Object, throw a *TypeError* exception.
-1. Let _entries_ be _registry_.[[RegistryData]].
-1. Let _pair_ be the entry in _entries_ such that _pair_.[[key]] is equal to _key_.
-1. If _pair_ does not exist, then throw a new *TypeError*.
-1. Let _entry_ be _pair_.[[value]].
-1. Let _stageEntry_ be GetCurrentStage(_entry_).
-1. If _stageEntry_.[[Stage]] is not "link" or "ready", throw a new *TypeError*.
-1. Remove _pair_ from _entries_.
-</emu-alg>
-
-<h4 id="registry-prototype-cancel">Registry.prototype.cancel(key)</h4>
-
-The following steps are taken:
-
-<emu-alg>
-1. Let _registry_ be *this* value.
-1. If Type(_registry_) is not Object, throw a *TypeError* exception.
-1. Let _entries_ be _registry_.[[RegistryData]].
-1. Let _pair_ be the entry in _entries_ such that _pair_.[[key]] is equal to _key_.
-1. If _pair_ does not exist, then throw a new *TypeError*.
-1. Let _entry_ be _pair_.[[value]].
-1. Let _stageEntry_ be GetCurrentStage(_entry_).
-1. If _stageEntry_.[[Stage]] is "link" or "ready", throw a new *TypeError*.
-1. Remove _pair_ from _entries_.
-</emu-alg>
-
-<h4 id="registry-prototype-provide">Registry.prototype.provide(key, stage, value)</h4>
-
-The following steps are taken:
-
-<emu-alg>
-1. Let _registry_ be *this* value.
-1. If Type(_registry_) is not Object, throw a new *TypeError*.
-1. If _stage_ is not "fetch", "translate" or "instantiate", throw a new *TypeError*.
-1. Let _loader_ be _registry_.[[Loader]].
-1. Let _entry_ be EnsureRegistered(_loader_, _key_).
-1. Let _stageEntry_ be GetStage(_entry_, _stage_).
-1. If _stageEntry_ is *undefined*, throw a new *TypeError*.
-1. If _stageEntry_.[[Result]] is *undefined*, then set _entry_.[[Result]] to a promise resolved with _value_.
-1. Else, fulfill _entry_.[[Result]] with _value_.
-1. UpgradeToStage(_entry_, _stage_).
-</emu-alg>
-
-<emu-note>
-  Any stage other than fetch, translate and instantiate is considered internal.
-</emu-note>
-
-<h4 id="registry-prototype-error">Registry.prototype.error(key, stage, value)</h4>
-
-The following steps are taken:
-
-<emu-alg>
-1. Let _registry_ be *this* value.
-1. If Type(_registry_) is not Object, throw a *TypeError* exception.
-1. If _stage_ is not "fetch", "translate" or "instantiate", throw a new *TypeError*.
-1. Let _loader_ be _registry_.[[Loader]].
-1. Let _entry_ be EnsureRegistered(_loader_, _key_).
-1. Let _stageEntry_ be GetStage(_entry_, _stage_).
-1. If _stageEntry_ is *undefined*, throw a new *TypeError*.
-1. If _stageEntry_.[[Result]] is *undefined*, then set _entry_.[[Result]] to a promise rejected with _value_.
-1. Else, reject _entry_.[[Result]] with _value_.
-1. UpgradeToStage(_entry_, _stage_).
-</emu-alg>
-
-<emu-note>
-  Any stage other than fetch, translate and instantiate is considered internal.
-</emu-note>
-
-<h3 id="registry-internal-slots">Properties of Registry Instances</h3>
-
-Registry instances are ordinary objects that inherit properties from the %RegistryPrototype%.
-
-Registry instances are initially created with the internal slots described in the following table:
-
-<table>
-  <thead>
-    <tr>
-      <th>Internal Slot</th>
-      <th>Value Type (<em>non-normative</em>)</th>
-      <th>Description (<em>non-normative</em>)</th>
-    </tr>
-  </thead>
-  <tr>
-    <td>\[[RegistryData]]</td>
-    <td>List of pairs of String and <a href="#registry-entry">registry entry</a>.</td>
-    <td>The registry of installed modules.</td>
-  </tr>
-  <tr>
-    <td>\[[Loader]]</td>
-    <td>An object</td>
-    <td>The loader this registry belongs to.</td>
-  </tr>
-</table>
-
 <h2 id="pipeline-semantics">Loading Semantics</h2>
 
 <h3 id="auxiliary-operations">Auxiliary Operations</h3>
@@ -642,48 +869,51 @@ Registry instances are initially created with the internal slots described in th
 <h4 id="ensure-registered" aoid="EnsureRegistered">EnsureRegistered(loader, key)</h4>
 
 <emu-alg>
-1. Assert: _loader_ has a [[Registry]] internal slot.
-1. Let _pair_ be the entry in _loader_.[[Registry]] such that _pair_.[[key]] is equal to _key_.
+1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
+1. Assert: Type(_key_) is String.
+1. Let _registry_ be _loader_.[[Registry]].
+1. Let _pair_ be the entry in _registry_.[[RegistryMap]] such that _pair_.[[Key]] is equal to _key_.
 1. If _pair_ exists, then:
-  1. Let _entry_ be _pair_.[[value]].
-1. Else:
-  1. Let _pipeline_ be a new List.
-  1. Add new stage entry record { [[Stage]]: "fetch", [[Result]]: undefined } as a new element of the list _pipeline_.
-  1. Add new stage entry record { [[Stage]]: "translate", [[Result]]: undefined } as a new element of the list _pipeline_.
-  1. Add new stage entry record { [[Stage]]: "instantiate", [[Result]]: undefined } as a new element of the list _pipeline_.
-  1. Add new stage entry record { [[Stage]]: "satisfy", [[Result]]: undefined } as a new element of the list _pipeline_.
-  1. Add new stage entry record { [[Stage]]: "link", [[Result]]: undefined } as a new element of the list _pipeline_.
-  1. Add new stage entry record { [[Stage]]: "ready", [[Result]]: undefined } as a new element of the list _pipeline_.
-  1. Let _entry_ be a new registry entry record { [[Key]]: _key_, [[Pipeline]]: _pipeline_, [[Metadata]]: *undefined*, [[Dependencies]]: *undefined*, [[Module]]: *undefined*, [[Error]]: *nothing* }.
-  1. Append { [[key]]: _key_, [[value]]: _entry_ } to _loader_.[[Registry]].
+  1. Let _entry_ be _pair_.[[Value]].
+1. Else,
+  1. Let _entry_ be a new ModuleStatus(_loader_, _key_).
 1. Return _entry_.
 </emu-alg>
 
 <h4 id="resolve" aoid="Resolve">Resolve(loader, name, referrer)</h4>
 
 <emu-alg>
+1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
+1. Assert: Type(_name_) is String.
+1. Assert: Type(_referrer_) is String.
 1. Let _hook_ be GetMethod(_loader_, @@resolve).
 1. Return the result of promise-calling _hook_(_name_, _referrer_).
 </emu-alg>
 
-<h4 id="extract-dependencies" aoid="ExtractDependencies">ExtractDependencies(loader, entry, optionalInstance, source)</h4>
+<h4 id="extract-dependencies" aoid="ExtractDependencies">ExtractDependencies(entry, optionalInstance, source)</h4>
 
 <emu-alg>
-1. Let _instance_ be Instantiation(_loader_, _optionalInstance_, _source_).
-1. ReturnIfAbrupt(_instance_).
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
+1. Let _instance_ be ? Instantiation(_entry_.[[Loader]], _optionalInstance_, _source_).
 1. Let _deps_ be a new empty List.
 1. If _instance_ is a Module Record, then:
   1. Assert: _instance_ is a Source Text Module Record.
-  1. Set _instance_.[[RegistryEntry]] to _entry_.
+  1. Set _instance_.[[ModuleStatus]] to _entry_.
   1. For each _dep_ in _instance_.[[RequestedModules]], do:
-    1. Append the record { [[key]]: _dep_, [[value]]: *undefined* } to _deps_.
+    1. Append the record { [[RequestName]]: _dep_, [[Key]]: *undefined*, [[ModuleStatus]]: *undefined* } to _deps_.
 1. Set _entry_.[[Dependencies]] to _deps_.
 1. Set _entry_.[[Module]] to _instance_.
 </emu-alg>
 
+<emu-note>
+  [[Key]] will identifies the dependency module status in the entry's corresponding loader.
+</emu-note>
+
+
 <h4 id="instantiation" aoid="Instantiation">Instantiation(loader, result, source)</h4>
 
 <emu-alg>
+1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
 1. If _result_ is *undefined*, then return ParseModule(_source_).
 1. If IsCallable(_result_) is *false* then throw a new *TypeError*.
 1. Set _result_.[[Realm]] to _loader_.[[Realm]].
@@ -692,84 +922,78 @@ Registry instances are initially created with the internal slots described in th
 
 <h3 id="loading-operations">Loading Operations</h3>
 
-<h4 id="request-fetch" aoid="RequestFetch">RequestFetch(loader, key)</h4>
+<h4 id="request-fetch" aoid="RequestFetch">RequestFetch(entry)</h4>
 
 <emu-alg>
-1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _fetchStageEntry_ be GetStage(_entry_, "fetch").
 1. If _fetchStageEntry_ is *undefined*, return a promise resolved with *undefined*.
-1. Let _hook_ be GetMethod(_loader_, @@fetch).
-1. // TODO: metadata object
-1. Let _p0_ be the result of promise-calling _hook_(_key_).
+1. If _fetchStageEntry_.[[Result]] is not *undefined*, return _fetchStageEntry_.[[Result]].
+1. Let _hook_ be GetMethod(_entry_.[[Loader]], @@fetch).
+1. Let _p0_ be the result of promise-calling _hook_(_entry_, _entry_.[[Key]]).
 1. Let _p1_ be the result of transforming _p0_ with a new pass-through promise.
 1. Let _p2_ be the result of transforming _p1_ with a fulfillment handler that, when called with argument _payload_, runs the following steps:
   1. UpgradeToStage(_entry_, "translate").
-  1. Return _payload_.
 1. Set _fetchStageEntry_.[[Result]] to _p1_.
 1. Return _p1_.
 </emu-alg>
 
-<h4 id="request-translate" aoid="RequestTranslate">RequestTranslate(loader, key)</h4>
+<h4 id="request-translate" aoid="RequestTranslate">RequestTranslate(entry)</h4>
 
 <emu-alg>
-1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _translateStageEntry_ be GetStage(_entry_, "translate").
 1. If _translateStageEntry_ is *undefined*, return a promise resolved with *undefined*.
-1. Let _hook_ be GetMethod(_loader_, @@translate).
-1. Let _p_ be the result of transforming RequestFetch(_loader_, _key_) with a fulfillment handler that, when called with argument _payload_, runs the following steps:
-  1. // TODO: metadata
-  1. Let _p0_ be the result of promise-calling _hook_(_key_, _payload_).
+1. If _translateStageEntry_.[[Result]] is not *undefined*, return _translateStageEntry_.[[Result]].
+1. Let _hook_ be GetMethod(_entry_.[[Loader]], @@translate).
+1. Let _p_ be the result of transforming RequestFetch(_entry_) with a fulfillment handler that, when called with argument _payload_, runs the following steps:
+  1. Let _p0_ be the result of promise-calling _hook_(_entry_, _payload_).
   1. Let _p1_ be the result of transforming _p0_ with a new pass-through promise.
   1. Let _p2_ be the result of transforming _p1_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
     1. UpgradeToStage(_entry_, "instantiate").
-    1. Return _source_.
   1. Return _p1_.
 1. Set _translateStageEntry_.[[Result]] to _p_.
 1. Return _p_.
 </emu-alg>
 
-<h4 id="request-instantiate" aoid="RequestInstantiate">RequestInstantiate(loader, key)</h4>
+<h4 id="request-instantiate" aoid="RequestInstantiate">RequestInstantiate(entry)</h4>
 
 <emu-alg>
-1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _instantiateStageEntry_ be GetStage(_entry_, "instantiate").
 1. If _instantiateStageEntry_ is *undefined*, return a promise resolved with *undefined*.
-1. Let _hook_ be GetMethod(_loader_, @@instantiate).
-1. Let _p_ be the result of transforming RequestTranslate(_loader_, _key_) with a fulfillment handler that, when called with argument _source_, runs the following steps:
-  1. // TODO: metadata
-  1. Let _p0_ be the result of promise-calling _hook_(_key_, _source_).
+1. If _instantiateStageEntry_.[[Result]] is not *undefined*, return _instantiateStageEntry_.[[Result]].
+1. Let _hook_ be GetMethod(_entry_.[[Loader]], @@instantiate).
+1. Let _p_ be the result of transforming RequestTranslate(_entry_) with a fulfillment handler that, when called with argument _source_, runs the following steps:
+  1. Let _p0_ be the result of promise-calling _hook_(_entry_, _source_).
   1. Let _p1_ be the result of transforming _p0_ with a new pass-through promise.
   1. Let _p2_ be the result of transforming _p1_ with a fulfillment handler that, when called with argument _optionalInstance_, runs the following steps:
-    1. Let _status_ be ExtractDependencies(_loader_, _entry_, _optionalInstance_, _source_).
-    1. ReturnIfAbrupt(_status_).
+    1. Let _status_ be ? ExtractDependencies(_entry_, _optionalInstance_, _source_).
     1. UpgradeToStage(_entry_, "satisfy").
-    1. Return _entry_.
   1. Return _p1_.
 1. Set _instantiateStageEntry_.[[Result]] to _p_.
 1. Return _p_.
 </emu-alg>
 
-<h4 id="request-satisfy" aoid="RequestSatisfy">RequestSatisfy(loader, key)</h4>
+<h4 id="request-satisfy" aoid="RequestSatisfy">RequestSatisfy(entry)</h4>
 
 <emu-alg>
-1. Let _entry_ be EnsureRegistered(_loader_, _key_).
-1. Let _satisfyStageEntry_ be GetStage(_entry_, "satisfy").
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
+1. Let _satisfyStageEntry_ be GetStage(_entry_.[[Loader]], "satisfy").
 1. If _satisfyStageEntry_ is *undefined*, return a promise resolved with *undefined*.
 1. If _satisfyStageEntry_.[[Result]] is not *undefined*, return _satisfyStageEntry_.[[Result]].
-1. Let _p_ be the result of transforming RequestInstantiate(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+1. Let _p_ be the result of transforming RequestInstantiate(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _depLoads_ be a new empty List.
   1. For each _pair_ in _entry_.[[Dependencies]], do:
-    1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[key]], _key_) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
-      1. Let _depEntry_ be EnsureRegistered(_loader_, _depKey_).
+    1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[Key]], _key_) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
+      1. Let _depEntry_ be EnsureRegistered(_entry_.[[Loader]], _depKey_).
+      1. Let _pair_.[[Key]] to _depKey_.
+      1. Let _pair_.[[ModuleStatus]] to _depEntry_.
       1. Let _currentStageEntry_ be GetCurrentStage(_entry_).
       1. If _currentStageEntry_.[[Stage]] is "ready", then:
-        1. Let _dep_ be _depEntry_.[[Module]].
-        1. Set _pair_.[[value]] to _dep_.
-        1. Return _dep_.
-      1. Return the result of transforming RequestSatisfy(_loader_, _depKey_) with a fulfillment handler that, when called with value _depEntry_, runs the following steps:
-        1. Let _dep_ be _depEntry_.[[Module]].
-        1. Set _pair_.[[value]] to _dep_.
-        1. Return _dep_.
+        1. Return _depEntry_.[[Module]].
+      1. Return the result of transforming RequestSatisfy(_depEntry_) with a fulfillment handler that, when called with value _depEntry_, runs the following steps:
+        1. Return _depEntry_.[[Module]].
     1. Append _p_ to _depLoads_.
   1. Let _p_ be the result of waiting for all _depLoads_.
   1. Return the result of transforming _p_ with a fulfillment handler that, when called, runs the following steps:
@@ -779,30 +1003,33 @@ Registry instances are initially created with the internal slots described in th
 1. Return _p_.
 </emu-alg>
 
-<h4 id="request-link" aoid="RequestLink">RequestLink(loader, key)</h4>
+<emu-note>
+  This abstract operation completes the [[Dependencies]] registry per entry keeping backpointers to each dependency entry and the corresponding keys.
+</emu-note>
+
+<h4 id="request-link" aoid="RequestLink">RequestLink(entry)</h4>
 
 <emu-alg>
-1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _linkStageEntry_ be GetStage(_entry_, "link").
 1. If _linkStageEntry_ is *undefined*, return a promise resolved with *undefined*.
-1. Return the result of transforming RequestSatisfy(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+1. If _linkStageEntry_.[[Result]] is not *undefined*, return _linkStageEntry_.[[Result]].
+1. Return the result of transforming RequestSatisfy(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Assert: _entry_'s whole dependency graph is in "link" or "ready" stage.
-  1. Let _status_ be Link(_loader_, _entry_).
-  1. ReturnIfAbrupt(_status_).
+  1. Let _status_ be ? Link(_entry_).
   1. Assert: _entry_'s whole dependency graph is in "ready" stage.
   1. Return _entry_.
 </emu-alg>
 
-<h4 id="request-ready" aoid="RequestReady">RequestReady(loader, key)</h4>
+<h4 id="request-ready" aoid="RequestReady">RequestReady(entry)</h4>
 
 <emu-alg>
-1. Let _entry_ be EnsureRegistered(_loader_, _key_).
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _currentStageEntry_ be GetCurrentStage(_entry_).
 1. If _currentStageEntry_.[[Stage]] is equal "ready", return _currentStageEntry_.[[Result]].
-1. Return the result of transforming RequestLink(_loader_, _key_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+1. Return the result of transforming RequestLink(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _module_ be _entry_.[[Module]].
-  1. Let _status_ be the result of calling the ModuleEvaluation abstract operation of _module_ with no arguments.
-  1. ReturnIfAbrupt(_status_).
+  1. Let _status_ be ? _module_.ModuleEvaluation().
   1. Return _module_.
 </emu-alg>
 
@@ -817,30 +1044,30 @@ The modules spec should only invoke this operation from methods of Source Text M
 
 <emu-alg>
 1. Assert: _module_ is a Source Text Module Record.
-1. Let _entry_ be _module_.[[RegistryEntry]].
+1. Assert: Type(_requestName_) is String.
+1. Let _entry_ be _module_.[[ModuleStatus]].
 1. Let _currentStageEntry_ be GetCurrentStage(_entry_).
 1. Assert: _currentStageEntry_.[[Stage]] is in "link" or "ready" stage.
-1. Let _pair_ be the pair in _entry_.[[Dependencies]] such that _pair_.[[key]] is equal to _requestName_.
+1. Let _pair_ be the pair in _entry_.[[Dependencies]] such that _pair_.[[RequestName]] is equal to _requestName_.
 1. Assert: _pair_ is defined.
-1. Let _dep_ be _pair_.[[value]].
-1. Let _depStageEntry_ be GetCurrentStage(_dep_).
+1. Let _depEntry_ be _pair_.[[ModuleStatus]].
+1. Let _depStageEntry_ be GetCurrentStage(_depEntry_).
 1. Assert: _depStageEntry_.[[Stage]] is equal "link" or "ready" stage.
-1. Return _dep_.[[Module]].
+1. Return _depEntry_.[[Module]].
 </emu-alg>
 
 <h3 id="linking">Linking</h3>
 
-<h4 id="link" aoid="Link">Link(loader, root)</h4>
+<h4 id="link" aoid="Link">Link(root)</h4>
 
 <emu-alg>
-1. Assert: _root_ is a registry entry record in "link" stage.
+1. Assert: _root_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _deps_ be DependencyGraph(_root_).
 1. For each _dep_ in _deps_, do:
   1. Let _depStageEntry_ be GetCurrentStage(_dep_).
   1. If _depStageEntry_.[[Stage]] is "link" and _dep_.[[Module]] is a Function object, then:
     1. Let _f_ be _dep_.[[Module]].
-    1. Let _m_ be _f_().
-    1. ReturnIfAbrupt(_m_).
+    1. Let _m_ be ? _f_().
     1. Set _dep_.[[Module]] to _m_.
     1. UpgradeToStage(_dep_, "ready").
 1. Assert: the following sequence is guaranteed not to run any user code.
@@ -849,8 +1076,7 @@ The modules spec should only invoke this operation from methods of Source Text M
   1. If _depStageEntry_.[[Stage]] is "link", then:
     1. Let _module_ be _dep_.[[Module]].
     1. Assert: _module_ is a Module Record.
-    1. Let _status_ be the result of calling the ModuleDeclarationInstantiation abstract operation of _module_ with no arguments.
-    1. ReturnIfAbrupt(_status_).
+    1. Let _status_ be ? _module_.ModuleDeclarationInstantiation().
     1. UpgradeToStage(_dep_, "ready").
 1. Return *undefined*.
 </emu-alg>
@@ -858,6 +1084,7 @@ The modules spec should only invoke this operation from methods of Source Text M
 <h4 id="dependency-graph" aoid="DependencyGraph">DependencyGraph(root)</h4>
 
 <emu-alg>
+1. Assert: _root_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _result_ be a new empty List.
 1. Call ComputeDependencyGraph(_root_, _result_).
 1. Return _result_.
@@ -866,11 +1093,13 @@ The modules spec should only invoke this operation from methods of Source Text M
 <h4 id="compute-dependency-graph" aoid="ComputeDependencyGraph">ComputeDependencyGraph(entry, result)</h4>
 
 <emu-alg>
+1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
+1. Assert: _result_ must be a List.
 1. If _entry_ is already in _result_, then return *undefined*.
 1. Append _entry_ to _result_.
 1. For each _pair_ in _entry_.[[Dependencies]], do:
-  1. Assert: _pair_.[[value]] is defined.
-  1. Call ComputeDependencyGraph(_pair_.[[value]], _result_).
+  1. Assert: _pair_.[[ModuleStatus]] is defined.
+  1. Call ComputeDependencyGraph(_pair_.[[ModuleStatus]], _result_).
 1. Return *undefined*.
 </emu-alg>
 
@@ -939,7 +1168,7 @@ The following steps are taken:
 1. For each _name_ in _module_.[[LocalExports]], do:
   1. Append _name_ to _exports_.
 1. For each _pair_ in _module_.[[IndirectExports]], do:
-  1. Append _pair_.[[key]] to _exports_.
+  1. Append _pair_.[[Key]] to _exports_.
 1. Return _exports_.
 </emu-alg>
 
@@ -949,15 +1178,15 @@ The following steps are taken:
 1. Let _module_ be this Reflective Module Record.
 1. If _resolveStack_ contains a record _r_ such that _r_.[[module]] is equal to _module_ and _r_.[[exportName]] is equal to _exportName_, then
   1. Assert: this is a circular import request.
-  1. Throw a SyntaxError exception.
+  1. Throw a *SyntaxError* exception.
 1. Append the record {[[module]]: _module_, [[exportName]]: _exportName_} to _resolveStack_.
 1. Let _exports_ be _module_.[[LocalExports]].
-1. Let _pair_ be the pair in _exports_ such that _pair_.[[key]] is equal to _exportName_.
+1. Let _pair_ be the pair in _exports_ such that _pair_.[[Key]] is equal to _exportName_.
 1. If _pair_ is defined, then:
   1. Return the Record { [[module]]: _module_, [[bindingName]]: _exportName_ }.
 1. Let _exports_ be _module_.[[IndirectExports]].
-1. Let _pair_ be the pair in _exports_ such that _pair_.[[key]] is equal to _exportName_.
-1. If _pair_ is defined, then return _pair_.[[value]].
+1. Let _pair_ be the pair in _exports_ such that _pair_.[[Key]] is equal to _exportName_.
+1. If _pair_ is defined, then return _pair_.[[Value]].
 1. Return *null*.
 </emu-alg>
 
@@ -978,15 +1207,15 @@ Reflective modules are always already instantiated.
 1. Return _evaluate_().
 </emu-alg>
 
-<h3 id="module-constructor">The Reflect.Module Constructor</h3>
+<h3 id="module-constructor">The Module Constructor</h3>
 
-The Module constructor is the initial value of the Module property of the the Reflect object. When called as a constructor it creates and initializes a new Module object. Reflect.Module is not intended to be called as a function and will throw an exception when called in that manner.
+The Module constructor is the initial value of the Module property of the the Reflect object. When called as a constructor it creates and initializes a new Module object. Module is not intended to be called as a function and will throw an exception when called in that manner.
 
-The Reflect.Module constructor is designed to be subclassable. It may be used as the value in an extends clause of a class definition. Subclass constructors that intend to inherit the specified Module behaviour must include a super call to the Reflect.Module constructor to create and initialize the subclass instance with the internal stage necessary to integrated with loaders.
+The Module constructor is designed to be subclassable. It may be used as the value in an extends clause of a class definition. Subclass constructors that intend to inherit the specified Module behaviour must include a super call to the Module constructor to create and initialize the subclass instance with the internal stage necessary to integrated with loaders.
 
-<h4 id="new-reflect-module">Reflect.Module(descriptors[, executor[, evaluate]])</h4>
+<h4 id="new-module">Module(descriptors[, executor[, evaluate]])</h4>
 
-When Reflect.Module is called with arguments <i>descriptors</i>, <i>executor</i>, and <i>evaluate</i>, the following steps are taken:
+When Module is called with arguments <i>descriptors</i>, <i>executor</i>, and <i>evaluate</i>, the following steps are taken:
 
 <emu-alg>
 1. Let _realm_ be the current Realm.
@@ -1001,16 +1230,15 @@ When Reflect.Module is called with arguments <i>descriptors</i>, <i>executor</i>
   1. Append _exportName_ to _exportNames_.
   1. If _desc_ is an Indirect Export Descriptor, then:
     1. Let _otherMod_ be _desc_.[[Module]].
-    1. Let _resolution_ be _otherMod_.ResolveExport(_desc_.[[Import]], « »).
-    1. ReturnIfAbrupt(_resolution_).
-    1. If _resolution_ is *null*, then throw a SyntaxError exception.
-    1. Append the record {[[key]]: _exportName_, [[value]]: _resolution_} to _indirectExports_.
-  1. Else:
+    1. Let _resolution_ be ? _otherMod_.ResolveExport(_desc_.[[Import]], « »).
+    1. If _resolution_ is *null*, then throw a *SyntaxError* exception.
+    1. Append the record {[[Key]]: _exportName_, [[Value]]: _resolution_} to _indirectExports_.
+  1. Else,
     1. Append _exportName_ to _localExports_.
     1. If _desc_ is an Immutable Export Descriptor, then:
       1. Let _status_ be _envRec_.CreateImmutableBinding(_exportName_, *true*).
       1. Assert: _status_ is not an abrupt completion.
-    1. Else:
+    1. Else,
       1. Assert: _desc_ is a Mutable Export Descriptor.
       1. Let _status_ be _envRec_.CreateMutableBinding(_exportName_, *false*).
       1. Assert: _status_ is not an abrupt completion.
@@ -1022,30 +1250,29 @@ When Reflect.Module is called with arguments <i>descriptors</i>, <i>executor</i>
 1. Set _mod_.[[Namespace]] to _ns_.
 1. If _executor_ is not *undefined*, then
   1. Let _mutator_ be CreateModuleMutator(_mod_).
-  1. Let _status_ be _executor_(_mutator_, _ns_).
-  1. ReturnIfAbrupt(_status_).
+  1. Let _status_ be ? _executor_(_mutator_, _ns_).
 1. Return _ns_.
 </emu-alg>
 
-<h3 id="properties-of-the-module-constructor">Properties of the Reflect.Module Constructor</h3>
+<h3 id="properties-of-the-module-constructor">Properties of the Module Constructor</h3>
 
-The value of the \[[Prototype]] internal slot of the Reflect.Module constructor is the intrinsic object %FunctionPrototype%.
+The value of the \[[Prototype]] internal slot of the Module constructor is the intrinsic object %FunctionPrototype%.
 
-Besides the internal slots and the length property (whose value is 0), the Reflect.Loader constructor has the following properties:
+Besides the internal slots and the length property (whose value is 0), the Loader constructor has the following properties:
 
-<h4 id="Reflect.Module.evaluate">Reflect.Module.evaluate(m)</h4>
+<h4 id="Module.evaluate">Module.evaluate(m)</h4>
 
 <b>TODO:</b> way to force evaluation of a module namespace exotic object (<code>Reflect.Module.evaluate(m)</code>? <code>m[Reflect.Module.evaluate]()</code>?)
 
-<h4 id="Reflect.Module.prototype">Reflect.Module.prototype</h4>
+<h4 id="Module.prototype">Module.prototype</h4>
 
-The value of Reflect.Module.prototype is an ordinary object with a null \[[Prototype]].
+The value of Module.prototype is an ordinary object with a null \[[Prototype]].
 
 This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
 
-<h3 id="reflect-module-internal-slots">Properties of Module Instances</h3>
+<h3 id="module-internal-slots">Properties of Module Instances</h3>
 
-Reflect.Module instances are module namespace exotic objects.
+Module instances are module namespace exotic objects.
 
 <h2 id="local">Local Loading</h2>
 
@@ -1072,7 +1299,7 @@ The Default Browser Loader Object is an %BrowserLoader% instance, whose internal
 
 <h3 id="browser-loader-constructor">The BrowserLoader Constructor</h3>
 
-The BrowserLoader constructor is the %BrowserLoader% intrinsic object. When called as a constructor it creates and initializes a new %BrowserLoader% object. %BrowserLoader% is not intended to be called as a function and will throw an exception when called in that manner.
+The BrowserLoader constructor is the %BrowserLoader% intrinsic object. When called as a constructor it creates and initializes a new BrowserLoader object. When <b>BrowserLoader</b> is called as a function rather than as a constructor, it throws an exception.
 
 <h3 id="properties-of-the-browser-loader-constructor">Properties of the BrowserLoader Constructor</h3>
 
@@ -1082,7 +1309,7 @@ Besides the internal slots and the length property (whose value is 0), the Brows
 
 <h4 id="browser-loader-prototype">BrowserLoader.prototype</h4>
 
-The value of BrowserLoader.prototype is %BrowserLoaderPrototype%.
+The initial value of BrowserLoader.prototype is the intrinsic object %BrowserLoaderPrototype%.
 
 This property has the attributes { \[[Writable]]: false, \[[Enumerable]]: false, \[[Configurable]]: false }.
 
@@ -1102,7 +1329,7 @@ When the @@resolve method is called, the following steps are taken:
 
 The value of the name property of this function is "[Reflect.Loader.resolve]".
 
-<h4 id="browser-loader-prototype-@@fetch">BrowserLoader.prototype[ @@fetch ](key)</h4>
+<h4 id="browser-loader-prototype-@@fetch">BrowserLoader.prototype[ @@fetch ](entry, key)</h4>
 
 When the @@fetch method is called, the following steps are taken:
 
@@ -1116,7 +1343,7 @@ When the @@fetch method is called, the following steps are taken:
 
 The value of the name property of this function is "[Reflect.Loader.fetch]".
 
-<h4 id="browser-loader-prototype-@@translate">BrowserLoader.prototype[ @@translate ](key, payload)</h4>
+<h4 id="browser-loader-prototype-@@translate">BrowserLoader.prototype[ @@translate ](entry, payload)</h4>
 
 When the @@translate method is called, the following steps are taken:
 
@@ -1124,7 +1351,7 @@ When the @@translate method is called, the following steps are taken:
 
 The value of the name property of this function is "[Reflect.Loader.translate]".
 
-<h4 id="browser-loader-prototype-@@instantiate">BrowserLoader.prototype[ @@instantiate ](key, source)</h4>
+<h4 id="browser-loader-prototype-@@instantiate">BrowserLoader.prototype[ @@instantiate ](entry, source)</h4>
 
 When the @@instantiate method is called, the following steps are taken:
 
@@ -1150,19 +1377,35 @@ The intrinsics are listed in table below:
     </tr>
   </thead>
   <tr>
+    <td>%Loader%</td>
+    <td>The loader constructor (<a href="#loader-constructor">3.1</a>)</td>
+  </tr>
+  <tr>
+    <td>%LoaderPrototype%</td>
+    <td>The initial value of the *prototype* data property of %Loader% (<a href="#loader-prototype">3.2.1</a>)</td>
+  </tr>
+  <tr>
     <td>%BrowserLoader%</td>
-    <td>The browser loader constructor (<a href="#browser-loader-constructor">10.1</a>)</td>
+    <td>The browser loader constructor (<a href="#browser-loader-constructor">11.1</a>)</td>
   </tr>
   <tr>
     <td>%BrowserLoaderPrototype%</td>
-    <td>The initial value of the *prototype* data property of %BrowserLoader% (<a href="#browser-loader-prototype">10.2.1</a>)</td>
+    <td>The initial value of the *prototype* data property of %BrowserLoader% (<a href="#browser-loader-prototype">11.2.1</a>)</td>
   </tr>
   <tr>
     <td>%Registry%</td>
-    <td>The registry constructor (<a href="#registry-constructor">4.1</a>)</td>
+    <td>The registry constructor (<a href="#registry-constructor">4.2</a>)</td>
   </tr>
   <tr>
     <td>%RegistryPrototype%</td>
     <td>The initial value of the *prototype* data property of %Registry% (<a href="#registry-prototype">4.3.1</a>)</td>
+  </tr>
+  <tr>
+    <td>%ModuleStatus%</td>
+    <td>The module status constructor (<a href="#module-status-constructor">5.2</a>)</td>
+  </tr>
+  <tr>
+    <td>%ModuleStatusPrototype%</td>
+    <td>The initial value of the *prototype* data property of %ModuleStatus% (<a href="#module-status-prototype">5.3.1</a>)</td>
   </tr>
 </table>
