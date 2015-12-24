@@ -135,7 +135,7 @@ Algorithm steps that say
 mean the same thing as:
 
 <emu-alg>
-1. If _x_ is an abrupt completion, then return a promise rejected with _x_.[[Value]].
+1. If _x_ is an abrupt completion, return a promise rejected with _x_.[[Value]].
 1. Else if _x_ is a Completion Record, then let _x_ be _x_.[[Value]].
 </emu-alg>
 
@@ -912,7 +912,7 @@ ModuleStatus instances are initially created with the internal slots described i
 
 <emu-alg>
 1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
-1. If _result_ is *undefined*, then return ParseModule(_source_).
+1. If _result_ is *undefined*, return ParseModule(_source_).
 1. If IsCallable(_result_) is *false* then throw a new *TypeError*.
 1. Set _result_.[[Realm]] to _loader_.[[Realm]].
 1. Return _result_.
@@ -1108,7 +1108,7 @@ The modules spec should only invoke this operation from methods of Source Text M
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Assert: _result_ must be a List.
-1. If _entry_ is already in _result_, then return *undefined*.
+1. If _entry_ is already in _result_, return *undefined*.
 1. Append _entry_ to _result_.
 1. For each _pair_ in _entry_.[[Dependencies]], do:
   1. Assert: _pair_.[[ModuleStatus]] is defined.
