@@ -970,8 +970,7 @@ ModuleStatus instances are initially created with the internal slots described i
   1. Return the result of transforming _hookResult_ with a fulfillment handler that, when called with argument _optionalInstance_, runs the following steps:
     1. Perform ? ExtractDependencies(_entry_, _optionalInstance_, _source_).
     1. Perform UpgradeToStage(_entry_, "satisfy").
-    1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
-    1. Return *undefined*.
+    1. Return _optionalInstance_.
 1. Let _pCatch_ be the result of transforming _p_ with a rejection handler that, when called, runs the following steps:
   1. Set _entry_.[[Error]] to *true*.
 1. Set _instantiateStageEntry_.[[Result]] to _p_.
@@ -1040,7 +1039,7 @@ ModuleStatus instances are initially created with the internal slots described i
 1. Let _p_ be the result of transforming RequestLink(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _module_ be _entry_.[[Module]].
   1. Perform ? _module_.ModuleEvaluation().
-  1. Return ? GetModuleNamespace(_entry_.[[Module]]).
+  1. Return ? GetModuleNamespace(_module_).
 1. Let _pCatch_ be the result of transforming _p_ with a rejection handler that, when called, runs the following steps:
   1. Set _entry_.[[Error]] to *true*.
 1. Set _readyStageEntry_.[[Result]] to _p_.
