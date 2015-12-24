@@ -217,7 +217,7 @@ The following steps are taken:
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
 1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
-1. Return Resolve(_loader_, _name_, _referrer_).
+1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a new pass-through promise.
 </emu-alg>
 
 <h4 id="loader-load">Loader.prototype.load(name[, referrer[, stage]])</h4>
@@ -501,23 +501,19 @@ The abstract operation LoadModule with arguments <i>entry</i> and <i>stage</i> p
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Assert: Type(_stage_) is String.
+1. Assert: _stage_ is a valid stage value.
 1. If _stage_ is "fetch", then:
   1. Return the result of transforming RequestFetch(_entry_) with a new pass-through promise.
 1. If _stage_ is "translate", then:
   1. Return the result of transforming RequestTranslate(_entry_) with a new pass-through promise.
 1. If _stage_ is "instantiate", then:
-  1. Return the result of transforming RequestInstantiate(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
-    1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
-    1. Return *undefined*.
+  1. Return the result of transforming RequestInstantiate(_entry_) with a new pass-through promise.
 1. If _stage_ is "satisfy", then:
-  1. Return the result of transforming RequestSatisfy(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
-    1. If _entry_.[[Module]] is a Function object, return _entry_.[[Module]].
-    1. Return *undefined*.
+  1. Return the result of transforming RequestSatisfy(_entry_) with a new pass-through promise.
 1. If _stage_ is "link", then:
-  1. Return the result of transforming RequestLink(_entry_) with a fulfillment handler that returns *undefined*.
-1. If _stage_ is "ready" or *undefined*, then:
-  1. Return the result of transforming RequestReady(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
-    1. Return GetModuleNamespace(_entry_.[[Module]]).
+  1. Return the result of transforming RequestLink(_entry_) with a new pass-through promise.
+1. If _stage_ is "ready", then:
+  1. Return the result of transforming RequestReady(_entry_) with a new pass-through promise.
 1. Return a promise rejected with a new *RangeError* exception.
 </emu-alg>
 
@@ -634,7 +630,7 @@ When ModuleStatus is called with arguments <i>loader</i>, <i>key</i> and <i>modu
 1. Set _O_’s [[Module]] internal slot to _module_.
 1. Set _O_’s [[Metadata]] internal slot to *undefined*.
 1. Set _O_’s [[Dependencies]] internal slot to *undefined*.
-1. Set _O_’s [[Error]] internal slot to *nothing*.
+1. Set _O_’s [[Error]] internal slot to *false*.
 1. Return _O_.
 </emu-alg>
 
@@ -716,12 +712,12 @@ The initial value of ModuleStatus.prototype.constructor is the intrinsic object 
 1. For each _pair_ in _entry_.[[Dependencies]], do:
   1. Let _O_ be ObjectCreate(%ObjectPrototype%).
   1. Let _requestNameDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[RequestName]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
-  1. Let _requestNameStatus_ be ? DefinePropertyOrThrow(_O_, "requestName", _requestNameDesc_).
+  1. Perform ? DefinePropertyOrThrow(_O_, "requestName", _requestNameDesc_).
   1. Let _keyDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[Key]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
-  1. Let _keyStatus_ be ? DefinePropertyOrThrow(_O_, "key", _keyDesc_).
+  1. Perform ? DefinePropertyOrThrow(_O_, "key", _keyDesc_).
   1. Let _moduleStatusDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[ModuleStatus]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
-  1. Let _moduleStatus_ be ? DefinePropertyOrThrow(_O_, "entry", _moduleStatusDesc_).
-  1. Let _status_ be ? CreateDataProperty(_array_, ? ToString(_n_), _O_).
+  1. Perform ? DefinePropertyOrThrow(_O_, "entry", _moduleStatusDesc_).
+  1. Perform ? CreateDataProperty(_array_, ? ToString(_n_), _O_).
   1. Increment _n_ by 1.
 1. Return _array_.
 </emu-alg>
@@ -782,9 +778,10 @@ The following steps are taken:
     1. Set _stageEntry_.[[Result]] to a promise resolved with _value_.
   1. Else,
     1. Fulfill _stageEntry_.[[Result]] with _value_.
-  1. UpgradeToStage(_entry_, _stageValue_).
-  1. Return _value_.
-1. Return _p0_.
+  1. Perform UpgradeToStage(_entry_, _stageValue_).
+1. Let _pCatch_ be the result of transforming _p1_ with a rejection handler that, when called, runs the following steps:
+  1. Set _entry_.[[Error]] to *true*.
+1. Return _p1_.
 </emu-alg>
 
 <h4 id="module-status-prototype-reject">ModuleStatus.prototype.reject(stage, error)</h4>
@@ -806,9 +803,10 @@ The following steps are taken:
     1. Set _stageEntry_.[[Result]] to a promise rejected with _value_.
   1. Else,
     1. Reject _stageEntry_.[[Result]] with _value_.
-  1. UpgradeToStage(_entry_, _stageValue_).
-  1. Return _value_.
-1. Return _p0_.
+  1. Perform UpgradeToStage(_entry_, _stageValue_).
+1. Let _pCatch_ be the result of transforming _p1_ with a rejection handler that, when called, runs the following steps:
+  1. Set _entry_.[[Error]] to *true*.
+1. Return _p1_.
 </emu-alg>
 
 <h3 id="module-status-internal-slots">Properties of ModuleStatus Instances</h3>
@@ -857,8 +855,8 @@ ModuleStatus instances are initially created with the internal slots described i
   </tr>
   <tr>
     <td>\[[Error]]</td>
-    <td>Any or <b>nothing</b></td>
-    <td>An error that was encountered during one of the phases of the loading pipeline; <b>nothing</b> if no error has been encountered.</td>
+    <td>A Boolean</td>
+    <td>A boolean valued that if <b>true</b> indicates that an error that was encountered during one of the phases of the loading pipeline; <b>false</b> if no error has been encountered.</td>
   </tr>
 </table>
 
@@ -930,12 +928,14 @@ ModuleStatus instances are initially created with the internal slots described i
 1. If _fetchStageEntry_ is *undefined*, return a promise resolved with *undefined*.
 1. If _fetchStageEntry_.[[Result]] is not *undefined*, return _fetchStageEntry_.[[Result]].
 1. Let _hook_ be GetMethod(_entry_.[[Loader]], @@fetch).
-1. Let _p0_ be the result of promise-calling _hook_(_entry_, _entry_.[[Key]]).
-1. Let _p1_ be the result of transforming _p0_ with a new pass-through promise.
-1. Let _p2_ be the result of transforming _p1_ with a fulfillment handler that, when called with argument _payload_, runs the following steps:
-  1. UpgradeToStage(_entry_, "translate").
-1. Set _fetchStageEntry_.[[Result]] to _p1_.
-1. Return _p1_.
+1. Let _hookResult_ be the result of promise-calling _hook_(_entry_, _entry_.[[Key]]).
+1. Let _p_ be the result of transforming _hookResult_ with a fulfillment handler that, when called with argument _payload_, runs the following steps:
+  1. Perform UpgradeToStage(_entry_, "translate").
+  1. Return _payload_.
+1. Let _pCatch_ be the result of transforming _p_ with a rejection handler that, when called, runs the following steps:
+  1. Set _entry_.[[Error]] to *true*.
+1. Set _fetchStageEntry_.[[Result]] to _p_.
+1. Return _p_.
 </emu-alg>
 
 <h4 id="request-translate" aoid="RequestTranslate">RequestTranslate(entry)</h4>
@@ -947,11 +947,12 @@ ModuleStatus instances are initially created with the internal slots described i
 1. If _translateStageEntry_.[[Result]] is not *undefined*, return _translateStageEntry_.[[Result]].
 1. Let _hook_ be GetMethod(_entry_.[[Loader]], @@translate).
 1. Let _p_ be the result of transforming RequestFetch(_entry_) with a fulfillment handler that, when called with argument _payload_, runs the following steps:
-  1. Let _p0_ be the result of promise-calling _hook_(_entry_, _payload_).
-  1. Let _p1_ be the result of transforming _p0_ with a new pass-through promise.
-  1. Let _p2_ be the result of transforming _p1_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
-    1. UpgradeToStage(_entry_, "instantiate").
-  1. Return _p1_.
+  1. Let _hookResult_ be the result of promise-calling _hook_(_entry_, _payload_).
+  1. Return the result of transforming _hookResult_ with a fulfillment handler that, when called with argument _source_, runs the following steps:
+    1. Perform UpgradeToStage(_entry_, "instantiate").
+    1. Return _source_.
+1. Let _pCatch_ be the result of transforming _p_ with a rejection handler that, when called, runs the following steps:
+  1. Set _entry_.[[Error]] to *true*.
 1. Set _translateStageEntry_.[[Result]] to _p_.
 1. Return _p_.
 </emu-alg>
@@ -965,12 +966,13 @@ ModuleStatus instances are initially created with the internal slots described i
 1. If _instantiateStageEntry_.[[Result]] is not *undefined*, return _instantiateStageEntry_.[[Result]].
 1. Let _hook_ be GetMethod(_entry_.[[Loader]], @@instantiate).
 1. Let _p_ be the result of transforming RequestTranslate(_entry_) with a fulfillment handler that, when called with argument _source_, runs the following steps:
-  1. Let _p0_ be the result of promise-calling _hook_(_entry_, _source_).
-  1. Let _p1_ be the result of transforming _p0_ with a new pass-through promise.
-  1. Let _p2_ be the result of transforming _p1_ with a fulfillment handler that, when called with argument _optionalInstance_, runs the following steps:
-    1. Let _status_ be ? ExtractDependencies(_entry_, _optionalInstance_, _source_).
-    1. UpgradeToStage(_entry_, "satisfy").
-  1. Return _p1_.
+  1. Let _hookResult_ be the result of promise-calling _hook_(_entry_, _source_).
+  1. Return the result of transforming _hookResult_ with a fulfillment handler that, when called with argument _optionalInstance_, runs the following steps:
+    1. Perform ? ExtractDependencies(_entry_, _optionalInstance_, _source_).
+    1. Perform UpgradeToStage(_entry_, "satisfy").
+    1. Return _optionalInstance_.
+1. Let _pCatch_ be the result of transforming _p_ with a rejection handler that, when called, runs the following steps:
+  1. Set _entry_.[[Error]] to *true*.
 1. Set _instantiateStageEntry_.[[Result]] to _p_.
 1. Return _p_.
 </emu-alg>
@@ -979,26 +981,27 @@ ModuleStatus instances are initially created with the internal slots described i
 
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
-1. Let _satisfyStageEntry_ be GetStage(_entry_.[[Loader]], "satisfy").
+1. Let _satisfyStageEntry_ be GetStage(_entry_, "satisfy").
 1. If _satisfyStageEntry_ is *undefined*, return a promise resolved with *undefined*.
 1. If _satisfyStageEntry_.[[Result]] is not *undefined*, return _satisfyStageEntry_.[[Result]].
-1. Let _p_ be the result of transforming RequestInstantiate(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+1. Let _p_ be the result of transforming RequestInstantiate(_entry_) with a fulfillment handler that, when called, runs the following steps:
   1. Let _depLoads_ be a new empty List.
   1. For each _pair_ in _entry_.[[Dependencies]], do:
-    1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[Key]], _key_) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
+    1. Let _pp_ be the result of transforming Resolve(_loader_, _pair_.[[Key]], _key_) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
       1. Let _depEntry_ be EnsureRegistered(_entry_.[[Loader]], _depKey_).
-      1. Let _pair_.[[Key]] to _depKey_.
-      1. Let _pair_.[[ModuleStatus]] to _depEntry_.
+      1. Set _pair_.[[Key]] to _depKey_.
+      1. Set _pair_.[[ModuleStatus]] to _depEntry_.
       1. Let _currentStageEntry_ be GetCurrentStage(_entry_).
       1. If _currentStageEntry_.[[Stage]] is "ready", then:
         1. Return _depEntry_.[[Module]].
       1. Return the result of transforming RequestSatisfy(_depEntry_) with a fulfillment handler that, when called with value _depEntry_, runs the following steps:
         1. Return _depEntry_.[[Module]].
-    1. Append _p_ to _depLoads_.
-  1. Let _p_ be the result of waiting for all _depLoads_.
-  1. Return the result of transforming _p_ with a fulfillment handler that, when called, runs the following steps:
-    1. UpgradeToStage(_entry_, "link").
-    1. Return _entry_.
+    1. Append _pp_ to _depLoads_.
+  1. Return the result of waiting for all _depLoads_ with a fulfillment handler that, when called, runs the following steps:
+    1. Perform UpgradeToStage(_entry_, "link").
+    1. Return *undefined*.
+1. Let _pCatch_ be the result of transforming _p_ with a rejection handler that, when called, runs the following steps:
+  1. Set _entry_.[[Error]] to *true*.
 1. Set _satisfyStageEntry_.[[Result]] to _p_.
 1. Return _p_.
 </emu-alg>
@@ -1014,23 +1017,33 @@ ModuleStatus instances are initially created with the internal slots described i
 1. Let _linkStageEntry_ be GetStage(_entry_, "link").
 1. If _linkStageEntry_ is *undefined*, return a promise resolved with *undefined*.
 1. If _linkStageEntry_.[[Result]] is not *undefined*, return _linkStageEntry_.[[Result]].
-1. Return the result of transforming RequestSatisfy(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+1. Let _p_ be the result of transforming RequestSatisfy(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Assert: _entry_'s whole dependency graph is in "link" or "ready" stage.
-  1. Let _status_ be ? Link(_entry_).
+  1. Perform ? Link(_entry_).
   1. Assert: _entry_'s whole dependency graph is in "ready" stage.
-  1. Return _entry_.
+  1. Perform UpgradeToStage(_entry_, "ready").
+  1. Return *undefined*.
+1. Let _pCatch_ be the result of transforming _p_ with a rejection handler that, when called, runs the following steps:
+  1. Set _entry_.[[Error]] to *true*.
+1. Set _linkStageEntry_.[[Result]] to _p_.
+1. Return _p_.
 </emu-alg>
 
 <h4 id="request-ready" aoid="RequestReady">RequestReady(entry)</h4>
 
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
-1. Let _currentStageEntry_ be GetCurrentStage(_entry_).
-1. If _currentStageEntry_.[[Stage]] is equal "ready", return _currentStageEntry_.[[Result]].
-1. Return the result of transforming RequestLink(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
+1. Let _readyStageEntry_ be GetStage(_entry_, "ready").
+1. Assert: _readyStageEntry_ is not *undefined*.
+1. If _readyStageEntry_.[[Result]] is not *undefined*, return _readyStageEntry_.[[Result]].
+1. Let _p_ be the result of transforming RequestLink(_entry_) with a fulfillment handler that, when called with argument _entry_, runs the following steps:
   1. Let _module_ be _entry_.[[Module]].
-  1. Let _status_ be ? _module_.ModuleEvaluation().
-  1. Return _module_.
+  1. Perform ? _module_.ModuleEvaluation().
+  1. Return ? GetModuleNamespace(_module_).
+1. Let _pCatch_ be the result of transforming _p_ with a rejection handler that, when called, runs the following steps:
+  1. Set _entry_.[[Error]] to *true*.
+1. Set _readyStageEntry_.[[Result]] to _p_.
+1. Return _p_.
 </emu-alg>
 
 
@@ -1069,15 +1082,15 @@ The modules spec should only invoke this operation from methods of Source Text M
     1. Let _f_ be _dep_.[[Module]].
     1. Let _m_ be ? _f_().
     1. Set _dep_.[[Module]] to _m_.
-    1. UpgradeToStage(_dep_, "ready").
+    1. Perform UpgradeToStage(_dep_, "ready").
 1. Assert: the following sequence is guaranteed not to run any user code.
 1. For each _dep_ in _deps_, do:
   1. Let _depStageEntry_ be GetCurrentStage(_dep_).
   1. If _depStageEntry_.[[Stage]] is "link", then:
     1. Let _module_ be _dep_.[[Module]].
     1. Assert: _module_ is a Module Record.
-    1. Let _status_ be ? _module_.ModuleDeclarationInstantiation().
-    1. UpgradeToStage(_dep_, "ready").
+    1. Perform ? _module_.ModuleDeclarationInstantiation().
+    1. Perform UpgradeToStage(_dep_, "ready").
 1. Return *undefined*.
 </emu-alg>
 
@@ -1180,13 +1193,13 @@ The following steps are taken:
   1. Assert: this is a circular import request.
   1. Throw a *SyntaxError* exception.
 1. Append the record {[[module]]: _module_, [[exportName]]: _exportName_} to _resolveStack_.
-1. Let _exports_ be _module_.[[LocalExports]].
-1. Let _pair_ be the pair in _exports_ such that _pair_.[[Key]] is equal to _exportName_.
+1. Let _localExports_ be _module_.[[LocalExports]].
+1. Let _pair_ be the pair in _localExports_ such that _pair_.[[Key]] is equal to _exportName_.
 1. If _pair_ is defined, then:
   1. Return the Record { [[module]]: _module_, [[bindingName]]: _exportName_ }.
-1. Let _exports_ be _module_.[[IndirectExports]].
-1. Let _pair_ be the pair in _exports_ such that _pair_.[[Key]] is equal to _exportName_.
-1. If _pair_ is defined, then return _pair_.[[Value]].
+1. Let _indirectExports_ be _module_.[[IndirectExports]].
+1. Let _pair_ be the pair in _indirectExports_ such that _pair_.[[Key]] is equal to _exportName_.
+1. If _pair_ is defined, return _pair_.[[Value]].
 1. Return *null*.
 </emu-alg>
 
@@ -1250,7 +1263,7 @@ When Module is called with arguments <i>descriptors</i>, <i>executor</i>, and <i
 1. Set _mod_.[[Namespace]] to _ns_.
 1. If _executor_ is not *undefined*, then
   1. Let _mutator_ be CreateModuleMutator(_mod_).
-  1. Let _status_ be ? _executor_(_mutator_, _ns_).
+  1. Perform ? _executor_(_mutator_, _ns_).
 1. Return _ns_.
 </emu-alg>
 
