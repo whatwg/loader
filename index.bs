@@ -684,7 +684,9 @@ The initial value of ModuleStatus.prototype.constructor is the intrinsic object 
 1. Let _entry_ be *this* value.
 1. If Type(_entry_) is not Object, throw a *TypeError* exception.
 1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), throw a *TypeError* exception.
-1. Return _entry_.[[Module]].
+1. Let _module_ be _entry_.[[Module]].
+1. If _module_ is a Module Record, return GetModuleNamespace(_module_).
+1. Return *undefined*.
 </emu-alg>
 
 <h4 id="module-status-error">get ModuleStatus.prototype.error</h4>
@@ -1151,25 +1153,72 @@ A <dfn>reflective module record</dfn> is a kind of module record. It extends
 
 <h4 id="parse-exports-descriptors" aoid="ParseExportsDescriptors">ParseExportsDescriptors(obj)</h4>
 
-<b>TODO:</b> parse as in <a href="https://gist.github.com/dherman/fbf3077a2781df74b6d8">these examples</a>
-<ul>
-  <li>uninitialized, mutable: <code>{ }</code>
-  <li>uninitialized, immutable: <code>{ const: true }</code>
-  <li>initialized, mutable: <code>{ value: 42 }</code>
-  <li>initialized, immutable: <code>{ value: 42, const: true }</code>
-  <li>re-export (immutable): <code>{ module: m, import: "foo" }</code>
-</ul>
+When ParseExportsDescriptors is called with argument <i>obj</i>, the following steps are taken:
 
 <emu-alg>
-1. // TODO: spec me
+1. If Type(_obj_) is not Object, throw a *TypeError* exception.
+1. Let _props_ be ? ToObject(Obj).
+1. Let _keys_ be ? _props_.[[OwnPropertyKeys]]().
+1. Let _descriptors_ be an empty List.
+1. Repeat for each element _nextKey_ of _keys_ in List order,
+  1. Let _propDesc_ be ? props.[[GetOwnProperty]](_nextKey_).
+  1. If _propDesc_ is not *undefined* and _propDesc_.[[Enumerable]] is *true*, then
+    1. Let _descObj_ be ? Get(_props_, _nextKey_).
+    1. Let _hasModule_ be ? HasProperty(_descObj_, "module").
+    1. If _hasModule_ is *true*, then
+      1. Let _ns_ be ? Get(_descObj_, "module").
+      1. If _ns_ is not a module namespace exotic object, throw a *TypeError* exception.
+      1. Let _import_ be ToString(? Get(_descObj_, "import")).
+      1. Let _desc_ be a new Indirect Export Descriptor Record {[[Name]]: _nextKey_, [[Module]]: _ns_.[[Module]], [[Import]]: _import_}.
+    1. Else,
+      1. Let _hasValue_ be ? HasProperty(_descObj_, "value").
+      1. If _hasValue_ is *true*, let _value_ be ? Get(_descObj_, "value").
+      1. Let _hasConst_ be ? HasProperty(_descObj_, "const").
+      1. If _hasConst_ is *true*, let _isConst_ be ToBoolean(? Get(_descObj_, "const")).
+      1. If _isConst_ is *true*, then
+        1. If _hasValue_ is *true*, then
+          1. Let _desc_ be a new Immutable Export Descriptor Record {[[Name]]: _nextKey_, [[Value]]: _value_, [[Initialized]]: *true*}.
+        1. Else,
+          1. Let _desc_ be a new Immutable Export Descriptor Record {[[Name]]: _nextKey_, [[Value]]: *undefined*, [[Initialized]]: *false*}.
+      1. Else,
+        1. If _hasValue_ is *true*, then
+          1. Let _desc_ be a new Mutable Export Descriptor Record {[[Name]]: _nextKey_, [[Value]]: _value_, [[Initialized]]: *true*}.
+        1. Else,
+          1. Let _desc_ be a new Mutable Export Descriptor Record {[[Name]]: _nextKey_, [[Value]]: *undefined*, [[Initialized]]: *false*}.
+    1. Append _desc_ to the end of _descriptors_.
+1. Return _descriptors_.
 </emu-alg>
+
+<emu-note>
+  Parse as in <a href="https://gist.github.com/dherman/fbf3077a2781df74b6d8">these examples</a>
+  <ul>
+    <li>uninitialized, mutable: <code>{ }</code>
+    <li>uninitialized, immutable: <code>{ const: true }</code>
+    <li>initialized, mutable: <code>{ value: 42 }</code>
+    <li>initialized, immutable: <code>{ value: 42, const: true }</code>
+    <li>re-export (immutable): <code>{ module: m, import: "foo" }</code>
+  </ul>
+</emu-note>
 
 <h4 id="create-module-mutator" aoid="CreateModuleMutator">CreateModuleMutator(module)</h4>
 
 <emu-alg>
-1. // TODO: spec me
+1. Assert: Assert: _module_ is a Reflective Module Records.
+1. Let _mutator_ be ObjectCreate(%ObjectPrototype%).
+1. Let _env_ be _module_.[[Environment]].
+1. Let _envRec_ be env’s environment record.
+1. For each _name_ in module.[[IndirectExports]], do:
+  1. Let _g_ be MakeArgGetter(_name_, _envRec_).
+  1. Let _indirectExportDesc_ be the PropertyDescriptor{[[Get]]: _g_, [[Set]]: %ThrowTypeError%, [[Enumerable]]: true, [[Configurable]]: false}.
+  1. Perform ? DefinePropertyOrThrow(_mutator_, _name_, _indirectExportDesc_).
+1. For each _name_ in module.[[LocalExports]], do:
+  1. Assert: _mutator_ does not already have a binding for _name_.
+  1. Let _g_ be MakeArgGetter(_name_, _envRec_).
+  1. Let _p_ be MakeArgSetter(_name_, _envRec_).
+  1. Let _localExportDesc_ be the PropertyDescriptor{[[Get]]: _g_, [[Set]]: _p_, [[Enumerable]]: true, [[Configurable]]: false}.
+  1. Perform ? DefinePropertyOrThrow(_mutator_, _name_, _localExportDesc_).
+1. Return _mutator_.
 </emu-alg>
-
 
 <h4 id="get-export-names" aoid="GetExportNames">GetExportNames(exportStarStack)</h4>
 
@@ -1249,12 +1298,10 @@ When Module is called with arguments <i>descriptors</i>, <i>executor</i>, and <i
   1. Else,
     1. Append _exportName_ to _localExports_.
     1. If _desc_ is an Immutable Export Descriptor, then:
-      1. Let _status_ be _envRec_.CreateImmutableBinding(_exportName_, *true*).
-      1. Assert: _status_ is not an abrupt completion.
+      1. Perform ? _envRec_.CreateImmutableBinding(_exportName_, *true*).
     1. Else,
       1. Assert: _desc_ is a Mutable Export Descriptor.
-      1. Let _status_ be _envRec_.CreateMutableBinding(_exportName_, *false*).
-      1. Assert: _status_ is not an abrupt completion.
+      1. Perform ? _envRec_.CreateMutableBinding(_exportName_, *false*).
     1. If _desc_.[[Initialized]] is *true*, then:
       1. Call _envRec_.InitializeBinding(_exportName_, _desc_.[[Value]]).
 1. If _evaluate_ is *undefined*, then let _evaluated_ be *true*. Otherwise let _evaluated_ be *false*.
