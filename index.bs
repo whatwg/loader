@@ -1145,6 +1145,11 @@ A <dfn>reflective module record</dfn> is a kind of module record. It extends
     <td>The set of re-exported bindings. This ensures that ResolveExport can fully resolve re-exports.</td>
   </tr>
   <tr>
+    <td>\[[RequestedModules]]</td>
+    <td>A List of Module Records.</td>
+    <td>The set of module records requested by re-exported bindings. This ensures that ModuleEvaluation can evaluate each requested module.</td>
+  </tr>
+  <tr>
     <td>\[[Evaluate]]</td>
     <td>A function object or <code>undefined</code></td>
     <td>A thunk to call when the the module is evaluated, or <code>undefined</code> if the module is already evaluated.</td>
@@ -1270,13 +1275,12 @@ Reflective modules are always already instantiated.
 1. Let _func_ be _module_.[[Evaluate]].
 1. Set _module_.[[Evaluated]] to *true*.
 1. Set _module_.[[Evaluate]] to *undefined*.
-1. Assert: _func_ is callable.
-1. For each _dep_ in entry.[[Dependencies]], do:
-  1. Let _depEntry_ be _dep_.[[ModuleStatus]].
-  1. Let _requiredModule_ be _depEntry_.[[Module]].
-  1. Perform ? requiredModule.ModuleEvaluation().
-1. Let _argList_ be a new empty List.
-1. Perform ? Call(func, *undefined*, argList).
+1. For each _requiredModule_ in _module_.[[RequestedModules]], do:
+  1. Assert: _requiredModule_ is a Module Record.
+  1. Perform ? _requiredModule_.ModuleEvaluation().
+1. If IsCallable(_func_) is *true*, then:
+  1. Let _argList_ be a new empty List.
+  1. Perform ? Call(func, *undefined*, argList).
 1. Return *undefined*.
 </emu-alg>
 
@@ -1298,12 +1302,15 @@ When Module is called with arguments <i>descriptors</i>, <i>executor</i>, and <i
 1. Let _localExports_ be a new empty List.
 1. Let _indirectExports_ be a new empty List.
 1. Let _exportNames_ be a new empty List.
+1. Let _requestedModules_ be new empty List.
 1. Let _envRec_ be _env_'s environment record.
 1. For each _desc_ in _exportDescriptors_, do:
   1. Let _exportName_ be _desc_.[[Name]].
   1. Append _exportName_ to _exportNames_.
   1. If _desc_ is an Indirect Export Descriptor, then:
     1. Let _otherMod_ be _desc_.[[Module]].
+    1. If _requestedModules_ does not contain the value of _otherMod_, then:
+      1. Append _otherMod_ to _requestedModules_.
     1. Let _resolution_ be ? _otherMod_.ResolveExport(_desc_.[[Import]], « »).
     1. If _resolution_ is *null*, then throw a *SyntaxError* exception.
     1. Append the record {[[Key]]: _exportName_, [[Value]]: _resolution_} to _indirectExports_.
@@ -1318,10 +1325,7 @@ When Module is called with arguments <i>descriptors</i>, <i>executor</i>, and <i
       1. Call _envRec_.InitializeBinding(_exportName_, _desc_.[[Value]]).
 1. If _evaluate_ is not *undefined*, then
   1. If IsCallable(_evaluate_) is *false*, throw a new *TypeError* exception.
-  1. Let _evaluated_ be *false*.
-1. Else,
-  1. Let _evaluated_ be *true*.
-1. Let _mod_ be a new Reflective Module Record {[[Realm]]: _realm_, [[Environment]]: _env_, [[Namespace]]: *undefined*, [[Evaluated]]: _evaluated_, [[LocalExports]]: _localExports_, [[IndirectExports]]: _indirectExports_, [[Evaluate]]: _evaluate_}.
+1. Let _mod_ be a new Reflective Module Record {[[Realm]]: _realm_, [[Environment]]: _env_, [[Namespace]]: *undefined*, [[LocalExports]]: _localExports_, [[IndirectExports]]: _indirectExports_, [[RequestedModules]]: _requestedModules_, [[Evaluated]]: *false*, [[Evaluate]]: _evaluate_}.
 1. Let _ns_ be ModuleNamespaceCreate(_mod_, _realm_, _exportNames_).
 1. Set _mod_.[[Namespace]] to _ns_.
 1. If _executor_ is not *undefined*, then
