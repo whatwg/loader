@@ -670,9 +670,9 @@ The initial value of ModuleStatus.prototype.constructor is the intrinsic object 
 1. Return _stageEntry_.[[Stage]].
 </emu-alg>
 
-<h4 id="module-status-module">get ModuleStatus.prototype.key</h4>
+<h4 id="module-status-module">get ModuleStatus.prototype.originalKey</h4>
 
-<code>ModuleStatus.prototype.key</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
+<code>ModuleStatus.prototype.originalKey</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
 
 <emu-alg>
 1. Let _entry_ be *this* value.
@@ -720,8 +720,6 @@ The initial value of ModuleStatus.prototype.constructor is the intrinsic object 
   1. Let _O_ be ObjectCreate(%ObjectPrototype%).
   1. Let _requestNameDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[RequestName]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
   1. Perform ? DefinePropertyOrThrow(_O_, "requestName", _requestNameDesc_).
-  1. Let _keyDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[Key]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
-  1. Perform ? DefinePropertyOrThrow(_O_, "key", _keyDesc_).
   1. Let _moduleStatusDesc_ be the PropertyDescriptor{[[Value]]: _pair_.[[ModuleStatus]], [[Writable]]: *false*, [[Enumerable]]: *true*, [[Configurable]]: *false*}.
   1. Perform ? DefinePropertyOrThrow(_O_, "entry", _moduleStatusDesc_).
   1. Perform ? CreateDataProperty(_array_, ? ToString(_n_), _O_).
@@ -850,7 +848,7 @@ ModuleStatus instances are initially created with the internal slots described i
   </tr>
   <tr>
     <td>\[[Dependencies]]</td>
-    <td>List of Records of the form {\[[RequestName]]: String, \[[Key]]: String, \[[ModuleStatus]]: Module Status} .</td>
+    <td>List of Records of the form {\[[RequestName]]: String, \[[ModuleStatus]]: Module Status} .</td>
     <td>Table mapping unresolved names to their resolved key and module status entries.</td>
   </tr>
   <tr>
@@ -903,7 +901,7 @@ ModuleStatus instances are initially created with the internal slots described i
   1. Assert: _instance_ is a Source Text Module Record.
   1. Set _instance_.[[ModuleStatus]] to _entry_.
   1. For each _dep_ in _instance_.[[RequestedModules]], do:
-    1. Append the record { [[RequestName]]: _dep_, [[Key]]: *undefined*, [[ModuleStatus]]: *undefined* } to _deps_.
+    1. Append the record { [[RequestName]]: _dep_, [[ModuleStatus]]: *undefined* } to _deps_.
 1. Set _entry_.[[Dependencies]] to _deps_.
 1. Set _entry_.[[Module]] to _instance_.
 </emu-alg>
@@ -992,9 +990,8 @@ ModuleStatus instances are initially created with the internal slots described i
 1. Let _p_ be the result of transforming RequestInstantiate(_entry_) with a fulfillment handler that, when called, runs the following steps:
   1. Let _depLoads_ be a new empty List.
   1. For each _pair_ in _entry_.[[Dependencies]], do:
-    1. Let _pp_ be the result of transforming Resolve(_loader_, _pair_.[[Key]], _key_) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
+    1. Let _pp_ be the result of transforming Resolve(_loader_, _pair_.[[RequestName]], _entry_.[[Key]]) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
       1. Let _depEntry_ be EnsureRegistered(_entry_.[[Loader]], _depKey_).
-      1. Set _pair_.[[Key]] to _depKey_.
       1. Set _pair_.[[ModuleStatus]] to _depEntry_.
       1. Let _currentStageEntry_ be GetCurrentStage(_entry_).
       1. If _currentStageEntry_.[[Stage]] is "ready", return *undefined*.
