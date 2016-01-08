@@ -206,8 +206,8 @@ The following steps are taken:
 1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
 1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
   1. Let _entry_ be EnsureRegistered(_loader_, _key_).
-  1. Return the result of transforming LoadModule(_entry_, _stageValue_) with a fulfillment handler that, when called, runs the following steps:
-    1. Return the result of transforming EnsureEvaluated(_entry_) with a new pass-through promise.
+  1. Return the result of transforming LoadModule(_entry_, "instantiate") with a fulfillment handler that, when called, runs the following steps:
+    1. Return EnsureEvaluated(_entry_).
 </emu-alg>
 
 <h4 id="loader-load-resolve">Loader.prototype.resolve(name[, referrer])</h4>
@@ -977,11 +977,10 @@ ModuleStatus instances are initially created with the internal slots described i
 1. Let _list_ be a new empty List.
 1. Let _loader_ be _entry_.[[Loader]].
 1. For each _pair_ in _entry_.[[Dependencies]], do:
-  1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[Key]], _entry_.[[Key]]) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
+  1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[RequestName]], _entry_.[[Key]]) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
     1. Let _depEntry_ be EnsureRegistered(_loader_, _depKey_).
     1. If _depEntry_ is already in _buckle_, return *undefined*.
     1. Append _depEntry_ to _buckle_.
-    1. Set _pair_.[[Key]] to _depKey_.
     1. Set _pair_.[[ModuleStatus]] to _depEntry_.
     1. Return RequestInstantiate(_depEntry_, _buckle_).
   1. Append _p_ to _list_.
@@ -1295,13 +1294,13 @@ Besides the internal slots and the length property (whose value is 0), the Loade
 
 <h4 id="Module.evaluate">Module.evaluate(ns)</h4>
 
-<b>TODO:</b> way to force evaluation of a module namespace exotic object (<code>Reflect.Module.evaluate(m)</code>? <code>m[Reflect.Module.evaluate]()</code>?)
-
 <emu-alg>
 1. If _ns_ is not a module namespace exotic object, throw a *TypeError* exception.
 1. Let _module_ be _ns_.[[Module]].
 1. Let _entry_ be _module_.[[Entry]].
-1. Return EnsureEvaluated(_entry_).
+1. Let _status_ be EnsureEvaluated(_entry_).
+1. RejectIfAbrupt(_status_);
+1. Return a promise resolved with *true*.
 </emu-alg>
 
 <h4 id="Module.prototype">Module.prototype</h4>
