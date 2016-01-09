@@ -1,6 +1,6 @@
 # Loader
 
-This repository provides the [JavaScript Loader Standard](http://whatwg.github.io/loader). This consolidates work on the ECMAScript module loading semantics with the integration points of Web browsers, as well as Node.js.
+This repository provides the [JavaScript Loader Standard](http://whatwg.github.io/loader). Section 15.2 of the [ES2015 specification](http://www.ecma-international.org/ecma-262/6.0/) describes the syntax for the new `import` and `export` declarations, but does not specify how modules are to be loaded. This repository consolidates work on the ECMAScript module loading semantics with the integration points of Web browsers, as well as Node.js.
 
 The main spec is available at http://whatwg.github.io/loader, generated from the `index.bs` file.
 
@@ -40,9 +40,9 @@ to start a watcher on `index.bs` that will update `index.html` as you edit.
 
 ### Implementation status
 
-Please, reference to the [roadmap](https://github.com/whatwg/loader/blob/master/roadmap.md) for more details about the implementation of this spec.
+This spec will be implemented in several stages/milestones. See the [roadmap](https://github.com/whatwg/loader/blob/master/roadmap.md) for more details.
 
-Current status (Milestone 0):
+As the various milestones of the roadmap are completed, browsers will be able to implement them. See the following trackers for the current status of the main browsers:
 
  * IE/Edge: [Under Consideration](https://status.modern.ie/moduleses6?term=modules)
  * Firefox: [In progress](https://bugzilla.mozilla.org/show_bug.cgi?id=568953)
