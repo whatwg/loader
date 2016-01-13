@@ -991,7 +991,6 @@ ModuleStatus instances are initially created with the internal slots described i
   1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[RequestName]], _entry_.[[Key]]) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
     1. Let _depEntry_ be EnsureRegistered(_loader_, _depKey_).
     1. If _depEntry_ is already in _buckle_, return *undefined*.
-    1. Append _depEntry_ to _buckle_.
     1. Set _pair_.[[ModuleStatus]] to _depEntry_.
     1. Return RequestInstantiate(_depEntry_, _buckle_).
   1. Append _p_ to _list_.
