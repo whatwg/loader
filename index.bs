@@ -584,9 +584,9 @@ The ModuleStatus constructor is the %ModuleStatus% intrinsic object and the init
 
 The <b>ModuleStatus</b> constructor is designed to be subclassable. It may be used as the value of an <b>extends</b> clause of a class definition. Subclass constructors that intend to inherit the specified <b>ModuleStatus</b> behaviour must include a <b>super</b> call to the <b>ModuleStatus</b> constructor to create and initialize the subclass instance with the corresponding internal slots.
 
-<h4 id="new-module-status" aoid="ModuleStatus">ModuleStatus(loader, key)</h4>
+<h4 id="new-module-status" aoid="ModuleStatus">ModuleStatus(loader, key, ns)</h4>
 
-When ModuleStatus is called with arguments <i>loader</i> and <i>key</i>, the following steps are taken:
+When ModuleStatus is called with arguments <i>loader</i>, <i>key</i> and <i>ns</i>, the following steps are taken:
 
 <emu-alg>
 1. If NewTarget is *undefined*, then throw a *TypeError* exception.
@@ -595,15 +595,26 @@ When ModuleStatus is called with arguments <i>loader</i> and <i>key</i>, the fol
 1. Let _keyString_ be ? ToString(_key_).
 1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, "%ModuleStatusPrototype%", «[[Loader]], [[Pipeline]], [[Key]], [[Module]], [[Metadata]], [[Dependencies]], [[Error]]» ).
 1. Let _pipeline_ be a new List.
-1. Add new stage entry record { [[Stage]]: "fetch", [[Result]]: *undefined* } as a new element of the list _pipeline_.
-1. Add new stage entry record { [[Stage]]: "translate", [[Result]]: *undefined* } as a new element of the list _pipeline_.
-1. Add new stage entry record { [[Stage]]: "instantiate", [[Result]]: *undefined* } as a new element of the list _pipeline_.
+1. If _ns_ is *undefined*, then:
+  1. Let _module_ be *undefined*.
+  1. Let _deps_ be *undefined*.
+  1. Add new stage entry record { [[Stage]]: "fetch", [[Result]]: *undefined* } as a new element of the list _pipeline_.
+  1. Add new stage entry record { [[Stage]]: "translate", [[Result]]: *undefined* } as a new element of the list _pipeline_.
+  1. Add new stage entry record { [[Stage]]: "instantiate", [[Result]]: *undefined* } as a new element of the list _pipeline_.
+1. Else,
+  1. If _ns_ is not a module namespace exotic object, throw a *TypeError* exception.
+  1. Let _module_ be _ns_.[[Module]].
+  1. Let _deps_ be a new empty List.
+  1. Assert: _module_ is a Module Record.
+  1. Assert: All [[RequestedModule]] of _module_ are safistied.
+  1. Let _result_ be a promise resolved with _ns_.
+  1. Add new stage entry record { [[Stage]]: "instantiate", [[Result]]: _result_ } as a new element of the list _pipeline_.
 1. Set _O_’s [[Loader]] internal slot to _loader_.
 1. Set _O_’s [[Pipeline]] internal slot to _pipeline_.
 1. Set _O_’s [[Key]] internal slot to _keyString_.
-1. Set _O_’s [[Module]] internal slot to *undefined*.
+1. Set _O_’s [[Module]] internal slot to _module_.
 1. Set _O_’s [[Metadata]] internal slot to *undefined*.
-1. Set _O_’s [[Dependencies]] internal slot to *undefined*.
+1. Set _O_’s [[Dependencies]] internal slot to _deps_.
 1. Set _O_’s [[Error]] internal slot to *false*.
 1. Return _O_.
 </emu-alg>
@@ -613,7 +624,7 @@ When ModuleStatus is called with arguments <i>loader</i> and <i>key</i>, the fol
 </emu-note>
 
 <emu-note>
-  The optional second argument module allows to create a module status in a way that synchronously circumvents the asynchronous loading process.
+  The optional third argument ns allows to create a module status in a way that synchronously circumvents the asynchronous loading process.
 </emu-note>
 
 <emu-note>
@@ -759,8 +770,8 @@ The following steps are taken:
 1. Let _p0_ be the result of transforming _result_ with a new pass-through promise.
 1. Let _p1_ be the result of transforming _p0_ with a fulfillment handler that, when called with argument _value_, runs the following steps:
   1. If _stageValue_ is "instantiate", then:
-    1. Perform ? ExtractDependencies(_entry_, _value_, *undefined*).
-    1. Return the result of transforming RequestSatisfy(_entry_, *undefined*) with a fulfillment handler that, when called, runs the following steps:
+    1. Return the result of transforming SatisfyInstance(_entry_, _value_, *undefined*, *undefined*) with a fulfillment handler that, when called with value _instance_, runs the following steps:
+      1. Set _entry_.[[Module]] to _instance_.
       1. Let _stageEntry_ be GetStage(_entry_, _stageValue_).
       1. Assert: _stageEntry_ is not *undefined*.
       1. Fulfill _stageEntry_.[[Result]] with _value_.
@@ -841,7 +852,7 @@ ModuleStatus instances are initially created with the internal slots described i
   <tr>
     <td>\[[Module]]</td>
     <td>Module Record or Function object or <code>undefined</code></td>
-    <td>The Module Record if the entry is instantiated, or a thunk if the entry is delayed; otherwise <code>undefined</code>.</td>
+    <td>The Module Record or a thunk after the module has been satisfied; otherwise <code>undefined</code>.</td>
   </tr>
   <tr>
     <td>\[[Error]]</td>
@@ -878,19 +889,17 @@ ModuleStatus instances are initially created with the internal slots described i
 1. Return the result of promise-calling _hook_(_name_, _referrer_).
 </emu-alg>
 
-<h4 id="extract-dependencies" aoid="ExtractDependencies">ExtractDependencies(entry, optionalInstance, source)</h4>
+<h4 id="extract-dependencies" aoid="ExtractDependencies">ExtractDependencies(entry, instance)</h4>
 
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
-1. Let _instance_ be ? Instantiation(_entry_.[[Loader]], _optionalInstance_, _source_).
 1. Let _deps_ be a new empty List.
 1. If _instance_ is a Module Record, then:
-  1. Assert: _instance_ is a Source Text Module Record.
   1. Set _instance_.[[ModuleStatus]] to _entry_.
-  1. For each _dep_ in _instance_.[[RequestedModules]], do:
-    1. Append the record { [[RequestName]]: _dep_, [[ModuleStatus]]: *undefined* } to _deps_.
+  1. If _instance_ is a Source Text Module Record, then:
+    1. For each _dep_ in _instance_.[[RequestedModules]], do:
+      1. Append the record { [[RequestName]]: _dep_, [[ModuleStatus]]: *undefined* } to _deps_.
 1. Set _entry_.[[Dependencies]] to _deps_.
-1. Set _entry_.[[Module]] to _instance_.
 </emu-alg>
 
 <emu-note>
@@ -898,14 +907,14 @@ ModuleStatus instances are initially created with the internal slots described i
 </emu-note>
 
 
-<h4 id="instantiation" aoid="Instantiation">Instantiation(loader, result, source)</h4>
+<h4 id="instantiation" aoid="Instantiation">Instantiation(optionalInstance, source)</h4>
 
 <emu-alg>
-1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
-1. If _result_ is *undefined*, return ParseModule(_source_).
-1. If IsCallable(_result_) is *false* then throw a new *TypeError*.
-1. Set _result_.[[Realm]] to _loader_.[[Realm]].
-1. Return _result_.
+1. If _optionalInstance_ is *undefined*, then:
+  1. If _source_ is a ECMAScript source text, return ? ParseModule(_source_); otherwise throw new *TypeError*.
+1. If _optionalInstance_ is a namespace exotic object, return _optionalInstance_.[[Module]].
+1. If IsCallable(_optionalInstance_) is *false* then throw a new *TypeError*.
+1. Return _optionalInstance_.
 </emu-alg>
 
 <h3 id="loading-operations">Loading Operations</h3>
@@ -958,8 +967,8 @@ ModuleStatus instances are initially created with the internal slots described i
   1. Let _hook_ be GetMethod(_entry_.[[Loader]], @@instantiate).
   1. Let _hookResult_ be the result of promise-calling _hook_(_entry_, _source_).
   1. Return the result of transforming _hookResult_ with a fulfillment handler that, when called with argument _optionalInstance_, runs the following steps:
-    1. Perform ? ExtractDependencies(_entry_, _optionalInstance_, _source_).
-    1. Return the result of transforming RequestSatisfy(_entry_, _buckle_) with a fulfillment handler that, when called, runs the following steps:
+    1. Return the result of transforming SatisfyInstance(_entry_, _optionalInstance_, _source_, _buckle_) with a fulfillment handler that, when called with value _instance_, runs the following steps:
+      1. Set _entry_.[[Module]] to _instance_.
       1. Return _optionalInstance_.
 1. Let _pCatch_ be the result of transforming _p_ with a rejection handler that, when called, runs the following steps:
   1. Set _entry_.[[Error]] to *true*.
@@ -967,15 +976,17 @@ ModuleStatus instances are initially created with the internal slots described i
 1. Return _p_.
 </emu-alg>
 
-<h4 id="request-satisfy" aoid="RequestSatisfy">RequestSatisfy(entry, buckle)</h4>
+<h4 id="satisfy-instance" aoid="SatisfyInstance">SatisfyInstance(entry, optionalInstance, source, buckle)</h4>
 
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. If _buckle_ is *undefined*, Set _buckle_ is a new empty List.
 1. If _entry_ is already in _buckle_, return *undefined*.
 1. Append _entry_ to _buckle_.
-1. Let _list_ be a new empty List.
 1. Let _loader_ be _entry_.[[Loader]].
+1. Let _instance_ be ? Instantiation(_optionalInstance_, _source_).
+1. Perform ? ExtractDependencies(_entry_, _instance_).
+1. Let _list_ be a new empty List.
 1. For each _pair_ in _entry_.[[Dependencies]], do:
   1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[RequestName]], _entry_.[[Key]]) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
     1. Let _depEntry_ be EnsureRegistered(_loader_, _depKey_).
@@ -984,7 +995,7 @@ ModuleStatus instances are initially created with the internal slots described i
     1. Set _pair_.[[ModuleStatus]] to _depEntry_.
     1. Return RequestInstantiate(_depEntry_, _buckle_).
   1. Append _p_ to _list_.
-1. Return the result of waiting for all _list_.
+1. Return the result of waiting for all _list_ with a fulfillment handler that, when called, return _instance_.
 </emu-alg>
 
 <emu-note>
@@ -1044,7 +1055,7 @@ The modules spec should only invoke this operation from methods of Source Text M
 1. Let _deps_ be DependencyGraph(_entry_).
 1. For each _dep_ in _deps_, do:
   1. Let _depStageEntry_ be GetCurrentStage(_dep_).
-  1. Assert: _depStageEntry_.[[Stage]] is "instantiate" and _stageEntry_.[[Result]] is a resolved promise.
+  1. Assert: _depStageEntry_.[[Stage]] is "instantiate" and _depStageEntry_.[[Result]] is a resolved promise.
   1. If _dep_.[[Module]] is a Function object, then:
     1. Let _func_ be _dep_.[[Module]].
     1. Let _argList_ be a new empty List.
@@ -1201,8 +1212,7 @@ The following steps are taken:
   1. Throw a *SyntaxError* exception.
 1. Append the record {[[module]]: _module_, [[exportName]]: _exportName_} to _resolveStack_.
 1. Let _localExports_ be _module_.[[LocalExports]].
-1. Let _pair_ be the pair in _localExports_ such that _pair_.[[Key]] is equal to _exportName_.
-1. If _pair_ is defined, then:
+1. If _exportName_ is in _localExports_, then:
   1. Return the Record { [[module]]: _module_, [[bindingName]]: _exportName_ }.
 1. Let _indirectExports_ be _module_.[[IndirectExports]].
 1. Let _pair_ be the pair in _indirectExports_ such that _pair_.[[Key]] is equal to _exportName_.
