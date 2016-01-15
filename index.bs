@@ -956,7 +956,7 @@ ModuleStatus instances are initially created with the internal slots described i
 1. Return _p_.
 </emu-alg>
 
-<h4 id="request-instantiate" aoid="RequestInstantiate">RequestInstantiate(entry, buckle)</h4>
+<h4 id="request-instantiate" aoid="RequestInstantiate">RequestInstantiate(entry, instantiateSet)</h4>
 
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
@@ -967,7 +967,7 @@ ModuleStatus instances are initially created with the internal slots described i
   1. Let _hook_ be GetMethod(_entry_.[[Loader]], @@instantiate).
   1. Let _hookResult_ be the result of promise-calling _hook_(_entry_, _source_).
   1. Return the result of transforming _hookResult_ with a fulfillment handler that, when called with argument _optionalInstance_, runs the following steps:
-    1. Return the result of transforming SatisfyInstance(_entry_, _optionalInstance_, _source_, _buckle_) with a fulfillment handler that, when called with value _instance_, runs the following steps:
+    1. Return the result of transforming SatisfyInstance(_entry_, _optionalInstance_, _source_, _instantiateSet_) with a fulfillment handler that, when called with value _instance_, runs the following steps:
       1. Set _entry_.[[Module]] to _instance_.
       1. Return _optionalInstance_.
 1. Let _pCatch_ be the result of transforming _p_ with a rejection handler that, when called, runs the following steps:
@@ -976,13 +976,13 @@ ModuleStatus instances are initially created with the internal slots described i
 1. Return _p_.
 </emu-alg>
 
-<h4 id="satisfy-instance" aoid="SatisfyInstance">SatisfyInstance(entry, optionalInstance, source, buckle)</h4>
+<h4 id="satisfy-instance" aoid="SatisfyInstance">SatisfyInstance(entry, optionalInstance, source, instantiateSet)</h4>
 
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
-1. If _buckle_ is *undefined*, Set _buckle_ is a new empty List.
-1. If _entry_ is already in _buckle_, return *undefined*.
-1. Append _entry_ to _buckle_.
+1. If _instantiateSet_ is *undefined*, Set _instantiateSet_ to a new empty List.
+1. If _entry_ is already in _instantiateSet_, return *undefined*.
+1. Append _entry_ to _instantiateSet_.
 1. Let _loader_ be _entry_.[[Loader]].
 1. Let _instance_ be ? Instantiation(_optionalInstance_, _source_).
 1. Perform ? ExtractDependencies(_entry_, _instance_).
@@ -990,9 +990,9 @@ ModuleStatus instances are initially created with the internal slots described i
 1. For each _pair_ in _entry_.[[Dependencies]], do:
   1. Let _p_ be the result of transforming Resolve(_loader_, _pair_.[[RequestName]], _entry_.[[Key]]) with a fulfillment handler that, when called with value _depKey_, runs the following steps:
     1. Let _depEntry_ be EnsureRegistered(_loader_, _depKey_).
-    1. If _depEntry_ is already in _buckle_, return *undefined*.
+    1. If _depEntry_ is already in _instantiateSet_, return *undefined*.
     1. Set _pair_.[[ModuleStatus]] to _depEntry_.
-    1. Return RequestInstantiate(_depEntry_, _buckle_).
+    1. Return RequestInstantiate(_depEntry_, _instantiateSet_).
   1. Append _p_ to _list_.
 1. Return the result of waiting for all _list_ with a fulfillment handler that, when called, return _instance_.
 </emu-alg>
