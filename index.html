@@ -21,7 +21,7 @@
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://whatwg.org/"> <img alt="WHATWG" height="100" src="https://resources.whatwg.org/logo-javascript.svg"> </a> </p>
    <h1 class="p-name no-ref" id="title">Loader</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">A Collection of Interesting Ideas — Last Updated <time class="dt-updated" datetime="2016-01-23">23 January 2016</time></span></h2>
+   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">A Collection of Interesting Ideas — Last Updated <time class="dt-updated" datetime="2016-01-24">24 January 2016</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -354,7 +354,7 @@ loading process and customizing loading behavior.</p>
    <p>The <b>Loader</b> constructor is designed to be subclassable. It may be used as the value of an <b>extends</b> clause of a class definition. Subclass constructors that intend to inherit the specified <b>Loader</b> behaviour must include a <b>super</b> call to the <b>Loader</b> constructor to create and initialize the subclass instance with the corresponding internal slots.</p>
    <h4 class="heading settled" data-level="3.1.1" id="new-loader"><span class="secno">3.1.1. </span><span class="content">Loader()</span><a class="self-link" href="#new-loader"></a></h4>
    <p>When Loader is called with no arguments, the following steps are taken:</p>
-<emu-alg><ol><li>If NewTarget is <emu-val>undefined</emu-val>, then throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>O</var> be ? <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ordinarycreatefromconstructor">OrdinaryCreateFromConstructor</a>(NewTarget, "%LoaderPrototype%", «[[Realm]], [[Registry]]»).</li><li>Set <var>O</var>’s [[Registry]] internal slot to <a href="#registry-CreateRegistry">CreateRegistry</a>().</li><li>Return <var>O</var>.</li></ol></emu-alg>
+<emu-alg><ol><li>If NewTarget is <emu-val>undefined</emu-val>, then throw a <emu-val>TypeError</emu-val> exception.</li><li>Let <var>O</var> be ? <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-ordinarycreatefromconstructor">OrdinaryCreateFromConstructor</a>(NewTarget, "%LoaderPrototype%", «[[Realm]], [[Registry]]»).</li><li>Set <var>O</var>’s [[Realm]] internal slot to current Realm Record.</li><li>Set <var>O</var>’s [[Registry]] internal slot to <a href="#registry-CreateRegistry">CreateRegistry</a>().</li><li>Return <var>O</var>.</li></ol></emu-alg>
    <h3 class="heading settled" data-level="3.2" id="properties-of-the-loader-constructor"><span class="secno">3.2. </span><span class="content">Properties of the Loader Constructor</span><a class="self-link" href="#properties-of-the-loader-constructor"></a></h3>
    <p>The value of the [[Prototype]] internal slot of the Loader constructor is the intrinsic object %FunctionPrototype%.</p>
    <p>The Loader constructor has the following properties:</p>
