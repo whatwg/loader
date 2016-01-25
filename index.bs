@@ -868,6 +868,8 @@ ModuleStatus instances are initially created with the internal slots described i
 
 <h4 id="ensure-registered" aoid="EnsureRegistered">EnsureRegistered(loader, key)</h4>
 
+When the abstract operation EnsureRegistered is called with arguments <i>loader</i> and <i>key</i>, the following steps are taken:
+
 <emu-alg>
 1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
 1. Assert: Type(_key_) is String.
@@ -882,6 +884,8 @@ ModuleStatus instances are initially created with the internal slots described i
 
 <h4 id="resolve" aoid="Resolve">Resolve(loader, name, referrer)</h4>
 
+When the abstract operation Resolve is called with arguments <i>loader</i>, <i>name</i> and <i>referrer</i>, the following steps are taken:
+
 <emu-alg>
 1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
 1. Assert: Type(_name_) is String.
@@ -891,6 +895,8 @@ ModuleStatus instances are initially created with the internal slots described i
 </emu-alg>
 
 <h4 id="extract-dependencies" aoid="ExtractDependencies">ExtractDependencies(entry, instance)</h4>
+
+When the abstract operation ExtractDependencies is called with arguments <i>entry</i> and <i>instance</i>, the following steps are taken:
 
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
@@ -905,8 +911,9 @@ ModuleStatus instances are initially created with the internal slots described i
   [[Key]] will identifies the dependency module status in the entry's corresponding loader.
 </emu-note>
 
-
 <h4 id="instantiation" aoid="Instantiation">Instantiation(loader, optionalInstance, source)</h4>
+
+When the abstract operation Instantiation is called with arguments <i>loader</i>, <i>optionalInstance</i> and <i>source</i>, the following steps are taken:
 
 <emu-alg>
 1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
@@ -922,6 +929,8 @@ ModuleStatus instances are initially created with the internal slots described i
 <h3 id="loading-operations">Loading Operations</h3>
 
 <h4 id="request-fetch" aoid="RequestFetch">RequestFetch(entry)</h4>
+
+When the abstract operation RequestFetch is called with argument <i>entry</i>, the following steps are taken:
 
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
@@ -940,6 +949,8 @@ ModuleStatus instances are initially created with the internal slots described i
 </emu-alg>
 
 <h4 id="request-translate" aoid="RequestTranslate">RequestTranslate(entry)</h4>
+
+When the abstract operation RequestTranslate is called with argument <i>entry</i>, the following steps are taken:
 
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
@@ -960,6 +971,8 @@ ModuleStatus instances are initially created with the internal slots described i
 
 <h4 id="request-instantiate" aoid="RequestInstantiate">RequestInstantiate(entry, instantiateSet)</h4>
 
+When the abstract operation RequestInstantiate is called with arguments <i>entry</i> and <i>instantiateSet</i>, the following steps are taken:
+
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _instantiateStageEntry_ be GetStage(_entry_, "instantiate").
@@ -979,6 +992,8 @@ ModuleStatus instances are initially created with the internal slots described i
 </emu-alg>
 
 <h4 id="satisfy-instance" aoid="SatisfyInstance">SatisfyInstance(entry, optionalInstance, source, instantiateSet)</h4>
+
+When the abstract operation SatisfyInstance is called with arguments <i>entry</i>, <i>optionalInstance</i>, <i>source</i> and <i>instantiateSet</i>, the following steps are taken:
 
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
@@ -1011,7 +1026,9 @@ ModuleStatus instances are initially created with the internal slots described i
 
 <h4 id="host-resolve-imported-module" aoid="HostResolveImportedModule">HostResolveImportedModule(module, requestName)</h4>
 
-The modules spec should only invoke this operation from methods of Source Text Module Records, and this spec does not invoke the operation at all.
+The modules spec should only invoke this abstract operation from methods of Source Text Module Records, and this spec does not invoke the operation at all.
+
+When the abstract operation HostResolveImportedModule is called with arguments <i>module</i> and <i>requestName</i>, the following steps are taken:
 
 <emu-alg>
 1. Assert: _module_ is a Source Text Module Record.
@@ -1031,6 +1048,8 @@ The modules spec should only invoke this operation from methods of Source Text M
 
 <h4 id="dependency-graph" aoid="DependencyGraph">DependencyGraph(root)</h4>
 
+When the abstract operation DependencyGraph is called with argument <i>root</i>, the following steps are taken:
+
 <emu-alg>
 1. Assert: _root_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _result_ be a new empty List.
@@ -1039,6 +1058,8 @@ The modules spec should only invoke this operation from methods of Source Text M
 </emu-alg>
 
 <h4 id="compute-dependency-graph" aoid="ComputeDependencyGraph">ComputeDependencyGraph(entry, result)</h4>
+
+When the abstract operation ComputeDependencyGraph is called with arguments <i>entry</i> and <i>result</i>, the following steps are taken:
 
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
@@ -1052,6 +1073,8 @@ The modules spec should only invoke this operation from methods of Source Text M
 </emu-alg>
 
 <h4 id="ensure-linked" aoid="EnsureLinked">EnsureLinked(entry)</h4>
+
+When the abstract operation EnsureLinked is called with argument <i>entry</i>, the following steps are taken:
 
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
@@ -1074,6 +1097,8 @@ The modules spec should only invoke this operation from methods of Source Text M
 
 <h4 id="ensure-evaluated" aoid="EnsureEvaluated">EnsureEvaluated(entry)</h4>
 
+When the abstract operation EnsureEvaluated is called with argument <i>entry</i>, the following steps are taken:
+
 <emu-alg>
 1. Assert: _entry_ must have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>).
 1. Let _stageEntry_ be GetCurrentStage(_entry_).
@@ -1089,7 +1114,7 @@ The modules spec should only invoke this operation from methods of Source Text M
 
 <h3 id="reflective-module-record">Reflective Module Records</h3>
 
-A <dfn>reflective module record</dfn> is a kind of module record. It extends
+A <dfn>reflective module record</dfn> is a kind of module record. In addition to the fields, defined in ES2016 Table 37, Reflective Module Records have the additional fields listed below. Each of these fields initially has the value <b>undefined</b>.
 
 <table>
   <thead>
@@ -1120,7 +1145,7 @@ A <dfn>reflective module record</dfn> is a kind of module record. It extends
 
 <h4 id="parse-exports-descriptors" aoid="ParseExportsDescriptors">ParseExportsDescriptors(obj)</h4>
 
-When ParseExportsDescriptors is called with argument <i>obj</i>, the following steps are taken:
+When the abstract operation ParseExportsDescriptors is called with argument <i>obj</i>, the following steps are taken:
 
 <emu-alg>
 1. Assert: Type(_obj_) is an Object.
@@ -1169,6 +1194,8 @@ When ParseExportsDescriptors is called with argument <i>obj</i>, the following s
 
 <h4 id="create-module-mutator" aoid="CreateModuleMutator">CreateModuleMutator(module)</h4>
 
+When the abstract operation CreateModuleMutator is called with argument <i>module</i>, the following steps are taken:
+
 <emu-alg>
 1. Assert: _module_ is a Reflective Module Records.
 1. Let _mutator_ be ObjectCreate(%ObjectPrototype%).
@@ -1184,7 +1211,7 @@ When ParseExportsDescriptors is called with argument <i>obj</i>, the following s
 
 <h4 id="get-export-names" aoid="GetExportNames">GetExportNames(exportStarStack)</h4>
 
-The following steps are taken:
+When the abstract operation GetExportNames is called with argument <i>exportStarStack</i>, the following steps are taken:
 
 <emu-alg>
 1. Let _module_ be this Reflective Module Record.
@@ -1197,6 +1224,8 @@ The following steps are taken:
 </emu-alg>
 
 <h4 id="resolve-export" aoid="ResolveExport">ResolveExport(exportName, resolveStack, exportStarStack)</h4>
+
+When the abstract operation ResolveExport is called with arguments <i>exportName</i>, <i>resolveStack</i> and <i>exportStarStack</i>, the following steps are taken:
 
 <emu-alg>
 1. Let _module_ be this Reflective Module Record.
@@ -1215,13 +1244,19 @@ The following steps are taken:
 
 <h4 id="module-declaration-instantiation" aoid="ModuleDeclarationInstantiation">ModuleDeclarationInstantiation()</h4>
 
-Reflective modules are always already instantiated.
+When the abstract operation ModuleDeclarationInstantiation is called with no arguments, the following steps are taken:
 
 <emu-alg>
 1. Return *undefined*.
 </emu-alg>
 
+<emu-note>
+Reflective modules are always already instantiated.
+</emu-note>
+
 <h4 id="module-evaluation" aoid="ModuleEvaluation">ModuleEvaluation()</h4>
+
+When the abstract operation ModuleEvaluation is called with no arguments, the following steps are taken:
 
 <emu-alg>
 1. Let _module_ be this Reflective Module Record.
@@ -1277,7 +1312,7 @@ When Module is called with arguments <i>descriptors</i>, <i>executor</i>, and <i
       1. Call _envRec_.InitializeBinding(_exportName_, _desc_.[[Value]]).
 1. If _evaluate_ is not *undefined*, then
   1. If IsCallable(_evaluate_) is *false*, throw a new *TypeError* exception.
-1. Let _mod_ be a new Reflective Module Record {[[Realm]]: _realm_, [[Environment]]: _env_, [[Namespace]]: *undefined*, [[LocalExports]]: _localExports_, [[IndirectExports]]: _indirectExports_, [[Evaluated]]: *false*, [[Evaluate]]: _evaluate_}.
+1. Let _mod_ be a new Reflective Module Record {[[Realm]]: _realm_, [[Environment]]: _env_, [[Namespace]]: *undefined*, [[LocalExports]]: _localExports_, [[IndirectExports]]: _indirectExports_, [[Evaluated]]: *false*, [[Evaluate]]: _evaluate_, [[HostDefined]]: *undefined*}.
 1. Let _ns_ be ModuleNamespaceCreate(_mod_, _realm_, _exportNames_).
 1. Set _mod_.[[Namespace]] to _ns_.
 1. If _executor_ is not *undefined*, then
@@ -1294,6 +1329,8 @@ The value of the \[[Prototype]] internal slot of the Module constructor is the i
 The Loader constructor has the following properties:
 
 <h4 id="Module.evaluate">Module.evaluate(ns)</h4>
+
+When Module.evaluate is called with argument <i>ns</i>, the following steps are taken:
 
 <emu-alg>
 1. If _ns_ is not a module namespace exotic object, throw a *TypeError* exception.
