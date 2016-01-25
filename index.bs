@@ -1314,7 +1314,6 @@ When Module is called with arguments <i>descriptors</i>, <i>executor</i>, and <i
   1. If IsCallable(_evaluate_) is *false*, throw a new *TypeError* exception.
 1. Let _mod_ be a new Reflective Module Record {[[Realm]]: _realm_, [[Environment]]: _env_, [[Namespace]]: *undefined*, [[LocalExports]]: _localExports_, [[IndirectExports]]: _indirectExports_, [[Evaluated]]: *false*, [[Evaluate]]: _evaluate_, [[HostDefined]]: *undefined*}.
 1. Let _ns_ be ModuleNamespaceCreate(_mod_, _exportNames_).
-1. Set _mod_.[[Namespace]] to _ns_.
 1. If _executor_ is not *undefined*, then
   1. If IsCallable(_executor_) is *false*, throw a new *TypeError* exception.
   1. Let _mutator_ be CreateModuleMutator(_mod_).
