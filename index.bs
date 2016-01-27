@@ -874,11 +874,15 @@ When the abstract operation EnsureRegistered is called with arguments <i>loader<
 1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
 1. Assert: Type(_key_) is String.
 1. Let _registry_ be _loader_.[[Registry]].
-1. Let _pair_ be the entry in _registry_.[[RegistryMap]] such that _pair_.[[Key]] is equal to _key_.
+1. Let _M_ be registry.[[RegistryMap]].
+1. Let _entries_ be the List that is the value of _M_’s [[MapData]] internal slot.
+1. Let _pair_ be the entry in _entries_ such that _pair_.[[key]] is equal to _key_.
 1. If _pair_ exists, then:
-  1. Let _entry_ be _pair_.[[Value]].
+  1. Let _entry_ be _pair_.[[value]].
 1. Else,
   1. Let _entry_ be a new ModuleStatus(_loader_, _key_).
+  1. Let _p_ be the Record {[[key]]: key, [[value]]: entry}.
+  1. Append _p_ as the last element of _entries_.
 1. Return _entry_.
 </emu-alg>
 
