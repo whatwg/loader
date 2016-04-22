@@ -155,7 +155,7 @@ mean the same thing as:
 1. Return ? OrdinaryDefineOwnProperty(_obj_, _name_, _desc_).
 </emu-alg>
 
-<h3 id="common-operations">Built-in Function Objects</h3>
+<h3 id="sec-built-in-function-objects">Built-in Function Objects</h3>
 
 We follow the ECMA-262 <a href="http://www.ecma-international.org/ecma-262/6.0/index.html#sec-built-in-function-objects">convention for built-in function objects</a> in which the value of NewTarget in each function argument is <b>**undefined**</b> for \[[Call]] and the <i>newTarget</i> parameter for \[[Construct]].
 
@@ -375,8 +375,8 @@ The following steps are taken:
 1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
 1. Let _M_ be _registry_.[[RegistryMap]].
 1. Let _entries_ be the List that is the value of _M_'s [[MapData]] internal slot.
-1. Repeat for each Record {[[key]], [[value]]} _p_ that is an element of _entries_,
-  1. If _p_.[[key]] is not empty and SameValueZero(_p_.[[key]], _key_) is *true*, return _p_.[[value]].
+1. Repeat for each Record {[[Key]], [[Value]]} _p_ that is an element of _entries_,
+  1. If _p_.[[Key]] is not empty and SameValueZero(_p_.[[Key]], _key_) is *true*, return _p_.[[Value]].
 1. Return *undefined*.
 </emu-alg>
 
@@ -392,11 +392,11 @@ The following steps are taken:
 1. If _entry_ does not have all of the internal slots of a ModuleStatus Instance (<a href="#module-status-internal-slots">5.5</a>), throw a *TypeError* exception.
 1. Let _M_ be _registry_.[[RegistryMap]].
 1. Let _entries_ be the List that is the value of _M_'s [[MapData]] internal slot.
-1. Repeat for each Record {[[key]], [[value]]} _p_ that is an element of _entries_,
-  1. If _p_.[[key]] is not empty and SameValueZero(_p_.[[key]], _key_) is *true*, then
-    1. Set _p_.[[value]] to _entry_.
+1. Repeat for each Record {[[Key]], [[Value]]} _p_ that is an element of _entries_,
+  1. If _p_.[[Key]] is not empty and SameValueZero(_p_.[[Key]], _key_) is *true*, then
+    1. Set _p_.[[Value]] to _entry_.
     1. Return _registry_.
-1. Let _p_ be the Record {[[key]]: _key_, [[value]]: _entry_}.
+1. Let _p_ be the Record {[[Key]]: _key_, [[Value]]: _entry_}.
 1. Append _p_ as the last element of _entries_.
 1. Return _registry_.
 </emu-alg>
@@ -411,8 +411,8 @@ The following steps are taken:
 1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
 1. Let _M_ be _registry_.[[RegistryMap]].
 1. Let _entries_ be the List that is the value of _M_'s [[MapData]] internal slot.
-1. Repeat for each Record {[[key]], [[value]]} _p_ that is an element of _entries_,
-  1. If _p_.[[key]] is not empty and SameValueZero(_p_.[[key]], _key_) is *true*, then, return *true*.
+1. Repeat for each Record {[[Key]], [[Value]]} _p_ that is an element of _entries_,
+  1. If _p_.[[Key]] is not empty and SameValueZero(_p_.[[Key]], _key_) is *true*, then, return *true*.
 1. Return *false*.
 </emu-alg>
 
@@ -426,10 +426,10 @@ The following steps are taken:
 1. If _registry_ does not have all of the internal slots of a Registry Instance (<a href="#registry-internal-slots">4.4</a>), throw a *TypeError* exception.
 1. Let _M_ be _registry_.[[RegistryMap]].
 1. Let _entries_ be the List that is the value of _M_'s [[MapData]] internal slot.
-1. Repeat for each Record {[[key]], [[value]]} _p_ that is an element of _entries_,
-  1. If _p_.[[key]] is not empty and SameValueZero(_p_.[[key]], _key_) is *true*, then
-    1. Set _p_.[[key]] to empty.
-    1. Set _p_.[[value]] to empty.
+1. Repeat for each Record {[[Key]], [[Value]]} _p_ that is an element of _entries_,
+  1. If _p_.[[Key]] is not empty and SameValueZero(_p_.[[Key]], _key_) is *true*, then
+    1. Set _p_.[[Key]] to empty.
+    1. Set _p_.[[Value]] to empty.
     1. Return *true*.
 1. Return *false*.
 </emu-alg>
@@ -662,7 +662,7 @@ The initial value of ModuleStatus.prototype.constructor is the intrinsic object 
 1. Return _stageEntry_.[[Stage]].
 </emu-alg>
 
-<h4 id="module-status-module">get ModuleStatus.prototype.originalKey</h4>
+<h4 id="sec-modulestatus.prototype.originalKey">get ModuleStatus.prototype.originalKey</h4>
 
 <code>ModuleStatus.prototype.originalKey</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
 
@@ -673,7 +673,7 @@ The initial value of ModuleStatus.prototype.constructor is the intrinsic object 
 1. Return _entry_.[[Key]].
 </emu-alg>
 
-<h4 id="module-status-module">get ModuleStatus.prototype.module</h4>
+<h4 id="sec-modulestatus.prototype.module">get ModuleStatus.prototype.module</h4>
 
 <code>ModuleStatus.prototype.module</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
 
@@ -686,7 +686,7 @@ The initial value of ModuleStatus.prototype.constructor is the intrinsic object 
 1. Return *undefined*.
 </emu-alg>
 
-<h4 id="module-status-error">get ModuleStatus.prototype.error</h4>
+<h4 id="sec-modulestatus.prototype,error">get ModuleStatus.prototype.error</h4>
 
 <code>ModuleStatus.prototype.error</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
 
@@ -698,7 +698,7 @@ The initial value of ModuleStatus.prototype.constructor is the intrinsic object 
 </emu-alg>
 
 
-<h4 id="module-status-error">get ModuleStatus.prototype.dependencies</h4>
+<h4 id="sec-modulestatus.prototype.dependencies">get ModuleStatus.prototype.dependencies</h4>
 
 <code>ModuleStatus.prototype.dependencies</code> is an accessor property whose set accessor function is undefined. Its get accessor function performs the following steps:
 
@@ -876,12 +876,12 @@ When the abstract operation EnsureRegistered is called with arguments <i>loader<
 1. Let _registry_ be _loader_.[[Registry]].
 1. Let _M_ be registry.[[RegistryMap]].
 1. Let _entries_ be the List that is the value of _M_’s [[MapData]] internal slot.
-1. Let _pair_ be the entry in _entries_ such that _pair_.[[key]] is equal to _key_.
+1. Let _pair_ be the entry in _entries_ such that _pair_.[[Key]] is equal to _key_.
 1. If _pair_ exists, then:
-  1. Let _entry_ be _pair_.[[value]].
+  1. Let _entry_ be _pair_.[[Value]].
 1. Else,
   1. Let _entry_ be a new ModuleStatus(_loader_, _key_).
-  1. Let _p_ be the Record {[[key]]: key, [[value]]: entry}.
+  1. Let _p_ be the Record {[[Key]]: key, [[Value]]: entry}.
   1. Append _p_ as the last element of _entries_.
 1. Return _entry_.
 </emu-alg>
@@ -910,10 +910,6 @@ When the abstract operation ExtractDependencies is called with arguments <i>entr
     1. Append the record { [[RequestName]]: _dep_, [[ModuleStatus]]: *undefined* } to _deps_.
 1. Set _entry_.[[Dependencies]] to _deps_.
 </emu-alg>
-
-<emu-note>
-  [[Key]] will identifies the dependency module status in the entry's corresponding loader.
-</emu-note>
 
 <h4 id="instantiation" aoid="Instantiation">Instantiation(loader, optionalInstance, source)</h4>
 
@@ -1116,9 +1112,9 @@ When the abstract operation EnsureEvaluated is called with argument <i>entry</i>
 
 <h2 id="module-objects">Module Objects</h2>
 
-<h3 id="reflective-module-record">Reflective Module Records</h3>
+<h3 id="sec-reflective-module-record">Reflective Module Records</h3>
 
-A <dfn>reflective module record</dfn> is a kind of module record. In addition to the fields, defined in ES2016 Table 37, Reflective Module Records have the additional fields listed below. Each of these fields initially has the value <b>undefined</b>.
+A <dfn>reflective module record</dfn> is a kind of module record. In addition to the fields, defined in ES2016 Table 37, Reflective Module Records have the additional fields listed below.
 
 <table>
   <thead>
@@ -1129,14 +1125,9 @@ A <dfn>reflective module record</dfn> is a kind of module record. In addition to
     </tr>
   </thead>
   <tr>
-    <td>\[[LocalExports]]</td>
-    <td>A List of Strings</td>
-    <td>The set of exported names accessible in this module's environment.</td>
-  </tr>
-  <tr>
     <td>\[[IndirectExports]]</td>
-    <td>A List of pairs of String and {\[[module]]: Module Record, \[[bindingName]]: String}.</td>
-    <td>The set of re-exported bindings. This ensures that ResolveExport can fully resolve re-exports.</td>
+    <td>A List of Record {\[[Key]]: String, \[[Value]]: Export Object}.</td>
+    <td>The set of exported bindings. This ensures that ResolveExport can fully resolve re-exports.</td>
   </tr>
   <tr>
     <td>\[[Evaluate]]</td>
@@ -1147,34 +1138,29 @@ A <dfn>reflective module record</dfn> is a kind of module record. In addition to
 
 <h3 id="module-abstract-operations">Abstract Operations for Module Objects</h3>
 
-<h4 id="get-export-names" aoid="GetExportedNames">GetExportedNames(exportStarStack)</h4>
+<h4 id="get-export-names" aoid="GetExportedNames">GetExportedNames(exportStarSet)</h4>
 
 The GetExportedNames concrete method of a Reflective Module Record with argument <i>exportStarSet</i> performs the following steps:
 
 <emu-alg>
 1. Let _module_ be this Reflective Module Record.
 1. Append _module_ to _exportStarSet_.
-1. Let _exports_ be a new empty List.
-1. For each _name_ in _module_.[[LocalExports]], do:
-  1. Append _name_ to _exports_.
+1. Let _exportNames_ be a new empty List.
 1. For each _pair_ in _module_.[[IndirectExports]], do:
-  1. Append _pair_.[[Key]] to _exports_.
-1. Return _exports_.
+  1. Append _pair_.[[Key]] to _exportNames_.
+1. Return _exportNames_.
 </emu-alg>
 
-<h4 id="resolve-export" aoid="ResolveExport">ResolveExport(exportName, resolveStack, exportStarStack)</h4>
+<h4 id="resolve-export" aoid="ResolveExport">ResolveExport(exportName, resolveSet, exportStarSet)</h4>
 
 The ResolveExport concrete method of a Reflective Module Record with arguments <i>exportName</i>, <i>resolveSet</i>, and <i>exportStarSet</i> performs the following steps:
 
 <emu-alg>
 1. Let _module_ be this Reflective Module Record.
-1. If _resolveStack_ contains a record _r_ such that _r_.[[module]] is equal to _module_ and _r_.[[exportName]] is equal to _exportName_, then
+1. If _resolveSet_ contains a record _r_ such that _r_.[[Module]] is equal to _module_ and _r_.[[ExportName]] is equal to _exportName_, then
   1. Assert: this is a circular import request.
   1. Throw a *SyntaxError* exception.
-1. Append the record {[[module]]: _module_, [[exportName]]: _exportName_} to _resolveStack_.
-1. Let _localExports_ be _module_.[[LocalExports]].
-1. If _exportName_ is in _localExports_, then:
-  1. Return the Record { [[module]]: _module_, [[bindingName]]: _exportName_ }.
+1. Append the record {[[Module]]: _module_, [[ExportName]]: _exportName_} to _resolveSet_.
 1. Let _indirectExports_ be _module_.[[IndirectExports]].
 1. Let _pair_ be the pair in _indirectExports_ such that _pair_.[[Key]] is equal to _exportName_.
 1. If _pair_ is defined, return _pair_.[[Value]].
@@ -1204,7 +1190,8 @@ The ModuleEvaluation concrete method of a Reflective Module Record performs the 
 1. Set _module_.[[Evaluated]] to *true*.
 1. Set _module_.[[Evaluate]] to *undefined*.
 1. For each _pair_ in _module_.[[IndirectExports]], do:
-  1. Let _requiredModule_ be _pair_.[[Value]].[[module]].
+  1. Let _exportRec_ be _pair_.[[Value]].
+  1. Let _requiredModule_ be _exportRec_.[[Module]].
   1. Assert: _requiredModule_ is a Module Record.
   1. Perform ? _requiredModule_.ModuleEvaluation().
 1. If IsCallable(_func_) is *true*, then:
@@ -1225,30 +1212,21 @@ When Module is called with arguments <i>obj</i> and <i>evaluate</i>, the followi
 
 <emu-alg>
 1. Let _realm_ be the current Realm Record.
-1. Let _env_ be NewModuleEnvironment(_realm_.[[globalEnv]]).
+1. Let _env_ be NewModuleEnvironment(_realm_.[[GlobalEnv]]).
 1. If Type(_obj_) is not Object, throw a *TypeError* exception.
 1. Let _objValue_ be ? ToObject(_obj_).
-1. Let _localExports_ be a new empty List.
 1. Let _indirectExports_ be a new empty List.
-1. Let _exportNames_ be a new empty List.
-1. Let _envRec_ be _env_'s environment record.
 1. Let _keys_ be ? _objValue_.[[OwnPropertyKeys]]().
 1. Repeat for each element _exportName_ of _keys_ in List order,
   1. Let _propDesc_ be ? _objValue_.[[GetOwnProperty]](_exportName_).
   1. If _propDesc_ is not *undefined* and _propDesc_.[[Enumerable]] is *true*, then:
-    1. Let _exportObj_ be ? Get(_objValue_, _exportName_).
-    1. If _exportObj_ is not an Export Object, throw a *TypeError* exception.
-    1. Append _exportName_ to _exportNames_.
-    1. If _exportObj_.[[resolvedExport]] is not *undefined*, then:
-      1. Let _resolution_ be _exportObj_.[[resolvedExport]].
-      1. Append the record {[[Key]]: _exportName_, [[Value]]: _resolution_} to _indirectExports_.
-    1. Else,
-      1. Append _exportName_ to _localExports_.
-      1. Call _envRec_.CreateIndirectBinding(_exportName_, _exportObj_.[[target]], _exportObj_.[[targetKey]]).
+    1. Let _exportRec_ be ? Get(_objValue_, _exportName_).
+    1. If _exportRec_ is not an Export Object, throw a *TypeError* exception.
+    1. Append the record {[[Key]]: _exportName_, [[Value]]: _exportRec_} to _indirectExports_.
 1. If _evaluate_ was not provided, let _evaluate_ be *undefined*.
 1. Else if IsCallable(_evaluate_) is *false*, throw a new *TypeError* exception.
-1. Let _mod_ be a new Reflective Module Record {[[Realm]]: _realm_, [[Environment]]: _env_, [[Namespace]]: *undefined*, [[LocalExports]]: _localExports_, [[IndirectExports]]: _indirectExports_, [[Evaluated]]: *false*, [[Evaluate]]: _evaluate_, [[HostDefined]]: *undefined*}.
-1. Return ? ModuleNamespaceCreate(_mod_, _exportNames_).
+1. Let _mod_ be a new Reflective Module Record {[[Realm]]: *undefined*, [[Environment]]: *undefined*, [[Namespace]]: *undefined*, [[Evaluated]]: *false*, [[HostDefined]]: *undefined*, [[Evaluate]]: _evaluate_, [[IndirectExports]]: _indirectExports_ }.
+1. Return ? GetModuleNamespace(_mod_).
 </emu-alg>
 
 <h3 id="properties-of-the-module-constructor">Properties of the Module Constructor</h3>
@@ -1282,22 +1260,63 @@ Module instances are module namespace exotic objects.
 
 <h2 id="sec-export-objects">Export Objects</h2>
 
-<h3>Abstract Operations for Export Objects</h3>
+<h3 id="sec-export-module-record">Export Module Records</h3>
 
-<h4 id="sec-createlocalexportobject" aoid="CreateLocalExportObject">CreateLocalExportObject(value, mutable, initialized)</h4>
+A <dfn>export module record</dfn> is a kind of module record. It is created and used by Export Objects. Export Module Records have the fields defined in ES2016 Table 37, with no additional fields.
 
-When the abstract operation CreateLocalExportObject is called with arguments <i>value</i>, <i>mutable</i> and <i>initialized</i>, the following steps are taken:
+Additionally, all abtract methods of modules records defined in ES2016 Table 38, should never be called for Export Module Records and an implementation should guaratantee this assertion.
+
+<h3 id="sec-export-abstract-operations">Abstract Operations for Export Objects</h3>
+
+<h4 id="sec-createsingleexportmodulerecord" aoid="CreateExportModuleRecord">CreateExportModuleRecord()</h4>
+
+When the abstract operation CreateExportModuleRecord is called with no arguments, the following steps are taken:
 
 <emu-alg>
-1. Let _O_ be ? OrdinaryCreateFromConstructor(Export, "%ExportPrototype%", « [[resolvedExport]], [[initialized]], [[mutable]], [[target]], [[targetKey]] »).
-1. Let _target_ be ObjectCreate(%ObjectPrototype%).
-1. Let _targetKey_ be *"value"*.
-1. Perform CreateDataProperty(_target_, _targetKey_, _value_).
-1. Set _O_'s [[mutable]] internal slot to _mutable_.
-1. Set _O_'s [[initialized]] internal slot to _initialized_.
-1. Set _O_'s [[target]] internal slot to _target_.
-1. Set _O_'s [[targetKey]] internal slot to _targetKey_.
+1. Let _realm_ be the current Realm Record.
+1. Let _env_ be NewModuleEnvironment(_realm_.[[GlobalEnv]]).
+1. Set _mod_'s [[Environment]] internal slot to _env_.
+1. Let _mod_ be a new Export Module Record {[[Realm]]: _realm_, [[Environment]]: _env_, [[Namespace]]: *undefined*, [[Evaluated]]: *true*, [[HostDefined]]: *undefined*}.
+1. Return _mod_.
+</emu-alg>
+
+<h4 id="sec-createexportobject" aoid="CreateExportObject">CreateExportObject(isMutable)</h4>
+
+When the abstract operation CreateExportObject is called with argument isMutable, the following steps are taken:
+
+<emu-alg>
+1. Assert: Type(_isMutable_) is Boolean.
+1. Let _O_ be ? OrdinaryCreateFromConstructor(Export, "%ExportPrototype%", « [[Module]], [[BindingName]] »).
+1. Let _realm_ be the current Realm Record.
+1. Let _env_ be NewModuleEnvironment(_realm_.[[GlobalEnv]]).
+1. Let _envRec_ be _env_’s EnvironmentRecord.
+1. Set _mod_'s [[Environment]] internal slot to _env_.
+1. Let _mod_ be a new Export Module Record {[[Realm]]: _realm_, [[Environment]]: _env_, [[Namespace]]: *undefined*, [[Evaluated]]: *true*, [[HostDefined]]: *undefined*}.
+1. If _isMutable_ is equal *true*, then
+  1. Perform ? _envRec_.CreateMutableBinding(*"value"*, *false*).
+1. Else,
+  1. Perform ? _envRec_.CreateImmutableBinding(*"value"*, *true*).
+1. Set _O_.[[Module]] to _mod_.
+1. Set _O_.[[BindingName]] to *"value"*.
 1. Return _O_.
+</emu-alg>
+
+
+<h4 id="sec-setexportvalue" aoid="SetExportValue">SetExportValue(mod, bindingName, value)</h4>
+
+When the abstract operation SetExportValue is called with arguments mod, bindingName and value, the following steps are taken:
+
+<emu-alg>
+1. Assert: _mod_ is a module record.
+1. Assert: Type(_bindingName_) is String.
+1. Let _env_ be _mod_.[[Environment]].
+1. Let _envRec_ be _env_'s EnvironmentRecord.
+1. Assert: _envRec_ must have a binding for _bindingName_.
+1. If the binding for _bindingName_ in _envRec_ is an uninitialized binding, then
+  1. Call ? _envRec_.InitializeBinding(_bindingName_, _value_).
+1. Else if the binding for _bindingName_ in envRec is a mutable binding, then
+  1. Call ? _envRec_.SetMutableBinding(_bindingName_, _value_, *true*);
+1. Else throw a *SyntaxError* exception.
 </emu-alg>
 
 <h3 id="sec-export-constructor">The Export Constructor</h3>
@@ -1315,12 +1334,10 @@ The Export constructor has the following properties:
 When Export.let is called with argument optional <i>value</i>, the following steps are taken:
 
 <emu-alg>
-1. Let _mutable_ be *true*.
-1. If _value_ was not provided, then:
-  1. Let _initialized_ be *false*.
-  1. Let _value_ be *undefined*.
-1. Else let _initialized_ be *true*.
-1. Return ? CreateLocalExportObject(_value_, _mutable_, _initialized_).
+1. Let _O_ be ? CreateExportObject(*true*).
+1. If _value_ was provided, then
+  1. Perform ? SetExportValue(_O_.[[Module]], _O_.[[BindingName]], _value_).
+1. Return _O_.
 </emu-alg>
 
 <h4 id="sec-export.var">Export.var([value])</h4>
@@ -1328,12 +1345,10 @@ When Export.let is called with argument optional <i>value</i>, the following ste
 When Export.var is called with optional argument <i>value</i>, the following steps are taken:
 
 <emu-alg>
-1. Let _mutable_ be *true*.
-1. If _value_ was not provided, then:
-  1. Let _initialized_ be *false*.
-  1. Let _value_ be *undefined*.
-1. Else let _initialized_ be *true*.
-1. Return ? CreateLocalExportObject(_value_, _mutable_, _initialized_).
+1. Let _O_ be ? CreateExportObject(*true*).
+1. If _value_ was provided, then
+  1. Perform ? SetExportValue(_O_.[[Module]], _O_.[[BindingName]], _value_).
+1. Return _O_.
 </emu-alg>
 
 <h4 id="sec-export.const">Export.const([value])</h4>
@@ -1341,33 +1356,25 @@ When Export.var is called with optional argument <i>value</i>, the following ste
 When Export.const is called with optional argument <i>value</i>, the following steps are taken:
 
 <emu-alg>
-1. Let _mutable_ be *false*.
-1. If _value_ was not provided, then:
-  1. Let _initialized_ be *false*.
-  1. Let _value_ be *undefined*.
-1. Else let _initialized_ be *true*.
-1. Return ? CreateLocalExportObject(_value_, _mutable_, _initialized_).
+1. Let _O_ be ? CreateExportObject(*false*).
+1. If _value_ was provided, then
+  1. Perform ? SetExportValue(_O_.[[Module]], _O_.[[BindingName]], _value_).
+1. Return _O_.
 </emu-alg>
 
-<h4 id="sec-export.from">Export.from(obj, key)</h4>
+<h4 id="sec-export.from">Export.from(ns, name)</h4>
 
-When Export.from is called with arguments <i>obj</i> and <i>key</i>, the following steps are taken:
+When Export.from is called with arguments <i>ns</i> and <i>name</i>, the following steps are taken:
 
 <emu-alg>
-1. If Type(_obj_) is not an Object, throw a *TypeError* exception.
-1. Let _objValue_ be ? ToObject(_obj_).
-1. Let _keyValue_ be ? ToString(_key_).
-1. Let _O_ be ? OrdinaryCreateFromConstructor(Export, "%ExportPrototype%", « [[resolvedExport]], [[initialized]], [[mutable]], [[target]], [[targetKey]] »).
-1. If _objValue_ is a module namespace exotic object, then:
-  1. Let _module_ be _objValue_.[[Module]].
-  1. Let _resolution_ be ? _module_.ResolveExport(_keyValue_, « », « »).
-  1. If _resolution_ is *null* or _resolution_ is "ambiguous", throw a *SyntaxError* exception.
-  1. Set _O_'s [[resolvedExport]] internal slot to _resolution_.
-1. Else,
-  1. Set _O_'s [[target]] internal slot to _objValue_.
-  1. Set _O_'s [[targetKey]] internal slot to _keyValue_.
-1. Set _O_'s [[initialized]] internal slot to *true*.
-1. Set _O_'s [[mutable]] internal slot to *false*.
+1. If _ns_ is not a module namespace exotic object, throw a *TypeError* exception.
+1. Let _module_ be _ns_.[[Module]].
+1. Let _bindingName_ be ? ToString(_name_).
+1. Let _resolution_ be ? _module_.ResolveExport(_bindingName_, « », « »).
+1. If _resolution_ is *null* or _resolution_ is "ambiguous", throw a *SyntaxError* exception.
+1. Let _O_ be ? OrdinaryCreateFromConstructor(Export, "%ExportPrototype%", « [[Module]], [[BindingName]] »).
+1. Set _O_'s [[Module]] internal slot to _resolution_.[[Module]].
+1. Set _O_'s [[BindingName]] internal slot to _resolution_.[[BindingName]].
 1. Return _O_.
 </emu-alg>
 
@@ -1395,20 +1402,12 @@ The following steps are taken:
 1. Let _O_ be the *this* value.
 1. If Type(_O_) is not Object, throw a *TypeError* exception.
 1. If _O_ does not have all of the internal slots of a Export Instance (<a href="#sec-export-internal-slots">9.4</a>), throw a *TypeError* exception.
-1. Let _r_ be the value of the [[resolvedExport]] internal slot of _O_.
-1. If _r_ is not *undefined*, then:
-  1. Let _module_ be _r_.[[module]].
-  1. Assert: _module_ is a Module Record.
-  1. Let _bindingName_ be _r_.[[bindingName]].
-  1. Assert: Type(_bindingName_) is a String.
-  1. Let _targetEnv_ be _module_.[[Environment]].
-  1. If _targetEnv_ is *undefined*, throw a *ReferenceError* exception.
-  1. Let _targetEnvRec_ be _targetEnv_'s EnvironmentRecord.
-  1. Return ? _targetEnvRec_.GetBindingValue(_propName_, true).
-1. Let _target_ be the value of the [[target]] internal slot of _O_.
-1. Assert: Type(_target_) is an Object.
-1. Let _targetKey_ be the value of the [[targetKey]] internal slot of _O_.
-1. Return ? Get(_target_, _targetKey_).
+1. Let _mod_ be _O_.[[Module]].
+1. Let _bindingName_ be _O_.[[BindingName]].
+1. Let _env_ be _mod_.[[Environment]].
+1. Let _envRec_ be _env_'s EnvironmentRecord.
+1. Assert: _envRec_ must have a binding for _bindingName_.
+1. Return ? _envRec_.GetBindingValue(_bindingName_, true).
 </emu-alg>
 
 <h4 id="sec-export.prototype.set">Export.prototype.set(value)</h4>
@@ -1419,11 +1418,11 @@ The following steps are taken:
 1. Let _O_ be the *this* value.
 1. If Type(_O_) is not Object, throw a *TypeError* exception.
 1. If _O_ does not have all of the internal slots of a Export Instance (<a href="#sec-export-internal-slots">9.4</a>), throw a *TypeError* exception.
-1. If _O_.[[mutable]] is equal *false* and _O_.[[initialized]] is equal *true*, throw a *SyntaxError* exception.
-1. Let _target_ be the value of the [[target]] internal slot of _O_.
-1. Let _targetKey_ be the value of the [[targetKey]] internal slot of _O_.
-1. Perform ? Call(_target_, _targetKey_, _value_, *true*).
-1. Set _O_.[[initialized]] to *true*.
+1. If _value_ is not provided, throw a *TypeError* exception.
+1. Let _mod_ be _O_.[[Module]].
+1. Let _bindingName_ be _O_.[[BindingName]].
+1. If _mod_ is not an export module record, throw a *SyntaxError* exception.
+1. Perform ? SetExportValue(_mod_, _bindingName_, _value_).
 </emu-alg>
 
 <h3 id="sec-export-internal-slots">Properties of Export Instances</h3>
@@ -1437,27 +1436,18 @@ Export instances are initially created with the internal slots described in the 
     <tr>
       <th>Internal Slot</th>
       <th>Value Type</th>
+      <th>Description</th>
     </tr>
   </thead>
   <tr>
-    <td>\[[resolvedExport]]</td>
-    <td>Record {\[[module]]: Module Record, \[[bindingName]]: String}, default value is <b>undefined</b></td>
+    <td>\[[Module]]</td>
+    <td>Module Record</td>
+    <td>The Module Record whose export this export module exposes.</td>
   </tr>
   <tr>
-    <td>\[[initialized]]</td>
-    <td>Boolean</td>
-  </tr>
-  <tr>
-    <td>\[[mutable]]</td>
-    <td>Boolean</td>
-  </tr>
-  <tr>
-    <td>\[[target]]</td>
-    <td>Object, default value is <b>undefined</b></td>
-  </tr>
-  <tr>
-    <td>\[[targetKey]]</td>
-    <td>String, default value is <b>undefined</b></td>
+    <td>\[[BindingName]]</td>
+    <td>String</td>
+    <td>The exported binding name from \[[Module]] internal slot</td>
   </tr>
 </table>
 
