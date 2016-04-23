@@ -1,6 +1,13 @@
+This repository hosts the [JavaScript Loader Standard](http://whatwg.github.io/loader).
+
+### Code of conduct
+
+We are committed to providing a friendly, safe and welcoming environment for all. Please read and
+respect the [WHATWG Code of Conduct](https://wiki.whatwg.org/wiki/Code_of_Conduct).
+
 # Loader
 
-This repository provides the [JavaScript Loader Standard](http://whatwg.github.io/loader). Section 15.2 of the [ES2015 specification](http://www.ecma-international.org/ecma-262/6.0/) describes the syntax for the new `import` and `export` declarations, but does not specify how modules are to be loaded. This repository consolidates work on the ECMAScript module loading semantics with the integration points of Web browsers, as well as Node.js.
+Section 15.2 of the [ES2015 specification](http://www.ecma-international.org/ecma-262/6.0/) describes the syntax for the new `import` and `export` declarations, but does not specify how modules are to be loaded. This repository consolidates work on the ECMAScript module loading semantics with the integration points of Web browsers, as well as Node.js.
 
 The main spec is available at http://whatwg.github.io/loader, generated from the `index.bs` file.
 
