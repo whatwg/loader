@@ -7,7 +7,9 @@ var EmuSpec = require('ecmarkup/lib/Spec');
 module.exports = ecmarkupify;
 
 if (module.parent === null) {
-  ecmarkupify(process.argv[2], process.argv[3]);
+  ecmarkupify(process.argv[2], process.argv[3]).catch(function (e) {
+    console.log(e.stack || e);
+  });
 }
 
 function ecmarkupify(inputFile, outputFile) {
