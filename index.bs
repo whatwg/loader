@@ -204,7 +204,7 @@ The following steps are taken:
 <emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
-1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.4</a>), throw a *TypeError* exception.
 1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a fulfillment handler that, when called with argument _key_, runs the following steps:
   1. Let _entry_ be EnsureRegistered(_loader_, _key_).
   1. Return the result of transforming LoadModule(_entry_, "instantiate") with a fulfillment handler that, when called, runs the following steps:
@@ -218,7 +218,7 @@ The following steps are taken:
 <emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
-1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.4</a>), throw a *TypeError* exception.
 1. Return the result of transforming Resolve(_loader_, _name_, _referrer_) with a new pass-through promise.
 </emu-alg>
 
@@ -229,7 +229,7 @@ The following steps are taken:
 <emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
-1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.4</a>), throw a *TypeError* exception.
 1. If _stage_ is *undefined* then let _stageValue_ be "instantiate".
 1. Else let _stageValue_ be ToString(_stage_).
 1. RejectIfAbrupt(_stageValue_).
@@ -246,7 +246,7 @@ The following steps are taken:
 <emu-alg>
 1. Let _loader_ be *this* value.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
-1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.4</a>), throw a *TypeError* exception.
 1. Return _loader_.[[Registry]].
 </emu-alg>
 
@@ -592,7 +592,7 @@ When ModuleStatus is called with arguments <i>loader</i>, <i>key</i> and <i>ns</
 <emu-alg>
 1. If NewTarget is *undefined*, then throw a *TypeError* exception.
 1. If Type(_loader_) is not Object, throw a *TypeError* exception.
-1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>), throw a *TypeError* exception.
+1. If _loader_ does not have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.4</a>), throw a *TypeError* exception.
 1. Let _keyString_ be ? ToString(_key_).
 1. Let _O_ be ? OrdinaryCreateFromConstructor(NewTarget, "%ModuleStatusPrototype%", «[[Loader]], [[Pipeline]], [[Key]], [[Module]], [[Metadata]], [[Dependencies]], [[Error]]» ).
 1. Let _pipeline_ be a new List.
@@ -871,7 +871,7 @@ ModuleStatus instances are initially created with the internal slots described i
 When the abstract operation EnsureRegistered is called with arguments <i>loader</i> and <i>key</i>, the following steps are taken:
 
 <emu-alg>
-1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
+1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.4</a>).
 1. Assert: Type(_key_) is String.
 1. Let _registry_ be _loader_.[[Registry]].
 1. Let _M_ be registry.[[RegistryMap]].
@@ -891,7 +891,7 @@ When the abstract operation EnsureRegistered is called with arguments <i>loader<
 When the abstract operation Resolve is called with arguments <i>loader</i>, <i>name</i> and <i>referrer</i>, the following steps are taken:
 
 <emu-alg>
-1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
+1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.4</a>).
 1. Assert: Type(_name_) is String.
 1. Assert: Type(_referrer_) is String.
 1. Let _hook_ be GetMethod(_loader_, @@resolve).
@@ -920,7 +920,7 @@ When the abstract operation ExtractDependencies is called with arguments <i>entr
 When the abstract operation Instantiation is called with arguments <i>loader</i>, <i>optionalInstance</i> and <i>source</i>, the following steps are taken:
 
 <emu-alg>
-1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.5</a>).
+1. Assert: _loader_ must have all of the internal slots of a Loader Instance (<a href="#loader-internal-slots">3.4</a>).
 1. If _optionalInstance_ is *undefined*, then:
   1. If _source_ is not a ECMAScript source text, throw new *TypeError*.
   1. Let _realm_ be _loader_.[[Realm]].
