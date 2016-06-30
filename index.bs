@@ -163,7 +163,7 @@ We follow the ECMA-262 <a href="http://www.ecma-international.org/ecma-262/6.0/i
 
 <h3 id="loader-constructor">The Loader Constructor</h3>
 
-The Loader constructor is the %Loader% intrinsic object and the initial value of the <b>Loader</b> property of the the Reflect object. When called as a constructor it creates and initializes a new Loader object. When <b>Loader</b> is called as a function rather than as a constructor, it throws an exception.
+The Loader constructor is the %Loader% intrinsic object and the initial value of the <b>Loader</b> property of the Reflect object. When called as a constructor it creates and initializes a new Loader object. When <b>Loader</b> is called as a function rather than as a constructor, it throws an exception.
 
 The <b>Loader</b> constructor is designed to be subclassable. It may be used as the value of an <b>extends</b> clause of a class definition. Subclass constructors that intend to inherit the specified <b>Loader</b> behaviour must include a <b>super</b> call to the <b>Loader</b> constructor to create and initialize the subclass instance with the corresponding internal slots.
 
@@ -532,10 +532,10 @@ The abstract operation UpgradeToStage with arguments <i>entry</i> and <i>stage</
 </emu-note>
 
 <emu-note>
-  Alternative, this algo can be implemented using functional programming techinques or a reverse cycle to avoid walking the entries twice.
+  Alternative, this algo can be implemented using functional programming techniques or a reverse cycle to avoid walking the entries twice.
 </emu-note>
 
-An <dfn id="stage-entry">stage</dfn> is a record with the following fields:
+A <dfn id="stage-entry">stage</dfn> is a record with the following fields:
 
 <table>
   <thead>
@@ -912,7 +912,7 @@ When the abstract operation ExtractDependencies is called with arguments <i>entr
 </emu-alg>
 
 <emu-note>
-  [[Key]] will identifies the dependency module status in the entry's corresponding loader.
+  [[Key]] will identify the dependency module status in the entry's corresponding loader.
 </emu-note>
 
 <h4 id="instantiation" aoid="Instantiation">Instantiation(loader, optionalInstance, source)</h4>
@@ -1118,7 +1118,7 @@ When the abstract operation EnsureEvaluated is called with argument <i>entry</i>
 
 <h3 id="reflective-module-record">Reflective Module Records</h3>
 
-A <dfn>reflective module record</dfn> is a kind of module record. In addition to the fields, defined in ES2016 Table 37, Reflective Module Records have the additional fields listed below. Each of these fields initially has the value <b>undefined</b>.
+A <dfn>reflective module record</dfn> is a kind of module record. In addition to the fields defined in ES2016 Table 37, Reflective Module Records have the additional fields listed below. Each of these fields initially has the value <b>undefined</b>.
 
 <table>
   <thead>
@@ -1141,7 +1141,7 @@ A <dfn>reflective module record</dfn> is a kind of module record. In addition to
   <tr>
     <td>\[[Evaluate]]</td>
     <td>A function object or <code>undefined</code></td>
-    <td>A thunk to call when the the module is evaluated, or <code>undefined</code> if the module is already evaluated.</td>
+    <td>A thunk to call when the module is evaluated, or <code>undefined</code> if the module is already evaluated.</td>
   </tr>
 </table>
 
@@ -1280,9 +1280,9 @@ When the abstract operation ModuleEvaluation is called with no arguments, the fo
 
 <h3 id="module-constructor">The Module Constructor</h3>
 
-The Module constructor is the initial value of the Module property of the the Reflect object. When called as a constructor it creates and initializes a new Module object. Module is not intended to be called as a function and will throw an exception when called in that manner.
+The Module constructor is the initial value of the Module property of the Reflect object. When called as a constructor it creates and initializes a new Module object. Module is not intended to be called as a function and will throw an exception when called in that manner.
 
-The Module constructor is designed to be subclassable. It may be used as the value in an extends clause of a class definition. Subclass constructors that intend to inherit the specified Module behaviour must include a super call to the Module constructor to create and initialize the subclass instance with the internal stage necessary to integrated with loaders.
+The Module constructor is designed to be subclassable. It may be used as the value in an extends clause of a class definition. Subclass constructors that intend to inherit the specified Module behaviour must include a super call to the Module constructor to create and initialize the subclass instance with the internal stage necessary to integrate with loaders.
 
 <h4 id="new-module">Module(descriptors[, executor[, evaluate]])</h4>
 
