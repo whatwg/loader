@@ -51,7 +51,7 @@ This spec will be implemented in several stages/milestones. See the [roadmap](ht
 
 As the various milestones of the roadmap are completed, browsers will be able to implement them. See the following trackers for the current status of the main browsers:
 
- * IE/Edge: [Under Consideration](https://status.modern.ie/moduleses6?term=modules)
+ * IE/Edge: [In progress](https://status.modern.ie/moduleses6?term=modules)
  * Firefox: [In progress](https://bugzilla.mozilla.org/show_bug.cgi?id=568953)
  * Chrome: [In progress](https://code.google.com/p/v8/issues/detail?id=1569)
  * Webkit: [Meta Bug](https://bugs.webkit.org/show_bug.cgi?id=147340)
