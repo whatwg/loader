@@ -9,7 +9,7 @@ respect the [WHATWG Code of Conduct](https://wiki.whatwg.org/wiki/Code_of_Conduc
 
 Section 15.2 of the [ES2015 specification](http://www.ecma-international.org/ecma-262/6.0/) describes the syntax for the new `import` and `export` declarations, but does not specify how modules are to be loaded. This repository consolidates work on the ECMAScript module loading semantics with the integration points of Web browsers, as well as Node.js.
 
-The main spec is available at http://whatwg.github.io/loader, generated from the `index.bs` file.
+The main spec is available at https://whatwg.github.io/loader, generated from the `index.bs` file.
 
 ## Building the spec
 
@@ -47,14 +47,9 @@ to start a watcher on `index.bs` that will update `index.html` as you edit.
 
 ### Implementation status
 
-This spec will be implemented in several stages/milestones. See the [roadmap](https://github.com/whatwg/loader/blob/master/roadmap.md) for more details.
+This spec is currently undergoing potentially-large redesigns (see [#147](https://github.com/whatwg/loader/issues/147) and [#149](https://github.com/whatwg/loader/issues/149)) and is not ready for implementations. You can see one possible way to break down the work in our old [roadmap](https://github.com/whatwg/loader/blob/master/roadmap.md) document, but that does not reflect the latest changes.
 
-As the various milestones of the roadmap are completed, browsers will be able to implement them. See the following trackers for the current status of the main browsers:
-
- * IE/Edge: [Under Consideration](https://status.modern.ie/moduleses6?term=modules)
- * Firefox: [In progress](https://bugzilla.mozilla.org/show_bug.cgi?id=568953)
- * Chrome: [In progress](https://code.google.com/p/v8/issues/detail?id=1569)
- * Webkit: [Meta Bug](https://bugs.webkit.org/show_bug.cgi?id=147340)
+Various browsers are implementing module syntax parsing and `<script type="module">` loading ([Firefox](https://bugzilla.mozilla.org/show_bug.cgi?id=568953), [Chrome](https://code.google.com/p/v8/issues/detail?id=1569), [WebKit](https://bugs.webkit.org/show_bug.cgi?id=147340), [Edge](https://blogs.windows.com/msedgedev/2016/05/17/es6-modules-and-beyond/)). However, none of them have begun work on the ideas prototyped here, since they are not ready for implementations yet.
 
 ### Feedback
 
