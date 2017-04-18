@@ -2,6 +2,8 @@
 
 ![The Road Ahead](http://img.archiwumallegro.pl/?1187401430)
 
+_note: A good chunk of this spec is out of date and is undergoing revision to realign it with Service Worker, the JS Realms API, and the dynamic import() feature._
+
 ## Milestone 0: Basic Static Loading
 
 - Name resolution (relative URLs, maybe absolute URLs)
