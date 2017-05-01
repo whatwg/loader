@@ -1207,9 +1207,11 @@ When the abstract operation CreateModuleMutator is called with argument <i>modul
 1. Let _envRec_ be env’s environment record.
 1. For each _name_ in _module_.[[LocalExports]], do:
   1. Assert: _mutator_ does not already have a binding for _name_.
-  1. Let _p_ be MakeArgSetter(_name_, _envRec_).
-  1. Let _localExportDesc_ be the PropertyDescriptor{[[Get]]: %ThrowTypeError%, [[Set]]: _p_, [[Enumerable]]: true, [[Configurable]]: false}.
-  1. Perform ? DefinePropertyOrThrow(_mutator_, _name_, _localExportDesc_).
+  1. Let _desc_ be ? _envRec_.[[GetOwnProperty]](_name_).
+  1. If _desc_.[[Writable]] is *true* or _desc_.[[Configurable]] is *true*, then:
+    1. Let _p_ be MakeArgSetter(_name_, _envRec_).
+    1. Let _localExportDesc_ be the PropertyDescriptor{[[Get]]: %ThrowTypeError%, [[Set]]: _p_, [[Enumerable]]: true, [[Configurable]]: false}.
+    1. Perform ? DefinePropertyOrThrow(_mutator_, _name_, _localExportDesc_).
 1. Return _mutator_.
 </emu-alg>
 
