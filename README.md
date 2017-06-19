@@ -21,7 +21,7 @@ Building the spec is a two-step process. First, the majority of the conversion w
 
 ### Bikeshed
 
-To run Bikeshed locally, [install Bikeshed](https://github.com/tabatkins/bikeshed/blob/master/docs/install.md) and then run `bikeshed spec` in the working directory.
+To run Bikeshed locally, [install Bikeshed](https://github.com/tabatkins/bikeshed/blob/master/docs/quick-start.md) and then run `bikeshed spec` in the working directory.
 
 Alternately, you can use the command
 
